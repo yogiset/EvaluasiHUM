@@ -8,7 +8,7 @@ function Root() {
       <div className="w-full min-h-screen flex flex-wrap-reverse ">
         <div className="w-full md:w-1/2 min-h-full flex flex-col justify-center items-center md:items-start text-center md:text-left p-2 md:p-5 lg:p-24 xl:p-40 gap-y-3">
           <h1 className="text-2xl md:text-4xl font-semibold">
-            SISTEM EVALUASI KARYAWAN
+            SISTEM EVALUASI HUM
           </h1>
           <h2 className="text-xl md:text-2xl font-medium">
             PT HARAPAN UTAMA MOTOR
@@ -19,7 +19,7 @@ function Root() {
             adipisci.
           </p>
           <Button variant="sky" className="w-fit">
-            Mulai survey
+            Mulai evaluasi
           </Button>
         </div>
         <div className="w-full md:w-1/2 flex justify-center items-center">

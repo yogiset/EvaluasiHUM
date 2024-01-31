@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const routes = [
   { path: "/", title: "BERANDA" },
-  { path: "/about", title: "APA ITU SEK?" },
+  { path: "/about", title: 'APA ITU "SEH"?' },
 ];
 
 export const Navbar = () => {
@@ -23,7 +23,7 @@ export const Navbar = () => {
   }
   return (
     <header className="w-full bg-white shadow flex justify-between items-center py-4 px-2 fixed top-0">
-      <h1 className="font-bold text-xl md:text-2xl">SISTEM EVALUASI</h1>
+      <h1 className="font-bold text-xl md:text-2xl">SISTEM EVALUASI HUM</h1>
       <nav className="hidden sm:flex items-center gap-x-4">
         <ul className="flex items-center gap-x-4 font-medium">
           {routes.map((route, index) => (
