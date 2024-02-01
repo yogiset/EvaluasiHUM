@@ -20,7 +20,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        poppins: ["Poppins", "sans-serif"], // Adds a new `font-poppins` class
+        poppins: ["Poppins", "sans-serif"], // Add a new `font-poppins` class
+      },
+      backgroundImage: {
+        waves: "url('@/assets/waves.svg')", // Add a new `bg-waves` class
       },
       colors: {
         border: "hsl(var(--border))",

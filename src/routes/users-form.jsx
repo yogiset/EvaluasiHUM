@@ -1,5 +1,6 @@
 import HomeLayout from "@/layouts/home-layout";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,6 +20,7 @@ const exampleUsers = [
 const positions = ["Sales", "Manager", "Direktur"];
 
 const UsersForm = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [regNumber, setRegNumber] = useState("");
   const [position, setPosition] = useState("");
@@ -30,6 +32,7 @@ const UsersForm = () => {
     console.log(formData);
 
     // TODO: Redirect to evaluation page
+    navigate("/evaluasi");
   }
   return (
     <HomeLayout>
