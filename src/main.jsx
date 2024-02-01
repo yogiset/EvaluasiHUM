@@ -7,6 +7,7 @@ import Root from "@/routes/root";
 import UsersForm from "./routes/users-form";
 
 import "./index.css";
+import EvaluationPage from "./routes/evaluations";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,11 @@ const router = createBrowserRouter([
   {
     path: "/evaluasi/user-form",
     element: <UsersForm />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/evaluasi",
+    element: <EvaluationPage />,
     errorElement: <ErrorPage />,
   },
 ]);

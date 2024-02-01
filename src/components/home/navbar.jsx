@@ -22,7 +22,7 @@ export const Navbar = () => {
     setIsOpen(false);
   }
   return (
-    <header className="w-full bg-white shadow flex justify-between items-center py-4 px-2 fixed top-0">
+    <header className="w-full bg-white shadow flex justify-between items-center py-4 px-2 fixed top-0 z-50">
       <h1 className="font-bold text-xl md:text-2xl">SISTEM EVALUASI HUM</h1>
       <nav className="hidden sm:flex items-center gap-x-4">
         <ul className="flex items-center gap-x-4 font-medium">
