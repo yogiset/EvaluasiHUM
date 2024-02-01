@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import HomeLayout from "@/layouts/home-layout";
 import appIcon from "@/assets/app-icon.svg";
 import { Button } from "@/components/ui/button";
 
 function Root() {
+  const navigate = useNavigate();
   return (
     <HomeLayout>
       <div className="w-full min-h-screen flex flex-wrap-reverse ">
@@ -18,7 +20,11 @@ function Root() {
             voluptatem, dignissimos consequuntur tempora impedit aliquid
             adipisci.
           </p>
-          <Button variant="sky" className="w-fit">
+          <Button
+            variant="sky"
+            className="w-fit"
+            onClick={() => navigate("/evaluasi/user-form")}
+          >
             Mulai evaluasi
           </Button>
         </div>
