@@ -1,9 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export const MobileNavbar = ({ onClose, open, routes }) => {
+  const navigate = useNavigate();
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent>
@@ -27,7 +28,11 @@ export const MobileNavbar = ({ onClose, open, routes }) => {
               </li>
             ))}
           </ul>
-          <Button variant="sky" className="w-fit">
+          <Button
+            variant="sky"
+            className="w-fit"
+            onClick={() => navigate("/adm-login")}
+          >
             <UserRound className="w-4 h-4 mr-2" />
             Login
           </Button>
