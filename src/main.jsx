@@ -8,6 +8,7 @@ import UsersForm from "./routes/users-form";
 
 import "./index.css";
 import EvaluationPage from "./routes/evaluations";
+import ResultsPage from "./routes/results-page";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,11 @@ const router = createBrowserRouter([
   {
     path: "/evaluasi",
     element: <EvaluationPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/results",
+    element: <ResultsPage />,
     errorElement: <ErrorPage />,
   },
 ]);

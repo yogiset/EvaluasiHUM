@@ -24,6 +24,7 @@ export default {
       },
       backgroundImage: {
         waves: "url('@/assets/waves.svg')", // Add a new `bg-waves` class
+        goal: "url('@/assets/goal-target.svg')",
       },
       colors: {
         border: "hsl(var(--border))",
