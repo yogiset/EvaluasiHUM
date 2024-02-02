@@ -95,6 +95,7 @@ const EvaluationPage = () => {
     e.preventDefault();
 
     // TODO: Submit the data to the API
+    navigate("/results");
   }
 
   // TODO: fetch the API when the page is first render and the page was changed
@@ -110,11 +111,13 @@ const EvaluationPage = () => {
           ))}
           <div className="w-full flex justify-between items-center">
             <Button variant="sky" onClick={goPrev}>
-              <ChevronLeft /> Previus
+              <ChevronLeft /> Prev
             </Button>
 
             {/* Just testing ↓↓↓ */}
-            <p>Page: {page}</p>
+            <p className="text-xl font-medium">
+              {"<<"} {page} {">>"}
+            </p>
 
             {page !== questions.length / 5 ? (
               <Button variant="sky" onClick={goNext}>
