@@ -10,6 +10,9 @@ import "./index.css";
 import EvaluationPage from "./routes/evaluations";
 import ResultsPage from "./routes/results-page";
 import Login from "./routes/admin/login-page";
+import DashboardLayout from "./layouts/dashboard-layout";
+import EvaluasiPage from "./routes/admin/evaluasi-page";
+import HomeDashboard from "./routes/admin/home-page";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +39,21 @@ const router = createBrowserRouter([
     path: "/adm-login",
     element: <Login />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path: "/dashboard/",
+    element: <DashboardLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "home",
+        element: <HomeDashboard />,
+      },
+      {
+        path: "evaluasi",
+        element: <EvaluasiPage />,
+      },
+    ],
   },
 ]);
 

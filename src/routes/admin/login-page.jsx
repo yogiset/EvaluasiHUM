@@ -17,7 +17,7 @@ const Login = () => {
 
     // TODO: Send data to API
 
-    navigate("/dashboard");
+    navigate("/dashboard/home");
   }
 
   return (
