@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, AlignJustify } from "lucide-react";
+import { Bell, AlignJustify, UserCog, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import userImage from "@/assets/hum-transparent-logo.png";
 import { Button } from "../ui/button";
@@ -13,7 +13,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { AdminSidebar } from "./admin-sidebar";
 
 export const AdminNav = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // State to open the sheet in mobile version
   const { pathname } = useLocation();
 
   function onClose() {
@@ -22,7 +22,7 @@ export const AdminNav = () => {
   return (
     <div className="w-full flex justify-between items-center sticky top-0 shadow p-2">
       <div className="flex items-center gap-x-2">
-        {/* mobile sidebar */}
+        {/* mobile version start */}
         <Button
           variant="secondary"
           size="sm"
@@ -32,16 +32,17 @@ export const AdminNav = () => {
           <AlignJustify />
         </Button>
 
-        {/* <SidebarSheet open={open} onClose={onClose} /> */}
         <SidebarSheet open={open} onClose={onClose} />
 
         <Separator orientation="vertical" className="md:hidden h-10" />
+        {/* mobile version end */}
+
         <h1 className="text-xl font-semibold">
           {pathname.split("/").reverse()[0].toUpperCase()}
         </h1>
       </div>
       <div className="flex items-center gap-0 md:gap-2">
-        <Button variant="ghost">
+        <Button variant="ghost" size="sm">
           <Bell />
         </Button>
         <UserPopover sideOffset={10}>
@@ -60,15 +61,17 @@ const UserPopover = ({ children, sideOffset }) => {
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent sideOffset={sideOffset}>
-        <ul className="space-y-2">
+        <ul className="space-y-2 text-lg font-medium">
           <li className="hover:bg-neutral-300 rounded p-2">
-            <Link to="#" className="w-full">
-              User settings
+            <Link to="#" className="w-full flex">
+              <UserCog className="mr-2" />
+              Akun
             </Link>
           </li>
           <li className="hover:bg-neutral-300 rounded p-2">
-            <Link to="#" className="w-full">
-              Sign out
+            <Link to="#" className="w-full flex">
+              <LogOut className="mr-2" />
+              Keluar
             </Link>
           </li>
         </ul>

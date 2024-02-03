@@ -37,7 +37,7 @@ export const AdminSidebar = ({ onClose }) => {
             <NavLink
               to={
                 user !== "admin" && adminPath.includes(nav.path)
-                  ? "/dashboard/forbidden"
+                  ? "/forbidden"
                   : nav.path
               }
               className={({ isActive }) =>
