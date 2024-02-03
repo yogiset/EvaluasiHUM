@@ -1,23 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [cookies, setCookie] = useCookies(["token"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
 
     const formData = { username, password };
+    try {
+      const response = await axios.post(
+        "http://localhost:8082/user/login",
+        formData
+      );
 
-    console.log(formData);
+      await setCookie("token", response.data.token);
 
-    // TODO: Send data to API
-
-    navigate("/dashboard/home");
+      if (response.status === 200) navigate("/dashboard/home");
+    } catch (err) {
+      // TODO: Error handling
+      console.log(err);
+    }
   }
 
   return (
