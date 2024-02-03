@@ -14,6 +14,10 @@ import Login from "./routes/admin/login-page";
 import DashboardLayout from "./layouts/dashboard-layout";
 import EvaluasiPage from "./routes/admin/evaluasi-page";
 import HomeDashboard from "./routes/admin/home-page";
+import KaryawanPage from "./routes/admin/karyawan-page";
+import RulePage from "./routes/admin/rule-page";
+import PertanyaanPage from "./routes/admin/pertanyaan-page";
+import UserPage from "./routes/admin/user-page";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +57,22 @@ const router = createBrowserRouter([
       {
         path: "evaluasi",
         element: <EvaluasiPage />,
+      },
+      {
+        path: "karyawan",
+        element: <KaryawanPage />,
+      },
+      {
+        path: "rule",
+        element: <RulePage />,
+      },
+      {
+        path: "Pertanyaan",
+        element: <PertanyaanPage />,
+      },
+      {
+        path: "users",
+        element: <UserPage />,
       },
     ],
   },

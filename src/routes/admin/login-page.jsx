@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -10,6 +10,12 @@ const Login = () => {
   const [cookies, setCookie] = useCookies(["token"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const token = cookies.token;
+
+  useEffect(() => {
+    if (token) return navigate("/dashboard/home");
+  }, [token, navigate]);
 
   async function handleLogin(e) {
     e.preventDefault();

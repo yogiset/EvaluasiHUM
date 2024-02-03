@@ -1,4 +1,5 @@
 import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Home,
   UsersRound,
@@ -18,15 +19,25 @@ const navigations = [
     path: "/dashboard/evaluasi",
     icon: <ClipboardList />,
   },
-  { title: "Karyawan", path: "/karyawan", icon: <UsersRound /> },
-  { title: "Rule", path: "/rule", icon: <BookMarked /> },
-  { title: "Pertanyaan", path: "/pertanyaan", icon: <MessageCircleQuestion /> },
-  { title: "User", path: "/user", icon: <UserRound /> },
+  { title: "Karyawan", path: "/dashboard/karyawan", icon: <UsersRound /> },
+  { title: "Rule", path: "/dashboard/rule", icon: <BookMarked /> },
+  {
+    title: "Pertanyaan",
+    path: "/dashboard/pertanyaan",
+    icon: <MessageCircleQuestion />,
+  },
+  { title: "User", path: "/dashboard/users", icon: <UserRound /> },
 ];
 
 export const AdminSidebar = ({ onClose }) => {
-  const user = "user";
-  const adminPath = ["/rule", "/karyawan", "/pertanyaan"];
+  const { role } = useAuth(); // get user data
+  const adminPath = [
+    "/dashboard/rule",
+    "/dashboard/karyawan",
+    "/dashboard/pertanyaan",
+    "/dashboard/users",
+  ];
+
   return (
     <div className="w-full h-full overflow-y-auto relative">
       <div className="flex items-center gap-x-4 mb-10">
@@ -37,11 +48,7 @@ export const AdminSidebar = ({ onClose }) => {
         {navigations.map((nav, index) => (
           <li key={index}>
             <NavLink
-              to={
-                user !== "admin" && adminPath.includes(nav.path)
-                  ? "/forbidden"
-                  : nav.path
-              }
+              to={nav.path}
               className={({ isActive }) =>
                 isActive
                   ? "w-full flex justify-between p-2 bg-white/15 hover:bg-white/15 rounded transition duration-200"
@@ -53,7 +60,7 @@ export const AdminSidebar = ({ onClose }) => {
                 {nav.icon}
                 {nav.title}
               </div>
-              {user !== "admin" && adminPath.includes(nav.path) && (
+              {role !== "ADMIN" && adminPath.includes(nav.path) && (
                 <LockKeyhole />
               )}
             </NavLink>
