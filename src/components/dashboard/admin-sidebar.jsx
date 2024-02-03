@@ -2,6 +2,7 @@ import { NavLink, Link } from "react-router-dom";
 import {
   Home,
   UsersRound,
+  UserRound,
   MessageCircleQuestion,
   ClipboardList,
   BookMarked,
@@ -20,6 +21,7 @@ const navigations = [
   { title: "Karyawan", path: "/karyawan", icon: <UsersRound /> },
   { title: "Rule", path: "/rule", icon: <BookMarked /> },
   { title: "Pertanyaan", path: "/pertanyaan", icon: <MessageCircleQuestion /> },
+  { title: "User", path: "/user", icon: <UserRound /> },
 ];
 
 export const AdminSidebar = ({ onClose }) => {
