@@ -1,8 +1,18 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { useCookies } from "react-cookie";
+import { Outlet, useNavigate } from "react-router-dom";
 import { AdminNav } from "@/components/dashboard/admin-nav";
 import { AdminSidebar } from "@/components/dashboard/admin-sidebar";
 
 const DashboardLayout = () => {
+  const navigate = useNavigate();
+  const [cookies] = useCookies(["token"]);
+  const { token } = cookies;
+
+  useEffect(() => {
+    if (!token) return navigate("/adm-login");
+  }, [token, navigate]);
+
   return (
     <main className="w-full h-screen overflow-hidden flex">
       <div

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CookiesProvider } from "react-cookie";
 
 import ErrorPage from "@/components/error-page";
 import Root from "@/routes/root";
@@ -13,6 +14,10 @@ import Login from "./routes/admin/login-page";
 import DashboardLayout from "./layouts/dashboard-layout";
 import EvaluasiPage from "./routes/admin/evaluasi-page";
 import HomeDashboard from "./routes/admin/home-page";
+import KaryawanPage from "./routes/admin/karyawan-page";
+import RulePage from "./routes/admin/rule-page";
+import PertanyaanPage from "./routes/admin/pertanyaan-page";
+import UserPage from "./routes/admin/user-page";
 
 const router = createBrowserRouter([
   {
@@ -53,12 +58,30 @@ const router = createBrowserRouter([
         path: "evaluasi",
         element: <EvaluasiPage />,
       },
+      {
+        path: "karyawan",
+        element: <KaryawanPage />,
+      },
+      {
+        path: "rule",
+        element: <RulePage />,
+      },
+      {
+        path: "Pertanyaan",
+        element: <PertanyaanPage />,
+      },
+      {
+        path: "users",
+        element: <UserPage />,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <CookiesProvider defaultSetOptions={{ path: "/" }}>
+      <RouterProvider router={router} />
+    </CookiesProvider>
   </React.StrictMode>
 );
