@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/lib/useAuth";
 import { UserRound, AlignJustify } from "lucide-react";
 import { Button } from "../ui/button";
 import { MobileNavbar } from "./mobile-navbar";
