@@ -17,16 +17,15 @@ const UserPage = () => {
 
   const { data, isLoading } = useQuery({
     queryKey: ["get-users"],
-    queryFn: fetchEmploye,
+    queryFn: fetchUsers,
   });
 
-  async function fetchEmploye() {
+  async function fetchUsers() {
     if (role !== "ADMIN") return [];
 
     const response = await axios.get("http://localhost:8082/user/all");
 
     if (response.status === 200) {
-      console.log(response);
       return response.data;
     }
   }
