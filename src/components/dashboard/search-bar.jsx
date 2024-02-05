@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
-export const SearchBar = ({ onSubmit, onChange }) => {
+export const SearchBar = ({ onSubmit, onChange, placeholder }) => {
   return (
     <form
       onSubmit={onSubmit}
@@ -10,7 +10,7 @@ export const SearchBar = ({ onSubmit, onChange }) => {
     >
       <Input
         type="text"
-        placeholder="Cari karyawan..."
+        placeholder={placeholder}
         onChange={onChange}
         className="w-full md:w-80 border-none focus-visible:ring-0 focus-visible:ring-offset-0"
       />

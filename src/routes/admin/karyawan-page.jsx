@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/useAuth";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loading } from "@/components/dashboard/loading";
 import { KaryawanModal } from "@/components/dashboard/modal/karyawan-modal";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
@@ -51,6 +52,7 @@ const KaryawanPage = () => {
       <div className="w-full flex justify-end items-center gap-x-2 p-2">
         <SearchBar
           onSubmit={onSearch}
+          placeholder="Cari karyawan..."
           onChange={(e) => setSearchValue(e.target.value)}
         />
         {/* modal start */}
@@ -128,15 +130,6 @@ const KaryawanCard = ({ data }) => {
           <span className="hidden md:inline">Hapus</span>
         </Button>
       </div>
-    </div>
-  );
-};
-
-const Loading = () => {
-  return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
-      <Loader2 className="w-10 h-10 animate-spin" />
-      <p className="text-xl font-semibold">Loading</p>
     </div>
   );
 };

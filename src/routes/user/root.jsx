@@ -2,9 +2,12 @@ import { useNavigate } from "react-router-dom";
 import HomeLayout from "@/layouts/home-layout";
 import appIcon from "@/assets/app-icon.svg";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/useAuth";
 
 function Root() {
   const navigate = useNavigate();
+  const { id } = useAuth();
+
   return (
     <HomeLayout>
       <div className="w-full min-h-screen flex flex-wrap-reverse ">
@@ -23,7 +26,9 @@ function Root() {
           <Button
             variant="sky"
             className="w-fit"
-            onClick={() => navigate("/evaluasi/user-form")}
+            onClick={() =>
+              id ? navigate("/evaluasi/user-form") : navigate("/adm-login")
+            }
           >
             Mulai evaluasi
           </Button>
