@@ -4,7 +4,8 @@ import { jwtDecode } from "jwt-decode";
 
 export const useAuth = () => {
   // get token from cookie
-  const [cookies] = useCookies(["token"]);
+  // eslint-disable-next-line no-unused-vars
+  const [cookies, setCookie] = useCookies(["token"]);
 
   const token = cookies.token;
 

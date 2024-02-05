@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 import { Bell, AlignJustify, UserCog, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import userImage from "@/assets/hum-transparent-logo.png";
+import { useAuth } from "@/lib/useAuth";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import {
@@ -13,6 +15,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { AdminSidebar } from "./admin-sidebar";
 
 export const AdminNav = () => {
+  const { sub } = useAuth();
   const [open, setOpen] = useState(false); // State to open the sheet in mobile version
   const { pathname } = useLocation();
 
@@ -38,7 +41,7 @@ export const AdminNav = () => {
         {/* mobile version end */}
 
         <h1 className="text-xl font-semibold">
-          {pathname.split("/").reverse()[0].toUpperCase()}
+          {pathname.split("/")[2].toUpperCase()}
         </h1>
       </div>
       <div className="flex items-center gap-0 md:gap-2">
@@ -48,7 +51,7 @@ export const AdminNav = () => {
         <UserPopover sideOffset={10}>
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <img src={userImage} alt="img" width={30} height={30} />
-            <p className="hidden md:inline font-medium">Asep Syaipulloh</p>
+            <p className="hidden md:inline font-medium">{sub}</p>
           </Button>
         </UserPopover>
       </div>
@@ -57,6 +60,13 @@ export const AdminNav = () => {
 };
 
 const UserPopover = ({ children, sideOffset }) => {
+  // eslint-disable-next-line no-unused-vars
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+
+  function handleLogout() {
+    removeCookie("token");
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -69,10 +79,13 @@ const UserPopover = ({ children, sideOffset }) => {
             </Link>
           </li>
           <li className="hover:bg-neutral-300 rounded p-2">
-            <Link to="#" className="w-full flex">
+            <Button
+              onClick={handleLogout}
+              className="w-full h-full flex justify-start text-black text-lg bg-transparent hover:bg-transparent p-0 m-0"
+            >
               <LogOut className="mr-2" />
               Keluar
-            </Link>
+            </Button>
           </li>
         </ul>
       </PopoverContent>
