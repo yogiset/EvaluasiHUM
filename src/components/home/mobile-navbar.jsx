@@ -6,7 +6,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export const MobileNavbar = ({ onClose, open, routes }) => {
   const navigate = useNavigate();
-  const { sub } = useAuth();
+  const { id } = useAuth();
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
@@ -37,7 +37,7 @@ export const MobileNavbar = ({ onClose, open, routes }) => {
             onClick={() => navigate("/adm-login")}
           >
             <UserRound className="w-4 h-4 mr-2" />
-            {sub ? "Dashboard" : "Login"}
+            {id ? "Dashboard" : "Login"}
           </Button>
         </nav>
       </SheetContent>

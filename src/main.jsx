@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
+import { QueryProvider } from "./providers/query-provider";
 
 import ErrorPage from "@/components/error-page";
 import Root from "@/routes/root";
@@ -18,6 +19,7 @@ import KaryawanPage from "./routes/admin/karyawan-page";
 import RulePage from "./routes/admin/rule-page";
 import PertanyaanPage from "./routes/admin/pertanyaan-page";
 import UserPage from "./routes/admin/user-page";
+import DetailKaryawanPage from "./routes/admin/detail-karyawan-page";
 
 const router = createBrowserRouter([
   {
@@ -63,6 +65,10 @@ const router = createBrowserRouter([
         element: <KaryawanPage />,
       },
       {
+        path: "karyawan/:karId",
+        element: <DetailKaryawanPage />,
+      },
+      {
         path: "rule",
         element: <RulePage />,
       },
@@ -81,7 +87,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
-      <RouterProvider router={router} />
+      <QueryProvider>
+        <RouterProvider router={router} />
+      </QueryProvider>
     </CookiesProvider>
   </React.StrictMode>
 );

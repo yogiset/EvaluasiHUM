@@ -10,7 +10,7 @@ const DashboardLayout = () => {
   const { token } = cookies;
 
   useEffect(() => {
-    if (!token) return navigate("/adm-login");
+    if (!token) return navigate("/");
   }, [token, navigate]);
 
   return (
@@ -23,7 +23,7 @@ const DashboardLayout = () => {
       </div>
       <div className="w-full">
         <AdminNav />
-        <div className="pl-2 h-full">
+        <div className="px-2 h-full">
           <Outlet />
         </div>
       </div>

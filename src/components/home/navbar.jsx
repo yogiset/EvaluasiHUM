@@ -12,7 +12,7 @@ const routes = [
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const { sub } = useAuth();
+  const { id } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   // open the sheet in mobile version
@@ -47,7 +47,7 @@ export const Navbar = () => {
         </ul>
         <Button variant="sky" onClick={() => navigate("/adm-login")}>
           <UserRound className="w-4 h-4 mr-2" />
-          {sub ? "Dashboard" : "Login"}
+          {id ? "Dashboard" : "Login"}
         </Button>
       </nav>
 
