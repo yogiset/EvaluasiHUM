@@ -1,7 +1,135 @@
+import { useState } from "react";
+import { Info, Trash2, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/useAuth";
+import axios from "axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loading } from "@/components/dashboard/loading";
+import { UserModal } from "@/components/dashboard/modal/user-modal";
+import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
+import { SearchBar } from "@/components/dashboard/search-bar";
+import { Button } from "@/components/ui/button";
+
 const UserPage = () => {
+  const { role } = useAuth();
+  const [searchValue, setSearchValue] = useState("");
+  const [open, setOpen] = useState(false); // modal/dialog state
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["get-users"],
+    queryFn: fetchUsers,
+  });
+
+  async function fetchUsers() {
+    if (role !== "ADMIN") return [];
+
+    const response = await axios.get("http://localhost:8082/user/all");
+
+    if (response.status === 200) {
+      return response.data;
+    }
+  }
+
+  // close modal ↓↓↓
+  function onClose() {
+    setOpen(false);
+  }
+
+  // onSubmit event ↓↓↓
+  function onSearch(e) {
+    e.preventDefault();
+
+    // TODO: Handle on search
+    alert(searchValue);
+  }
+
+  if (role !== "ADMIN") {
+    return <ForbiddenPage />;
+  }
+
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <h1 className="text-4xl">UserPage</h1>
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full flex justify-end items-center gap-x-2 p-2">
+        <SearchBar
+          onSubmit={onSearch}
+          placeholder="Cari user..."
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        {/* modal start */}
+        <Button variant="sky" onClick={() => setOpen(true)}>
+          Tambah
+        </Button>
+        <UserModal open={open} onClose={onClose} />
+        {/* modal end */}
+      </div>
+      {isLoading ? <Loading /> : <UsersList data={data} />}
+    </div>
+  );
+};
+
+const UsersList = ({ data }) => {
+  return (
+    <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+      {data.length < 1 ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <h1 className="text-lg font-semibold">User sedang ngopi☕</h1>
+        </div>
+      ) : (
+        data.map((elem) => <UserCard key={elem.iduser} data={elem} />)
+      )}
+    </div>
+  );
+};
+
+const UserCard = ({ data }) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: (id) => {
+      return axios.delete(`http://localhost:8082/user/hapususer/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-users"] });
+    },
+  });
+
+  function deleteUser() {
+    mutation.mutate(data.iduser);
+  }
+
+  return (
+    <div className="w-full flex justify-between items-center border shadow-md rounded-md p-2">
+      <div className="space-y-1 truncate">
+        <Link
+          to={`/dashboard/users/${data.iduser}`}
+          className="text-2xl font-semibold hover:underline"
+        >
+          {data.username}
+        </Link>
+        <h1 className="text-sm text-neutral-600">{data.role}</h1>
+      </div>
+      <div className="flex items-center gap-x-2">
+        <Button
+          variant="sky"
+          onClick={() => navigate(`/dashboard/users/${data.iduser}`)}
+        >
+          <Info className="mr-0 md:mr-2 w-5 h-5" />
+          <span className="hidden md:inline">Info</span>
+        </Button>
+        <Button
+          variant="destructive"
+          onClick={deleteUser}
+          disabled={mutation.isPending}
+        >
+          {mutation.isPending ? (
+            <Loader2 className="mr-0 md:mr-2 w-5 h-5 animate-spin" />
+          ) : (
+            <Trash2 className="mr-0 md:mr-2 w-5 h-5" />
+          )}
+          <span className="hidden md:inline">Hapus</span>
+        </Button>
+      </div>
     </div>
   );
 };

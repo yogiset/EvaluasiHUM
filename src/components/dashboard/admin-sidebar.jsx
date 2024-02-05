@@ -3,7 +3,6 @@ import { useAuth } from "@/lib/useAuth";
 import {
   Home,
   UsersRound,
-  UserRound,
   MessageCircleQuestion,
   ClipboardList,
   BookMarked,
@@ -26,7 +25,7 @@ const navigations = [
     path: "/dashboard/pertanyaan",
     icon: <MessageCircleQuestion />,
   },
-  { title: "User", path: "/dashboard/users", icon: <UserRound /> },
+  { title: "User", path: "/dashboard/users", icon: <UsersRound /> },
 ];
 
 export const AdminSidebar = ({ onClose }) => {
