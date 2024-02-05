@@ -10,7 +10,7 @@ const DashboardLayout = () => {
   const { token } = cookies;
 
   useEffect(() => {
-    if (!token) return navigate("/adm-login");
+    if (!token) return navigate("/");
   }, [token, navigate]);
 
   return (
