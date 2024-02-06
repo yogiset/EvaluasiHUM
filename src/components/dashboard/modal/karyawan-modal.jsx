@@ -18,8 +18,7 @@ import {
 } from "@/components/ui/select";
 
 // TODO: Remove or change this later ↓↓↓
-const exampleDivisi = ["IT", "Marketing", "Produksi", "Manajemen"];
-const exampleJabatan = ["Frontend", "Backend", "Operator Produksi", "Sales"];
+import { exampleDivisi, exampleJabatan } from "@/data/userData";
 
 export const KaryawanModal = ({ open, onClose }) => {
   const queryClient = useQueryClient();
