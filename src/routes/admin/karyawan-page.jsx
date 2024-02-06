@@ -17,10 +17,10 @@ const KaryawanPage = () => {
 
   const { data, isLoading } = useQuery({
     queryKey: ["get-all-employee"],
-    queryFn: fetchEmploye,
+    queryFn: fetchAllEmployee,
   });
 
-  async function fetchEmploye() {
+  async function fetchAllEmployee() {
     if (role !== "ADMIN") return [];
 
     const response = await axios.get("http://localhost:8082/karyawan/all");
