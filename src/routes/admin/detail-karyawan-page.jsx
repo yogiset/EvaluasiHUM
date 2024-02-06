@@ -133,10 +133,18 @@ const DetailKaryawanPage = () => {
               <div className="flex gap-x-2">
                 {isEdit ? (
                   <>
-                    <Button variant="sky" onClick={saveEditedData}>
+                    <Button
+                      variant="sky"
+                      onClick={saveEditedData}
+                      disabled={mutation.isPending}
+                    >
                       Save
                     </Button>
-                    <Button variant="outline" onClick={() => setIsEdit(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEdit(false)}
+                      disabled={mutation.isPending}
+                    >
                       Cancel
                     </Button>
                   </>
