@@ -47,7 +47,7 @@ export const UserModal = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-h-screen overflow-y-auto">
         <DialogHeader className="border-b">
           <DialogTitle>Buat User</DialogTitle>
         </DialogHeader>
