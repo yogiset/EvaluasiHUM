@@ -83,7 +83,12 @@ const Login = () => {
                 required
               />
             </div>
-            <Button className="w-full" type="submit" variant="sky">
+            <Button
+              className="w-full"
+              type="submit"
+              variant="sky"
+              disabled={mutation.isPending}
+            >
               LOGIN
             </Button>
             <p className="text-sm">Forgot Your Password?</p>
