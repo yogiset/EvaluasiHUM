@@ -15,3 +15,5 @@ export const exampleJabatan = [
   "Sales",
   "Perpajakan",
 ];
+
+export const exampleRole = ["ADMIN", "USER"];

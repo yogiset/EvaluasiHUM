@@ -174,8 +174,8 @@ const DetailKaryawanPage = () => {
 const TrText = ({ id, title, desc, isEdit, onChange }) => {
   return (
     <tr>
-      <td className="font-medium border border-slate-300 px-2 py-4">{title}</td>
-      <td className="border border-slate-300 px-2 py-4">
+      <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
+      <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
           <Input id={id} defaultValue={desc} onChange={onChange} />
         ) : (
@@ -197,8 +197,8 @@ const TrSelect = ({
 }) => {
   return (
     <tr>
-      <td className="font-medium border border-slate-300 px-2 py-4">{title}</td>
-      <td className="border border-slate-300 px-2 py-4">
+      <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
+      <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
           <Select id={id} name={id} onValueChange={onValueChange}>
             <SelectTrigger className="w-full">
