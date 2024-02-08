@@ -1,21 +1,15 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { FormInput } from "../form/form-input";
+import { FormSelect } from "../form/form-select";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 
 // TODO: Remove or change this later ↓↓↓
 const exampleRole = ["ADMIN", "USER"];
@@ -93,44 +87,5 @@ export const UserModal = ({ open, onClose }) => {
         </form>
       </DialogContent>
     </Dialog>
-  );
-};
-
-const FormInput = ({ label, id, placeholder, type, onChange }) => {
-  return (
-    <div className="w-full space-y-2">
-      <label htmlFor={id} className="font-semibold">
-        {label}
-      </label>
-      <Input
-        type={type}
-        id={id}
-        name={id}
-        placeholder={placeholder}
-        onChange={onChange}
-      />
-    </div>
-  );
-};
-
-const FormSelect = ({ label, id, onValueChange, selectItems, placeholder }) => {
-  return (
-    <div className="w-full space-y-2">
-      <label htmlFor={id} className="font-semibold">
-        {label}
-      </label>
-      <Select id={id} name={id} onValueChange={onValueChange}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {selectItems.map((position, index) => (
-            <SelectItem key={index} value={position}>
-              {position}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
   );
 };
