@@ -73,7 +73,7 @@ const UserPopover = ({ children, sideOffset }) => {
       <PopoverContent sideOffset={sideOffset}>
         <ul className="space-y-2 text-lg font-medium">
           <li className="hover:bg-neutral-300 rounded p-2">
-            <Link to="#" className="w-full flex">
+            <Link to="/dashboard/akun" className="w-full flex">
               <UserCog className="mr-2" />
               Akun
             </Link>

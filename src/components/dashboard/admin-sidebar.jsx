@@ -8,6 +8,7 @@ import {
   BookMarked,
   Settings,
   LockKeyhole,
+  UserCog,
 } from "lucide-react";
 import logo from "@/assets/hum-transparent-logo.png";
 
@@ -26,6 +27,7 @@ const navigations = [
     icon: <MessageCircleQuestion />,
   },
   { title: "User", path: "/dashboard/users", icon: <UsersRound /> },
+  { title: "Akun", path: "/dashboard/akun", icon: <UserCog /> },
 ];
 
 export const AdminSidebar = ({ onClose }) => {
