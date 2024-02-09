@@ -16,6 +16,7 @@ import PertanyaanPage from "./admin/pertanyaan-page";
 import UserPage from "./admin/user-page";
 import DetailKaryawanPage from "./admin/detail-karyawan-page";
 import DetailUserPage from "./admin/detail-user-page";
+import AccountPage from "./admin/account-page";
 
 export const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
       {
         path: "users/:userId",
         element: <DetailUserPage />,
+      },
+      {
+        path: "akun",
+        element: <AccountPage />,
       },
     ],
   },
