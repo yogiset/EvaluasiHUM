@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { UserCog, PencilLine, Trash2, X, Info } from "lucide-react";
+import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +13,7 @@ import { Input } from "@/components/ui/input";
 const AccountPage = () => {
   const { id: userId } = useAuth();
   const queryClient = useQueryClient();
+  // eslint-disable-next-line no-unused-vars
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [isEditName, setIsEditName] = useState(false);
   const [isEditPass, setIsEditPass] = useState(false);
@@ -36,7 +38,11 @@ const AccountPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      toast.success("Updated successfully!");
       setIsEditName(false);
+    },
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 
@@ -58,7 +64,11 @@ const AccountPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      toast.success("Updated successfully!");
       removeCookie("token");
+    },
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 

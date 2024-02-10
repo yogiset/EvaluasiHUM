@@ -3,6 +3,7 @@ import { useAuth } from "@/lib/useAuth";
 import { Info, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Loading } from "@/components/dashboard/loading";
@@ -81,6 +82,10 @@ const RuleCard = ({ data }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-rules"] });
+      toast.success("Deleted successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   });
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
+import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +59,11 @@ const DetailUserPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      toast.success("Updated successfully!");
       setIsEdit(false);
+    },
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 

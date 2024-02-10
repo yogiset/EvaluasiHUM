@@ -2,6 +2,7 @@ import { useState } from "react";
 import { PencilLine } from "lucide-react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,7 +24,11 @@ export const EditRuleModal = ({ open, onClose, data }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-rules"] });
+      toast.success("Updated successfully!");
       onClose();
+    },
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 
