@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/useAuth";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { UserModal } from "@/components/dashboard/modal/user-modal";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
@@ -91,6 +92,10 @@ const UserCard = ({ data }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-users"] });
+      toast.success("Deleted successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   });
 

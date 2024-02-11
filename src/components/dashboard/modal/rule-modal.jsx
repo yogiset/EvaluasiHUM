@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import generateUniqueId from "generate-unique-id";
+import { toast } from "sonner";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,11 @@ export const RuleModal = ({ open, onClose }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-rules"] });
+      toast.success("Added successfully!");
       onClose();
+    },
+    onError: () => {
+      toast.error("Failed to add!");
     },
   });
 
