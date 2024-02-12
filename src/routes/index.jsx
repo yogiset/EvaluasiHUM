@@ -9,6 +9,7 @@ import UsersForm from "./user/users-form";
 import EvaluationPage from "./user/evaluations";
 import ResultsPage from "./user/results-page";
 import EvaluasiPage from "./admin/evaluasi-page";
+import DetailEvaluasiPage from "./admin/detail-evaluasi-page";
 import HomeDashboard from "./admin/home-page";
 import KaryawanPage from "./admin/karyawan-page";
 import RulePage from "./admin/rule-page";
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
       {
         path: "evaluasi",
         element: <EvaluasiPage />,
+      },
+      {
+        path: "evaluasi/:evId",
+        element: <DetailEvaluasiPage />,
       },
       {
         path: "karyawan",

@@ -41,7 +41,6 @@ const DetailUserPage = () => {
     );
 
     if (response.status === 200) {
-      console.log(response);
       setKodeuser(response.data.kodeuser);
       setUsername(response.data.username);
       setRole(response.data.role);
