@@ -109,7 +109,7 @@ const RuleCard = ({ data }) => {
         <EditRuleModal open={editModal} onClose={onClose} data={data} />
         <Button variant="sky" onClick={() => setEditModal(true)}>
           <Info className="mr-0 md:mr-2 w-5 h-5" />
-          <span className="hidden md:inline">Info</span>
+          <span className="hidden md:inline">Detail</span>
         </Button>
         {/* modal end */}
 
