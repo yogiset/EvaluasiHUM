@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import { Bell, AlignJustify, UserCog, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import userImage from "@/assets/hum-transparent-logo.png";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import {

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import HomeLayout from "@/layouts/home-layout";
 import appIcon from "@/assets/app-icon.svg";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 
 function Root() {
   const navigate = useNavigate();
