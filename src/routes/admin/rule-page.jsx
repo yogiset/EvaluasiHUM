@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import { Info, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
@@ -74,6 +75,7 @@ const RulesList = ({ data }) => {
 const RuleCard = ({ data }) => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const queryClient = useQueryClient();
+  const { newModal } = useConfirmModal();
   const [editModal, setEditModal] = useState(false);
 
   const mutation = useMutation({
@@ -90,7 +92,14 @@ const RuleCard = ({ data }) => {
   });
 
   function deleteRule() {
-    mutation.mutate(data.idrule);
+    newModal({
+      title: "Peringatan!",
+      message: "Anda yakin ingin menghapusnya?",
+    }).then((res) => {
+      if (res) {
+        mutation.mutate(data.idrule);
+      }
+    });
   }
 
   function onClose() {
@@ -113,11 +122,7 @@ const RuleCard = ({ data }) => {
         </Button>
         {/* modal end */}
 
-        <Button
-          variant="destructive"
-          onClick={deleteRule}
-          disabled={mutation.isPending}
-        >
+        <Button variant="destructive" onClick={deleteRule}>
           <Trash2 className="mr-0 md:mr-2 w-5 h-5" />
           <span className="hidden md:inline">Hapus</span>
         </Button>

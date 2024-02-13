@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { SearchBar } from "@/components/dashboard/search-bar";
@@ -77,6 +78,7 @@ const EvaluationList = ({ data }) => {
 const EvaluationCard = ({ data }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { newModal } = useConfirmModal();
 
   const mutation = useMutation({
     mutationFn: (id) => {
@@ -92,7 +94,14 @@ const EvaluationCard = ({ data }) => {
   });
 
   function deleteEvaluation() {
-    mutation.mutate(data.ideva);
+    newModal({
+      title: "Peringatan!",
+      message: "Apakah anda ingin menghapusnya?",
+    }).then((res) => {
+      if (res) {
+        mutation.mutate(data.ideva);
+      }
+    });
   }
 
   return (

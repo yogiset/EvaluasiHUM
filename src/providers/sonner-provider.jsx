@@ -1,3 +1,4 @@
+import { ConfirmModal } from "@/components/dashboard/modal/confirm-modal";
 import { Toaster } from "@/components/ui/sonner";
 
 export const SonnerProvider = ({ children }) => {
@@ -5,6 +6,7 @@ export const SonnerProvider = ({ children }) => {
     <>
       {children}
       <Toaster position="top-right" />
+      <ConfirmModal />
     </>
   );
 };

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { UserModal } from "@/components/dashboard/modal/user-modal";
@@ -85,6 +86,7 @@ const UsersList = ({ data }) => {
 const UserCard = ({ data }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { newModal } = useConfirmModal();
 
   const mutation = useMutation({
     mutationFn: (id) => {
@@ -100,7 +102,15 @@ const UserCard = ({ data }) => {
   });
 
   function deleteUser() {
-    mutation.mutate(data.iduser);
+    newModal({
+      title: "Peringatan!",
+      message:
+        "Data karyawan yang terkait dengan user ini tidak akan dihapus. Apakah anda ingin menghapusnya?",
+    }).then((res) => {
+      if (res) {
+        mutation.mutate(data.iduser);
+      }
+    });
   }
 
   return (
