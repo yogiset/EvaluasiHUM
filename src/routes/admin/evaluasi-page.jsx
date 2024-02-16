@@ -11,7 +11,7 @@ import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 
 const EvaluasiPage = () => {
-  const { nik, role } = useAuth();
+  const { role } = useAuth();
   const [searchValue, setSearchValue] = useState("");
 
   const { data, isLoading, error } = useQuery({
@@ -22,9 +22,9 @@ const EvaluasiPage = () => {
   async function fetchEvaluationResults() {
     let url;
 
-    role === "ADMIN" ? (url = "all") : (url = `findbyNik/${nik}`); // Find by nik if not admin
+    role === "ADMIN" ? (url = "evaluasi/all") : (url = `user/userresult`); // Find by nik if not admin
 
-    const response = await axios.get(`http://localhost:8082/evaluasi/${url}`);
+    const response = await axios.get(`http://localhost:8082/${url}`);
 
     if (response.status === 200) {
       return response.data;
