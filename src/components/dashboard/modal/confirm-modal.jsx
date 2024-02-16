@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/dialog";
 
 export const ConfirmModal = () => {
-  const { isOpen, config, onConfirm, onCancel, onClose } = useConfirmModal();
+  const { isOpen, config, onConfirm, onCancel } = useConfirmModal();
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onCancel}>
       <DialogContent className="max-h-screen overflow-y-auto">
         <DialogHeader className="border-b">
           <DialogTitle>{config.title}</DialogTitle>
