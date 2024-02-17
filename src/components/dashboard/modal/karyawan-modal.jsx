@@ -1,10 +1,13 @@
-import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { employeeSchema } from "@/schema/employee-schema";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import {
   Dialog,
   DialogContent,
@@ -17,10 +20,15 @@ import { exampleDivisi, exampleJabatan } from "@/data/userData";
 
 export const KaryawanModal = ({ open, onClose }) => {
   const queryClient = useQueryClient();
-  const [nik, setNik] = useState("");
-  const [nama, setNama] = useState("");
-  const [divisi, setDivisi] = useState("");
-  const [jabatan, setJabatan] = useState("");
+
+  // Define a form
+  const employeeForm = useForm({
+    resolver: zodResolver(employeeSchema),
+    defaultValues: {
+      nik: "",
+      nama: "",
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: (formData) => {
@@ -36,10 +44,7 @@ export const KaryawanModal = ({ open, onClose }) => {
     },
   });
 
-  function onSubmit(e) {
-    e.preventDefault();
-
-    const formData = { nik, nama, divisi, jabatan };
+  function onSubmit(formData) {
     mutation.mutate(formData);
   }
 
@@ -49,39 +54,44 @@ export const KaryawanModal = ({ open, onClose }) => {
         <DialogHeader className="border-b">
           <DialogTitle>Tambah Karyawan</DialogTitle>
         </DialogHeader>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <FormInput
-            label="NIK"
-            id="nik"
-            placeholder="Masukkan NIK"
-            type="text"
-            onChange={(e) => setNik(e.target.value)}
-          />
-          <FormInput
-            label="Nama"
-            id="name"
-            placeholder="Masukkan Nama"
-            type="text"
-            onChange={(e) => setNama(e.target.value)}
-          />
-          <FormSelect
-            label="Divisi"
-            id="divisi"
-            onValueChange={(e) => setDivisi(e)}
-            selectItems={exampleDivisi}
-            placeholder="Pilih Divisi"
-          />
-          <FormSelect
-            label="Jabatan"
-            id="jabatan"
-            onValueChange={(e) => setJabatan(e)}
-            selectItems={exampleJabatan}
-            placeholder="Pilih Jabatan"
-          />
-          <Button type="submit" variant="sky" disabled={mutation.isPending}>
-            Tambah
-          </Button>
-        </form>
+        <Form {...employeeForm}>
+          <form
+            onSubmit={employeeForm.handleSubmit(onSubmit)}
+            className="space-y-3"
+          >
+            <FormInput
+              form={employeeForm}
+              label="NIK"
+              id="nik"
+              placeholder="Masukkan NIK"
+              type="text"
+            />
+            <FormInput
+              form={employeeForm}
+              label="Nama"
+              id="nama"
+              placeholder="Masukkan Nama"
+              type="text"
+            />
+            <FormSelect
+              form={employeeForm}
+              label="Divisi"
+              id="divisi"
+              selectItems={exampleDivisi}
+              placeholder="Pilih Divisi"
+            />
+            <FormSelect
+              form={employeeForm}
+              label="Jabatan"
+              id="jabatan"
+              selectItems={exampleJabatan}
+              placeholder="Pilih Jabatan"
+            />
+            <Button type="submit" variant="sky" disabled={mutation.isPending}>
+              Tambah
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
