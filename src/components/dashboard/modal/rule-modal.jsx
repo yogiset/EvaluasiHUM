@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import generateUniqueId from "generate-unique-id";
 import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { ruleSchema } from "@/schema/rule-schema";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,21 +24,21 @@ export const RuleModal = ({ open, onClose }) => {
   const queryClient = useQueryClient();
   const defaultKodeRule = generateUniqueId({ length: 8 });
 
-  const [koderule, setKoderule] = useState("");
-  const [rule, setRule] = useState("");
-  const [divisi, setDivisi] = useState("");
-
-  useEffect(() => {
-    if (open) {
-      setKoderule(defaultKodeRule);
-    }
-  }, [defaultKodeRule, open]);
+  // Define a form
+  const ruleForm = useForm({
+    resolver: zodResolver(ruleSchema),
+    defaultValues: {
+      koderule: defaultKodeRule,
+      rule: "",
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: (formData) => {
       return axios.post(`${baseUrl}/rules`, formData); // TODO: Change this latter
     },
     onSuccess: () => {
+      ruleForm.reset({ koderule: defaultKodeRule, rule: "" });
       queryClient.invalidateQueries({ queryKey: ["get-rules"] });
       toast.success("Added successfully!");
       onClose();
@@ -45,11 +48,7 @@ export const RuleModal = ({ open, onClose }) => {
     },
   });
 
-  function onSubmit(e) {
-    e.preventDefault();
-    if (!koderule || !rule || !divisi) return;
-
-    const formData = { koderule, rule, divisi };
+  function onSubmit(formData) {
     mutation.mutate(formData);
   }
 
@@ -59,33 +58,37 @@ export const RuleModal = ({ open, onClose }) => {
         <DialogHeader className="border-b">
           <DialogTitle>Tambah Rule</DialogTitle>
         </DialogHeader>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <FormInput
-            label="Kode rule"
-            id="koderule"
-            placeholder="Masukkan kode rule"
-            type="text"
-            defaultValue={defaultKodeRule}
-            onChange={(e) => setKoderule(e.target.value)}
-          />
-          <FormInput
-            label="Rule"
-            id="rule"
-            placeholder="Masukkan rule"
-            type="text"
-            onChange={(e) => setRule(e.target.value)}
-          />
-          <FormSelect
-            label="Divisi"
-            id="divisi"
-            onValueChange={(e) => setDivisi(e)}
-            selectItems={exampleDivisi}
-            placeholder="Pilih Divisi"
-          />
-          <Button type="submit" variant="sky" disabled={mutation.isPending}>
-            Tambah
-          </Button>
-        </form>
+        <Form {...ruleForm}>
+          <form
+            onSubmit={ruleForm.handleSubmit(onSubmit)}
+            className="space-y-3"
+          >
+            <FormInput
+              form={ruleForm}
+              label="Kode rule"
+              id="koderule"
+              placeholder="Masukkan kode rule"
+              type="text"
+            />
+            <FormInput
+              form={ruleForm}
+              label="Rule"
+              id="rule"
+              placeholder="Masukkan rule"
+              type="text"
+            />
+            <FormSelect
+              form={ruleForm}
+              label="Divisi"
+              id="divisi"
+              selectItems={exampleDivisi}
+              placeholder="Pilih Divisi"
+            />
+            <Button type="submit" variant="sky" disabled={mutation.isPending}>
+              Tambah
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

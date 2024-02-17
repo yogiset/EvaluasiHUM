@@ -37,6 +37,7 @@ export const UserModal = ({ open, onClose }) => {
       return axios.post("http://localhost:8082/user/createaccount", formData);
     },
     onSuccess: () => {
+      regForm.reset();
       queryClient.invalidateQueries({ queryKey: ["get-users"] });
       toast.success("Added successfully!");
       onClose();

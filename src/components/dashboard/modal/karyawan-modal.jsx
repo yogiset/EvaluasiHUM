@@ -35,6 +35,7 @@ export const KaryawanModal = ({ open, onClose }) => {
       return axios.post("http://localhost:8082/karyawan/addkaryawan", formData);
     },
     onSuccess: () => {
+      employeeForm.reset();
       queryClient.invalidateQueries({ queryKey: ["get-all-employee"] });
       toast.success("Added successfully!");
       onClose();

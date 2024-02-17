@@ -7,32 +7,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-export const FormInput = ({
-  form,
-  label,
-  id,
-  placeholder,
-  defaultValue,
-  type,
-}) => {
+export const FormInput = ({ form, label, id, placeholder, type }) => {
   return (
     <FormField
       control={form.control}
       name={id}
       render={({ field }) => (
         <FormItem className="w-full space-y-2">
-          <FormLabel htmlFor={id} className="font-semibold">
-            {label}
-          </FormLabel>
+          <FormLabel className="font-semibold">{label}</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              type={type}
-              id={id}
-              name={id}
-              placeholder={placeholder}
-              defaultValue={defaultValue}
-            />
+            <Input {...field} type={type} placeholder={placeholder} />
           </FormControl>
           <FormMessage className="text-xs" />
         </FormItem>
