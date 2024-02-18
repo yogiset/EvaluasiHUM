@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { toast } from "sonner";
+import { userSchema } from "@/schema/user-schema";
+import { CustomAlert } from "@/components/dashboard/custom-alert";
 import { Loading } from "@/components/dashboard/loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +25,9 @@ const DetailUserPage = () => {
   const { userId } = useParams();
   const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false); // Edit state
+
+  const [errorData, setErrorData] = useState([]);
+  const [errorValidation, setErrorValidation] = useState(false);
 
   const [kodeuser, setKodeuser] = useState("");
   const [username, setUsername] = useState("");
@@ -67,11 +72,17 @@ const DetailUserPage = () => {
   });
 
   function saveEditedUser() {
-    if (!kodeuser || !username || !role) return;
-
     const formData = { username, kodeuser, password, role, status };
-    console.log(formData);
-    mutation.mutate(formData);
+    const { success, data, error } = userSchema.safeParse(formData);
+
+    if (!success) {
+      setErrorData(JSON.parse(error));
+      setErrorValidation(true);
+      return;
+    }
+
+    setErrorValidation(false);
+    mutation.mutate(data);
   }
 
   if (error) {
@@ -99,6 +110,9 @@ const DetailUserPage = () => {
           ) : (
             <div className="p-2 space-y-4 pb-20">
               <h1 className="text-lg md:text-xl font-semibold">Detail User</h1>
+              {errorValidation && (
+                <CustomAlert variant="destructive" data={errorData} />
+              )}
               <table className="w-full border-collapse border border-slate-400">
                 <tbody>
                   <TrText

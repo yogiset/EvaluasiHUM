@@ -4,7 +4,9 @@ import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
+import { employeeSchema } from "@/schema/employee-schema";
 import { Loading } from "@/components/dashboard/loading";
+import { CustomAlert } from "@/components/dashboard/custom-alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,6 +25,9 @@ const DetailKaryawanPage = () => {
   const { karId } = useParams();
   const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false); // Edit state
+
+  const [errorData, setErrorData] = useState([]);
+  const [errorValidation, setErrorValidation] = useState(false);
 
   const [nama, setNama] = useState("");
   const [nik, setNik] = useState("");
@@ -66,10 +71,17 @@ const DetailKaryawanPage = () => {
   });
 
   function saveEditedData() {
-    if (!nama || !nik || !divisi || !jabatan) return;
-
     const formData = { nik, nama, divisi, jabatan };
-    mutation.mutate(formData);
+    const { success, data, error } = employeeSchema.safeParse(formData);
+
+    if (!success) {
+      setErrorData(JSON.parse(error));
+      setErrorValidation(true);
+      return;
+    }
+
+    setErrorValidation(false);
+    mutation.mutate(data);
   }
 
   if (error) {
@@ -99,6 +111,9 @@ const DetailKaryawanPage = () => {
               <h1 className="text-lg md:text-xl font-semibold">
                 Detail Karyawan
               </h1>
+              {errorValidation && (
+                <CustomAlert variant="destructive" data={errorData} />
+              )}
               <table className="w-full border-collapse border border-slate-400">
                 <tbody>
                   <TrText
@@ -147,7 +162,10 @@ const DetailKaryawanPage = () => {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => setIsEdit(false)}
+                      onClick={() => {
+                        setIsEdit(false);
+                        setErrorValidation(false);
+                      }}
                       disabled={mutation.isPending}
                     >
                       Cancel
