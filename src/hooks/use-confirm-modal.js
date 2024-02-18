@@ -6,8 +6,6 @@ export const useConfirmModal = create((set) => ({
   onConfirm: null,
   onCancel: null,
 
-  onClose: () => set({ isOpen: false }), // Function to close the modal
-
   newModal: ({ title, message }) =>
     // You can also add `reject` if you need it
     new Promise((resolve) => {
