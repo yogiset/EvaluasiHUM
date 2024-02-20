@@ -4,9 +4,11 @@ import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
+import { format, toDate } from "date-fns";
 import { employeeSchema } from "@/schema/employee-schema";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
+import { DatePicker } from "@/components/dashboard/date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,6 +35,7 @@ const DetailKaryawanPage = () => {
   const [nik, setNik] = useState("");
   const [divisi, setDivisi] = useState("");
   const [jabatan, setJabatan] = useState("");
+  const [tanggalmasuk, setTanggalmasuk] = useState(Date.now());
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-employee", karId],
@@ -49,6 +52,7 @@ const DetailKaryawanPage = () => {
       setNama(response.data.nama);
       setDivisi(response.data.divisi);
       setJabatan(response.data.jabatan);
+      setTanggalmasuk(toDate(response.data.tanggalmasuk));
       return response.data;
     }
   }
@@ -71,7 +75,14 @@ const DetailKaryawanPage = () => {
   });
 
   function saveEditedData() {
-    const formData = { nik, nama, divisi, jabatan };
+    const formData = {
+      nik,
+      nama,
+      divisi,
+      jabatan,
+      tanggalmasuk: tanggalmasuk,
+    };
+    console.log(formData);
     const { success, data, error } = employeeSchema.safeParse(formData);
 
     if (!success) {
@@ -147,6 +158,11 @@ const DetailKaryawanPage = () => {
                     selectItems={exampleJabatan}
                     placeholder={data.jabatan}
                     onValueChange={(e) => setJabatan(e)}
+                  />
+                  <TrDate
+                    desc={tanggalmasuk}
+                    isEdit={isEdit}
+                    onSelect={setTanggalmasuk}
                   />
                 </tbody>
               </table>
@@ -237,6 +253,23 @@ const TrSelect = ({
           </Select>
         ) : (
           <p>{desc}</p>
+        )}
+      </td>
+    </tr>
+  );
+};
+
+const TrDate = ({ desc, isEdit, onSelect }) => {
+  return (
+    <tr>
+      <td className="font-medium border border-slate-300 px-2 py-2">
+        Tanggal masuk
+      </td>
+      <td className="border border-slate-300 px-2 py-2">
+        {isEdit ? (
+          <DatePicker date={desc} onSelect={onSelect} />
+        ) : (
+          <p>{format(desc, "dd MMMM yyyy")}</p>
         )}
       </td>
     </tr>

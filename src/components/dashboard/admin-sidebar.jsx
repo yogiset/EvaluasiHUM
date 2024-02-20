@@ -11,6 +11,7 @@ import {
   UserCog,
 } from "lucide-react";
 import logo from "@/assets/hum-transparent-logo.png";
+import { cn } from "@/lib/utils";
 
 const navigations = [
   { title: "Home", path: "/dashboard/home", icon: <Home /> },
@@ -47,7 +48,12 @@ export const AdminSidebar = ({ onClose }) => {
       </div>
       <ul className="space-y-2">
         {navigations.map((nav, index) => (
-          <li key={index}>
+          <li
+            key={index}
+            className={cn(
+              role !== "ADMIN" && adminPath.includes(nav.path) && "hidden"
+            )}
+          >
             <NavLink
               to={nav.path}
               className={({ isActive }) =>

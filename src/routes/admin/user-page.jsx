@@ -17,7 +17,7 @@ const UserPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["get-users"],
     queryFn: fetchUsers,
   });
@@ -47,6 +47,14 @@ const UserPage = () => {
 
   if (role !== "ADMIN") {
     return <ForbiddenPage />;
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <h1 className="text-xl font-semibold">Error!</h1>
+      </div>
+    );
   }
 
   return (

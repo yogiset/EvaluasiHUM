@@ -13,7 +13,7 @@ export const ruleSchema = z.object({
       invalid_type_error: "Rule is required!",
     })
     .min(3, { message: "Rule must be at least 3 characters." }),
-  divisi: z.string({
-    required_error: "Please select a division!",
+  jabatan: z.string({
+    required_error: "Please select a position!",
   }),
 });

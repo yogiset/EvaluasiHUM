@@ -34,6 +34,7 @@ const DetailUserPage = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState(true);
+  const [nik, setNik] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-user", userId],
@@ -50,6 +51,7 @@ const DetailUserPage = () => {
       setUsername(response.data.username);
       setRole(response.data.role);
       setStatus(response.data.status);
+      setNik(response.data.nik);
       return response.data;
     }
   }
@@ -72,7 +74,7 @@ const DetailUserPage = () => {
   });
 
   function saveEditedUser() {
-    const formData = { username, kodeuser, password, role, status };
+    const formData = { username, kodeuser, password, role, status, nik };
     const { success, data, error } = userSchema.safeParse(formData);
 
     if (!success) {
@@ -115,6 +117,13 @@ const DetailUserPage = () => {
               )}
               <table className="w-full border-collapse border border-slate-400">
                 <tbody>
+                  <TrText
+                    id="nik"
+                    title="NIK"
+                    desc={data.nik}
+                    isEdit={isEdit}
+                    onChange={(e) => setNik(e.target.value)}
+                  />
                   <TrText
                     id="kodeuser"
                     title="Kode user"
