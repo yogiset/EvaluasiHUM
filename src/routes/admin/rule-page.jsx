@@ -13,11 +13,11 @@ import { RuleModal } from "@/components/dashboard/modal/rule-modal";
 import { EditRuleModal } from "@/components/dashboard/modal/edit-rule-modal";
 
 const RulePage = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
   const { role } = useAuth();
   const [open, setOpen] = useState(false); // Modal state
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["get-rules"],
     queryFn: fetchRules,
   });
@@ -25,10 +25,10 @@ const RulePage = () => {
   async function fetchRules() {
     if (role !== "ADMIN") return [];
 
-    const response = await axios.get(`${baseUrl}/rules`);
+    const response = await axios.get("http://localhost:8082/rule/all");
 
     if (response.status === 200) {
-      return response.data.body;
+      return response.data;
     }
   }
 
@@ -39,6 +39,14 @@ const RulePage = () => {
 
   if (role !== "ADMIN") {
     return <ForbiddenPage />;
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <h1 className="text-xl font-semibold">Error!</h1>
+      </div>
+    );
   }
 
   return (
@@ -73,14 +81,14 @@ const RulesList = ({ data }) => {
 };
 
 const RuleCard = ({ data }) => {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
   const queryClient = useQueryClient();
   const { newModal } = useConfirmModal();
   const [editModal, setEditModal] = useState(false);
 
   const mutation = useMutation({
     mutationFn: (id) => {
-      return axios.delete(`${baseUrl}/rules/${id}`);
+      return axios.delete(`http://localhost:8082/rule/hapusrule/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-rules"] });
@@ -111,7 +119,7 @@ const RuleCard = ({ data }) => {
         <h1 className="text-2xl font-semibold hover:underline truncate">
           {data.rule}
         </h1>
-        <h1 className="text-sm text-neutral-600">{data.divisi}</h1>
+        <h1 className="text-sm text-neutral-600">{data.jabatan}</h1>
       </div>
       <div className="flex items-center gap-x-2">
         {/* modal start */}

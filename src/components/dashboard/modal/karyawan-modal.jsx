@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { employeeSchema } from "@/schema/employee-schema";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
+import { FormDate } from "../form/form-date";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
@@ -87,6 +88,11 @@ export const KaryawanModal = ({ open, onClose }) => {
               id="jabatan"
               selectItems={exampleJabatan}
               placeholder="Pilih Jabatan"
+            />
+            <FormDate
+              form={employeeForm}
+              id="tanggalmasuk"
+              label="Tanggal masuk"
             />
             <Button type="submit" variant="sky" disabled={mutation.isPending}>
               Tambah

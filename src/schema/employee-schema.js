@@ -22,4 +22,7 @@ export const employeeSchema = z.object({
     required_error: "Please select a position!",
     invalid_type_error: "Please select a position!",
   }),
+  tanggalmasuk: z.date({
+    required_error: "Entry date is required.",
+  }),
 });

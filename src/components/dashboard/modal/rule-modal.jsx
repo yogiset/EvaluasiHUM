@@ -17,10 +17,10 @@ import {
 } from "@/components/ui/dialog";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleDivisi } from "@/data/userData";
+import { exampleJabatan } from "@/data/userData";
 
 export const RuleModal = ({ open, onClose }) => {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
   const queryClient = useQueryClient();
   const defaultKodeRule = generateUniqueId({ length: 8 });
 
@@ -35,7 +35,7 @@ export const RuleModal = ({ open, onClose }) => {
 
   const mutation = useMutation({
     mutationFn: (formData) => {
-      return axios.post(`${baseUrl}/rules`, formData); // TODO: Change this latter
+      return axios.post("http://localhost:8082/rule/addrule", formData); // TODO: Change this latter
     },
     onSuccess: () => {
       ruleForm.reset({ koderule: defaultKodeRule, rule: "" });
@@ -79,10 +79,10 @@ export const RuleModal = ({ open, onClose }) => {
             />
             <FormSelect
               form={ruleForm}
-              label="Divisi"
-              id="divisi"
-              selectItems={exampleDivisi}
-              placeholder="Pilih Divisi"
+              label="Jabatan"
+              id="jabatan"
+              selectItems={exampleJabatan}
+              placeholder="Pilih Jabatan"
             />
             <Button type="submit" variant="sky" disabled={mutation.isPending}>
               Tambah

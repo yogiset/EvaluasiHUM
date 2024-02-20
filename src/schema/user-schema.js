@@ -15,4 +15,11 @@ export const userSchema = z.object({
     required_error: "Please select a role!",
   }),
   status: z.boolean(),
+  nik: z.optional(
+    z
+      .string({
+        required_error: "NIK is required!",
+      })
+      .min(3, { message: "NIK must be at least 3 characters." })
+  ),
 });

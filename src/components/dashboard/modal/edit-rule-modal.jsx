@@ -13,14 +13,17 @@ import {
 import { Input } from "@/components/ui/input";
 
 export const EditRuleModal = ({ open, onClose, data }) => {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
   const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false);
   const [rule, setRule] = useState("");
 
   const mutation = useMutation({
     mutationFn: (formData) => {
-      return axios.patch(`${baseUrl}/rules/${data.idrule}`, formData);
+      return axios.put(
+        `http://localhost:8082/rule/editrule/${data.idrule}`,
+        formData
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-rules"] });
@@ -34,7 +37,7 @@ export const EditRuleModal = ({ open, onClose, data }) => {
 
   function onSubmit() {
     if (!rule) return;
-    const formData = { koderule: data.koderule, rule };
+    const formData = { rule, jabatan: data.jabatan };
 
     mutation.mutate(formData);
   }
@@ -47,8 +50,10 @@ export const EditRuleModal = ({ open, onClose, data }) => {
         <div className="w-full space-y-4">
           <div className="w-full flex flex-col md:flex-row justify-between items-center md:gap-x-2 gap-y-4 md:gap-y-0">
             <div className="w-full md:w-1/2 flex flex-col justify-center items-start gap-y-2">
-              <h1 className="font-semibold">Divisi</h1>
-              <p className="w-full p-2 bg-neutral-100 rounded">{data.divisi}</p>
+              <h1 className="font-semibold">Jabatan</h1>
+              <p className="w-full p-2 bg-neutral-100 rounded">
+                {data.jabatan}
+              </p>
             </div>
             <div className="w-full md:w-1/2 flex flex-col justify-center items-start gap-y-2">
               <h1 className="font-semibold">Kode rule</h1>
