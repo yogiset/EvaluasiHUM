@@ -18,6 +18,7 @@ import UserPage from "./admin/user-page";
 import DetailKaryawanPage from "./admin/detail-karyawan-page";
 import DetailUserPage from "./admin/detail-user-page";
 import AccountPage from "./admin/account-page";
+import AddQuestionPage from "./admin/add-pertanyaan-page";
 
 export const router = createBrowserRouter([
   {
@@ -75,8 +76,12 @@ export const router = createBrowserRouter([
         element: <RulePage />,
       },
       {
-        path: "Pertanyaan",
+        path: "pertanyaan",
         element: <PertanyaanPage />,
+      },
+      {
+        path: "pertanyaan/add",
+        element: <AddQuestionPage />,
       },
       {
         path: "users",

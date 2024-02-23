@@ -14,8 +14,8 @@ export const SearchBar = ({ onSubmit, onChange, placeholder }) => {
         onChange={onChange}
         className="w-full md:w-80 border-none focus-visible:ring-0 focus-visible:ring-offset-0"
       />
-      <Button type="submit" variant="ghost" className="rounded-sm">
-        <Search />
+      <Button type="submit" variant="ghost" className="px-2 rounded-sm">
+        <Search className="w-6 h-6" />
       </Button>
     </form>
   );
