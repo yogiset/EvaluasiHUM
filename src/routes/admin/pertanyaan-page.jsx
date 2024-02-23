@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Info, Trash2 } from "lucide-react";
 import axios from "axios";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 
 const PertanyaanPage = () => {
   // const baseUrl = import.meta.env.VITE_BASE_URL;
+  const navigate = useNavigate();
   const { role } = useAuth();
   const [searchValue, setSearchValue] = useState("");
 
@@ -26,7 +28,6 @@ const PertanyaanPage = () => {
     const response = await axios.get(`http://localhost:8082/pertanyaan/all`);
 
     if (response.status === 200) {
-      console.log(response.data); // TODO: Remove it later
       return response.data;
     }
   }
@@ -57,7 +58,12 @@ const PertanyaanPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
           onSubmit={searchQuestion}
         />
-        <Button variant="sky">Tambah</Button>
+        <Button
+          variant="sky"
+          onClick={() => navigate("/dashboard/pertanyaan/add")}
+        >
+          Tambah
+        </Button>
       </div>
       {isLoading ? <Loading /> : <QuestionList data={data} />}
     </div>
@@ -85,9 +91,7 @@ const QuestionCard = ({ data }) => {
 
   const mutation = useMutation({
     mutationFn: (id) => {
-      return axios.delete(
-        `http://localhost:8082/pertanyaan/hapuspertanyaan/${id}`
-      );
+      return axios.delete(`http://localhost:8082/pertanyaan/deleteall/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-questions"] });
