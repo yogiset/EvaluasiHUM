@@ -86,6 +86,7 @@ const QuestionList = ({ data }) => {
 
 const QuestionCard = ({ data }) => {
   // const baseUrl = import.meta.env.VITE_BASE_URL;
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { newModal } = useConfirmModal();
 
@@ -121,7 +122,10 @@ const QuestionCard = ({ data }) => {
         <h1 className="text-sm text-neutral-600">{data.jabatan}</h1>
       </div>
       <div className="flex items-center gap-x-2">
-        <Button variant="sky">
+        <Button
+          variant="sky"
+          onClick={() => navigate(`/dashboard/pertanyaan/${data.idper}`)}
+        >
           <Info className="mr-0 md:mr-2 w-5 h-5" />
           <span className="hidden md:inline">Detail</span>
         </Button>
