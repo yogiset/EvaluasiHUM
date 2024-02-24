@@ -21,10 +21,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleJabatan } from "@/data/userData";
-import { cn } from "@/lib/utils";
 
 const DetailQuestionPage = () => {
   const { questionId } = useParams();
@@ -115,7 +115,7 @@ const DetailQuestionPage = () => {
           PERTANYAAN
         </Link>
         <ChevronsRight />
-        <p>EDIT PERTANYAAN</p>
+        <p>{questionId}</p>
       </div>
       <div className="w-full h-full overflow-y-auto p-2 space-y-4 pb-20">
         {isLoading ? (

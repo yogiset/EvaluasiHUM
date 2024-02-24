@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Info, Trash2 } from "lucide-react";
 import axios from "axios";
@@ -116,9 +116,12 @@ const QuestionCard = ({ data }) => {
   return (
     <div className="w-full flex justify-between items-center border shadow-md rounded-md p-2">
       <div className="space-y-1 truncate">
-        <h1 className="text-2xl font-semibold hover:underline truncate">
+        <Link
+          to={`/dashboard/pertanyaan/${data.idper}`}
+          className="text-2xl font-semibold hover:underline"
+        >
           {data.pertanyaan}
-        </h1>
+        </Link>
         <h1 className="text-sm text-neutral-600">{data.jabatan}</h1>
       </div>
       <div className="flex items-center gap-x-2">
