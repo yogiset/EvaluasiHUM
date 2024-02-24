@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronsRight, Plus } from "lucide-react";
+import { ChevronsRight, Plus, Minus } from "lucide-react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,6 +59,10 @@ const AddQuestionPage = () => {
 
   function addAnswer(value) {
     setAnswers([...answers, value]);
+  }
+  function deleteAnswer(answer) {
+    const newAnswers = answers.filter((e) => e.jawaban !== answer);
+    setAnswers(newAnswers);
   }
 
   function onSubmit(formData) {
@@ -130,7 +134,16 @@ const AddQuestionPage = () => {
               <div className="bg-neutral-100 space-y-3 p-2 rounded-md">
                 <ul className="list-disc list-inside">
                   {answers.map((list, index) => (
-                    <li key={index}>{list.jawaban}</li>
+                    <li key={index}>
+                      {list.jawaban}
+                      <Button
+                        type="button"
+                        className="h-4 bg-neutral-300 hover:bg-rose-400 text-black hover:text-white px-1 ml-2 rounded"
+                        onClick={() => deleteAnswer(list.jawaban)}
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                    </li>
                   ))}
                 </ul>
 
@@ -150,7 +163,7 @@ const AddQuestionPage = () => {
             <Separator />
 
             <div className="flex gap-x-2">
-              <Button type="submit" variant="sky">
+              <Button type="submit" variant="sky" disabled={mutation.isPending}>
                 <Plus className="w-4 h-4 mr-2" />
                 Tambah
               </Button>
@@ -158,6 +171,7 @@ const AddQuestionPage = () => {
                 type="button"
                 variant="outline"
                 onClick={() => navigate("/dashboard/pertanyaan")}
+                disabled={mutation.isPending}
               >
                 Kembali
               </Button>
