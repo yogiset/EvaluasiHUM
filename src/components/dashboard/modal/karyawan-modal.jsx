@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { employeeSchema } from "@/schema/employee-schema";
+import { format } from "date-fns";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
 import { FormDate } from "../form/form-date";
@@ -47,6 +48,7 @@ export const KaryawanModal = ({ open, onClose }) => {
   });
 
   function onSubmit(formData) {
+    console.log(format(formData.tanggalmasuk, "dd MMMM yyyy")); // TODO: Wtf is the problem???
     mutation.mutate(formData);
   }
 

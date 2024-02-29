@@ -25,7 +25,7 @@ const KaryawanPage = () => {
   async function fetchAllEmployee() {
     if (role !== "ADMIN") return [];
 
-    const response = await axios.get("http://localhost:8082/karyawan/all");
+    const response = await axios.get("http://localhost:8082/karyawan/showall");
 
     if (response.status === 200) {
       return response.data;
@@ -72,7 +72,7 @@ const KaryawanPage = () => {
         <KaryawanModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
-      {isLoading ? <Loading /> : <KaryawanList data={data} />}
+      {isLoading ? <Loading /> : <KaryawanList data={data.content} />}
     </div>
   );
 };

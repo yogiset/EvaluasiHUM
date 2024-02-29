@@ -22,7 +22,7 @@ const EvaluasiPage = () => {
   async function fetchEvaluationResults() {
     let url;
 
-    role === "ADMIN" ? (url = "evaluasi/all") : (url = `user/userresult`); // Find by nik if not admin
+    role === "ADMIN" ? (url = "evaluasi/showall") : (url = `evaluasi/showall`); // Find by nik if not admin
 
     const response = await axios.get(`http://localhost:8082/${url}`);
 
@@ -56,7 +56,7 @@ const EvaluasiPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </div>
-      {isLoading ? <Loading /> : <EvaluationList data={data} />}
+      {isLoading ? <Loading /> : <EvaluationList data={data.content} />}
     </div>
   );
 };

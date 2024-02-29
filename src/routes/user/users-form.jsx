@@ -50,7 +50,7 @@ const UsersForm = () => {
   });
 
   async function fetchUsers() {
-    const response = await axios.get("http://localhost:8082/user/all");
+    const response = await axios.get("http://localhost:8082/user/showall");
 
     if (response.status === 200) {
       return response.data;
@@ -91,7 +91,7 @@ const UsersForm = () => {
                     id="username"
                     form={userForm}
                     title="Username"
-                    data={data}
+                    data={data.content}
                     placeholder={
                       value.username ? value.username : "Select username"
                     }

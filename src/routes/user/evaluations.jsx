@@ -1,6 +1,6 @@
 import HomeLayout from "@/layouts/home-layout";
 import { useState } from "react";
-import { Check, ChevronRight, ChevronLeft } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Loader2 } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useLocalStorageState from "use-local-storage-state";
 import axios from "axios";
@@ -32,9 +32,7 @@ const EvaluationPage = () => {
 
   async function fetchAllQuestions(page = 1) {
     const response = await axios.get(
-      `http://localhost:8082/pertanyaan/pertanyaanjawaban?jabatan=${
-        value.jabatan
-      }&page=${page - 1}`
+      `http://localhost:8082/pertanyaan/showall?jabatan=${value.jabatan}&page=${page}&limit=5`
     );
 
     if (response.status === 200) {
@@ -47,14 +45,12 @@ const EvaluationPage = () => {
 
     // save the current page to url params
     setSearchParams({ page: page - 1 });
-
     setPage(page - 1);
   }
 
   function goNext() {
     // save the current page to url params
     setSearchParams({ page: page + 1 });
-
     setPage(page + 1);
   }
 
@@ -68,8 +64,9 @@ const EvaluationPage = () => {
   if (isLoading) {
     return (
       <HomeLayout>
-        <div className="w-full min-h-screen flex flex-col items-center">
-          <h1 className="text-xl font-semibold">Loading...</h1>
+        <div className="w-full min-h-screen flex flex-col justify-center items-center">
+          <Loader2 className="w-10 h-10 animate-spin" />
+          <p className="text-xl font-semibold">Loading</p>
         </div>
       </HomeLayout>
     );
@@ -78,7 +75,7 @@ const EvaluationPage = () => {
   if (error) {
     return (
       <HomeLayout>
-        <div className="w-full min-h-screen flex flex-col items-center">
+        <div className="w-full min-h-screen flex justify-center items-center">
           <h1 className="text-xl font-semibold">Error!</h1>
         </div>
       </HomeLayout>

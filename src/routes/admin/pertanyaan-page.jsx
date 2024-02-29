@@ -25,7 +25,9 @@ const PertanyaanPage = () => {
   async function fetchQuestions() {
     if (role !== "ADMIN") return [];
 
-    const response = await axios.get(`http://localhost:8082/pertanyaan/all`);
+    const response = await axios.get(
+      `http://localhost:8082/pertanyaan/showall`
+    );
 
     if (response.status === 200) {
       return response.data;
@@ -65,7 +67,7 @@ const PertanyaanPage = () => {
           Tambah
         </Button>
       </div>
-      {isLoading ? <Loading /> : <QuestionList data={data} />}
+      {isLoading ? <Loading /> : <QuestionList data={data.content} />}
     </div>
   );
 };
