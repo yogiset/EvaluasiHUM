@@ -1,7 +1,7 @@
 // import { useEffect } from "react";
 import HomeLayout from "@/layouts/home-layout";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useNavigate } from "react-router-dom";
+import useLocalStorageState from "use-local-storage-state";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,9 @@ import { exampleJabatan } from "@/data/userData";
 
 const UsersForm = () => {
   const navigate = useNavigate();
-  const [value, setValue] = useLocalStorage("evData", "");
+  const [value, setValue] = useLocalStorageState("evData", {
+    defaultValue: {},
+  });
 
   // Define the form
   const userForm = useForm({
@@ -38,7 +40,7 @@ const UsersForm = () => {
     defaultValues: {
       username: value.username,
       jabatan: value.jabatan,
-      nik: value.nik,
+      nik: value.nik || "",
     },
   });
 
