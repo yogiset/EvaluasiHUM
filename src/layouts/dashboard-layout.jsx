@@ -17,7 +17,7 @@ const DashboardLayout = () => {
     <main className="w-full h-screen overflow-hidden flex">
       <div
         id="sidebar"
-        className="hidden md:inline w-[400px] h-screen bg-blue-950 text-white p-2"
+        className="relative hidden md:inline w-[400px] h-screen bg-blue-950 text-white"
       >
         <AdminSidebar />
       </div>
