@@ -25,7 +25,7 @@ const UserPage = () => {
   async function fetchUsers() {
     if (role !== "ADMIN") return [];
 
-    const response = await axios.get("http://localhost:8082/user/all");
+    const response = await axios.get("http://localhost:8082/user/showall");
 
     if (response.status === 200) {
       return response.data;
@@ -72,7 +72,7 @@ const UserPage = () => {
         <UserModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
-      {isLoading ? <Loading /> : <UsersList data={data} />}
+      {isLoading ? <Loading /> : <UsersList data={data.content} />}
     </div>
   );
 };

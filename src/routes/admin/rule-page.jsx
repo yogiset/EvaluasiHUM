@@ -61,7 +61,7 @@ const RulePage = () => {
         <RuleModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
-      {isLoading ? <Loading /> : <RulesList data={data} />}
+      {isLoading ? <Loading /> : <RulesList data={data.content} />}
     </div>
   );
 };
