@@ -23,21 +23,14 @@ const KaryawanPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
 
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["get-all-employee"],
-    queryFn: ({ pageParam }) => fetchAllEmployee(pageParam),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, lastPageParam) =>
-      lastPage.length === 0 ? undefined : lastPageParam.length + 1,
-  });
+  const { status, data, error, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["get-all-employee"],
+      queryFn: ({ pageParam }) => fetchAllEmployee(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, lastPageParam) =>
+        lastPage.length === 0 ? undefined : lastPageParam.length + 1,
+    });
 
   async function fetchAllEmployee(pageParam) {
     if (role !== "ADMIN") return [];
@@ -106,11 +99,8 @@ const KaryawanPage = () => {
             <KaryawanList
               key={i}
               data={group.content}
-              isFetching={isFetching}
               isFetchingNextPage={isFetchingNextPage}
               refer={ref}
-              fetchNextPage={fetchNextPage}
-              hasNextPage={hasNextPage}
             />
           ))}
         </div>

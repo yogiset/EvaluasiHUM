@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
@@ -14,23 +19,38 @@ import { Button } from "@/components/ui/button";
 
 const UserPage = () => {
   const { role } = useAuth();
+  const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["get-users"],
-    queryFn: fetchUsers,
-  });
+  const { status, data, error, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["get-users"],
+      queryFn: ({ pageParam }) => fetchUsers(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, lastPageParam) =>
+        lastPage.length === 0 ? undefined : lastPageParam.length + 1,
+    });
 
-  async function fetchUsers() {
+  async function fetchUsers(pageParam) {
     if (role !== "ADMIN") return [];
 
-    const response = await axios.get("http://localhost:8082/user/showall");
+    const response = await axios.get("http://localhost:8082/user/showall", {
+      params: {
+        page: pageParam,
+      },
+    });
 
     if (response.status === 200) {
       return response.data;
     }
   }
+
+  useEffect(() => {
+    if (inView && data.pageParams.length < data.pages[0].totalPages) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView, data]);
 
   // close modal ↓↓↓
   function onClose() {
@@ -72,22 +92,44 @@ const UserPage = () => {
         <UserModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
-      {isLoading ? <Loading /> : <UsersList data={data.content} />}
+      {status === "pending" ? (
+        <Loading />
+      ) : (
+        <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+          {data.pages.map((group, i) => (
+            <UsersList
+              key={i}
+              data={group.content}
+              isFetchingNextPage={isFetchingNextPage}
+              refer={ref}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-const UsersList = ({ data }) => {
+const UsersList = ({ data, isFetchingNextPage, refer }) => {
   return (
-    <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+    <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
           <h1 className="text-lg font-semibold">User sedang ngopi☕</h1>
         </div>
       ) : (
-        data.map((elem) => <UserCard key={elem.iduser} data={elem} />)
+        <Fragment>
+          {data.map((elem) => (
+            <UserCard key={elem.iduser} data={elem} />
+          ))}
+        </Fragment>
       )}
-    </div>
+      <>
+        {data.length !== 0 && (
+          <div ref={refer}>{isFetchingNextPage ? <Loading /> : null}</div>
+        )}
+      </>
+    </>
   );
 };
 
