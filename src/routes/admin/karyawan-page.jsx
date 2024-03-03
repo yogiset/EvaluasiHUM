@@ -23,14 +23,24 @@ const KaryawanPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
 
-  const { status, data, error, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: ["get-all-employee"],
-      queryFn: ({ pageParam }) => fetchAllEmployee(pageParam),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, lastPageParam) =>
-        lastPage.length === 0 ? undefined : lastPageParam.length + 1,
-    });
+  const {
+    status,
+    data,
+    error,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["get-all-employee"],
+    queryFn: ({ pageParam }) => fetchAllEmployee(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, lastPageParam) =>
+      lastPage.length === 0 ||
+      lastPage.totalPages === lastPageParam.length ||
+      lastPage.content.length === 0
+        ? undefined
+        : lastPageParam.length + 1,
+  });
 
   async function fetchAllEmployee(pageParam) {
     if (role !== "ADMIN") return [];
@@ -46,10 +56,10 @@ const KaryawanPage = () => {
   }
 
   useEffect(() => {
-    if (inView && data.pageParams.length < data.pages[0].totalPages) {
+    if (inView) {
       fetchNextPage();
     }
-  }, [fetchNextPage, inView, data]);
+  }, [fetchNextPage, inView]);
 
   // close modal ↓↓↓
   function onClose() {
@@ -96,23 +106,22 @@ const KaryawanPage = () => {
       ) : (
         <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
           {data.pages.map((group, i) => (
-            <KaryawanList
-              key={i}
-              data={group.content}
-              isFetchingNextPage={isFetchingNextPage}
-              refer={ref}
-            />
+            <KaryawanList key={i} data={group.content} />
           ))}
+
+          {hasNextPage && (
+            <div ref={ref}>{isFetchingNextPage ? <Loading /> : null}</div>
+          )}
         </div>
       )}
     </div>
   );
 };
 
-const KaryawanList = ({ data, isFetchingNextPage, refer }) => {
+const KaryawanList = ({ data }) => {
   return (
     <>
-      {data?.length < 1 ? (
+      {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
           <h1 className="text-lg font-semibold">Karyawan sedang ngopi☕</h1>
         </div>
@@ -122,9 +131,6 @@ const KaryawanList = ({ data, isFetchingNextPage, refer }) => {
             <KaryawanCard key={elem.idkar} data={elem} />
           ))}
         </Fragment>
-      )}
-      {data.length !== 0 && (
-        <div ref={refer}>{isFetchingNextPage ? <Loading /> : null}</div>
       )}
     </>
   );

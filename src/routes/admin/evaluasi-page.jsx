@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
+// import { useAuth } from "@/hooks/use-auth";
+import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
@@ -11,25 +16,47 @@ import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 
 const EvaluasiPage = () => {
-  const { role } = useAuth();
+  // const { role } = useAuth();
+  const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    status,
+    data,
+    error,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ["get-evaluation-results"],
-    queryFn: fetchEvaluationResults,
+    queryFn: ({ pageParam }) => fetchEvaluationResults(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, lastPageParam) =>
+      lastPage.length === 0 ||
+      lastPage.totalPages === lastPageParam.length ||
+      lastPage.content.length === 0
+        ? undefined
+        : lastPageParam.length + 1,
   });
 
-  async function fetchEvaluationResults() {
-    let url;
-
-    role === "ADMIN" ? (url = "evaluasi/showall") : (url = `evaluasi/showall`); // Find by nik if not admin
-
-    const response = await axios.get(`http://localhost:8082/${url}`);
+  async function fetchEvaluationResults(pageParam) {
+    const response = await axios.get("http://localhost:8082/evaluasi/showall", {
+      params: {
+        page: pageParam,
+      },
+    });
 
     if (response.status === 200) {
+      // console.log(response);
       return response.data;
     }
   }
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
 
   // onSubmit event ↓↓↓
   function onSearch(e) {
@@ -56,22 +83,37 @@ const EvaluasiPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </div>
-      {isLoading ? <Loading /> : <EvaluationList data={data.content} />}
+      {status === "pending" ? (
+        <Loading />
+      ) : (
+        <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+          {data.pages.map((group, i) => (
+            <EvaluationList key={i} data={group.content} />
+          ))}
+          {hasNextPage && (
+            <div ref={ref}>{isFetchingNextPage ? <Loading /> : null}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 const EvaluationList = ({ data }) => {
   return (
-    <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+    <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
           <h1 className="text-lg font-semibold">Ngopi dulu guys☕</h1>
         </div>
       ) : (
-        data.map((elem) => <EvaluationCard key={elem.ideva} data={elem} />)
+        <Fragment>
+          {data.map((elem) => (
+            <EvaluationCard key={elem.ideva} data={elem} />
+          ))}
+        </Fragment>
       )}
-    </div>
+    </>
   );
 };
 
