@@ -12,7 +12,7 @@ import EvaluasiPage from "./admin/evaluasi-page";
 import DetailEvaluasiPage from "./admin/detail-evaluasi-page";
 import HomeDashboard from "./admin/home-page";
 import KaryawanPage from "./admin/karyawan-page";
-import RulePage from "./admin/rule-page";
+// import RulePage from "./admin/rule-page";
 import PertanyaanPage from "./admin/pertanyaan-page";
 import UserPage from "./admin/user-page";
 import DetailKaryawanPage from "./admin/detail-karyawan-page";
@@ -72,10 +72,10 @@ export const router = createBrowserRouter([
         path: "karyawan/:karId",
         element: <DetailKaryawanPage />,
       },
-      {
-        path: "rule",
-        element: <RulePage />,
-      },
+      // {
+      //   path: "rule",
+      //   element: <RulePage />,
+      // },
       {
         path: "pertanyaan",
         element: <PertanyaanPage />,

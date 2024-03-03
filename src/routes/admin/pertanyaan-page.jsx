@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Info, Trash2 } from "lucide-react";
+import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  useQueryClient,
+  useMutation,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
@@ -15,24 +20,50 @@ const PertanyaanPage = () => {
   // const baseUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const { role } = useAuth();
+  const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    status,
+    data,
+    error,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ["get-questions"],
-    queryFn: fetchQuestions,
+    queryFn: ({ pageParam }) => fetchQuestions(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, lastPageParam) =>
+      lastPage.length === 0 ||
+      lastPage.totalPages === lastPageParam.length ||
+      lastPage.content.length === 0
+        ? undefined
+        : lastPageParam.length + 1,
   });
 
-  async function fetchQuestions() {
+  async function fetchQuestions(pageParam) {
     if (role !== "ADMIN") return [];
 
     const response = await axios.get(
-      `http://localhost:8082/pertanyaan/showall`
+      "http://localhost:8082/pertanyaan/showall",
+      {
+        params: {
+          page: pageParam,
+        },
+      }
     );
 
     if (response.status === 200) {
       return response.data;
     }
   }
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
 
   // TODO: Handle search Question ↓↓↓
   function searchQuestion(e) {
@@ -67,22 +98,38 @@ const PertanyaanPage = () => {
           Tambah
         </Button>
       </div>
-      {isLoading ? <Loading /> : <QuestionList data={data.content} />}
+      {status === "pending" ? (
+        <Loading />
+      ) : (
+        <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+          {data.pages.map((group, i) => (
+            <QuestionList key={i} data={group.content} />
+          ))}
+
+          {hasNextPage && (
+            <div ref={ref}>{isFetchingNextPage ? <Loading /> : null}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 const QuestionList = ({ data }) => {
   return (
-    <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+    <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
           <h1 className="text-lg font-semibold">Tidak ada pertanyaan.</h1>
         </div>
       ) : (
-        data.map((elem) => <QuestionCard key={elem.idper} data={elem} />)
+        <Fragment>
+          {data.map((elem) => (
+            <QuestionCard key={elem.idper} data={elem} />
+          ))}
+        </Fragment>
       )}
-    </div>
+    </>
   );
 };
 

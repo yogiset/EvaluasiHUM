@@ -5,7 +5,6 @@ import {
   UsersRound,
   MessageCircleQuestion,
   ClipboardList,
-  BookMarked,
   Settings,
   LockKeyhole,
   UserCog,
@@ -21,7 +20,7 @@ const navigations = [
     icon: <ClipboardList />,
   },
   { title: "Karyawan", path: "/dashboard/karyawan", icon: <UsersRound /> },
-  { title: "Rule", path: "/dashboard/rule", icon: <BookMarked /> },
+  // { title: "Rule", path: "/dashboard/rule", icon: <BookMarked /> },
   {
     title: "Pertanyaan",
     path: "/dashboard/pertanyaan",
@@ -34,7 +33,6 @@ const navigations = [
 export const AdminSidebar = ({ onClose }) => {
   const { role } = useAuth(); // get user data
   const adminPath = [
-    "/dashboard/rule",
     "/dashboard/karyawan",
     "/dashboard/pertanyaan",
     "/dashboard/users",

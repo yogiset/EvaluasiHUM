@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
@@ -14,23 +19,47 @@ import { Button } from "@/components/ui/button";
 
 const KaryawanPage = () => {
   const { role } = useAuth();
+  const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    status,
+    data,
+    error,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ["get-all-employee"],
-    queryFn: fetchAllEmployee,
+    queryFn: ({ pageParam }) => fetchAllEmployee(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, lastPageParam) =>
+      lastPage.length === 0 ||
+      lastPage.totalPages === lastPageParam.length ||
+      lastPage.content.length === 0
+        ? undefined
+        : lastPageParam.length + 1,
   });
 
-  async function fetchAllEmployee() {
+  async function fetchAllEmployee(pageParam) {
     if (role !== "ADMIN") return [];
-
-    const response = await axios.get("http://localhost:8082/karyawan/showall");
+    const response = await axios.get("http://localhost:8082/karyawan/showall", {
+      params: {
+        page: pageParam,
+      },
+    });
 
     if (response.status === 200) {
       return response.data;
     }
   }
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
 
   // close modal ↓↓↓
   function onClose() {
@@ -72,22 +101,38 @@ const KaryawanPage = () => {
         <KaryawanModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
-      {isLoading ? <Loading /> : <KaryawanList data={data.content} />}
+      {status === "pending" ? (
+        <Loading />
+      ) : (
+        <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+          {data.pages.map((group, i) => (
+            <KaryawanList key={i} data={group.content} />
+          ))}
+
+          {hasNextPage && (
+            <div ref={ref}>{isFetchingNextPage ? <Loading /> : null}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 const KaryawanList = ({ data }) => {
   return (
-    <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+    <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
           <h1 className="text-lg font-semibold">Karyawan sedang ngopi☕</h1>
         </div>
       ) : (
-        data.map((elem) => <KaryawanCard key={elem.idkar} data={elem} />)
+        <Fragment>
+          {data?.map((elem) => (
+            <KaryawanCard key={elem.idkar} data={elem} />
+          ))}
+        </Fragment>
       )}
-    </div>
+    </>
   );
 };
 
