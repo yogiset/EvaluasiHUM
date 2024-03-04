@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { ChevronsRight, Info, Download } from "lucide-react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { generatePdf } from "@/lib/generate-pdf";
 import { Loading } from "@/components/dashboard/loading";
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +22,17 @@ const DetailEvaluasiPage = () => {
     if (response.status === 200) {
       return response.data;
     }
+  }
+
+  function downloadPdf() {
+    generatePdf({
+      nik: data.nik,
+      nama: "Asep Syaipulloh",
+      jabatan: "Sales",
+      tanggal: data.tanggalevaluasi,
+      hasilEvaluasi: data.hasilevaluasi,
+      perluDitingkatkan: data.perluditingkatkan,
+    });
   }
 
   if (error) {
@@ -66,7 +78,7 @@ const DetailEvaluasiPage = () => {
                 <p>{data.perluditingkatkan}</p>
               </div>
               <div className="flex items-center gap-x-2 my-4">
-                <Button variant="sky">
+                <Button variant="sky" onClick={downloadPdf}>
                   <Download className="mr-2 w-4 h-4" />
                   Unduh PDF
                 </Button>
