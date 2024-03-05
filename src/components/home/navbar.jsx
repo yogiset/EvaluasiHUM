@@ -7,7 +7,7 @@ import { MobileNavbar } from "./mobile-navbar";
 
 const routes = [
   { path: "/", title: "BERANDA" },
-  { path: "/about", title: 'APA ITU "SEH"?' },
+  { path: "/about", title: 'APA ITU "S.E.H"?' },
 ];
 
 export const Navbar = () => {
