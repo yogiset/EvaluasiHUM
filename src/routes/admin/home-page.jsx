@@ -1,15 +1,19 @@
 import { cn } from "@/lib/utils";
 import { LayoutGrid } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const boards = [
-  { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
-  { title: "Karyawan", path: "/dashboard/karyawan", bg: "bg-sky-500" },
-  { title: "Rule", path: "/dashboard/rule", bg: "bg-green-500" },
-  { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },
-];
+import { useAuth } from "@/hooks/use-auth";
 
 const BoardList = () => {
+  const { role } = useAuth();
+
+  const allBoards = [
+    { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
+    { title: "Karyawan", path: "/dashboard/karyawan", bg: "bg-sky-500" },
+    { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },
+  ];
+
+  const boards = role !== "ADMIN" ? allBoards.filter(board => board.title !== "Karyawan" && board.title !== "Pertanyaan") : allBoards;
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {boards.map((board, index) => (
