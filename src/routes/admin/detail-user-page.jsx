@@ -47,7 +47,6 @@ const DetailUserPage = () => {
     );
 
     if (response.status === 200) {
-      console.table(response.data);
       setNik(response.data.nik);
       setKodeuser(response.data.kodeuser);
       setUsername(response.data.username);
