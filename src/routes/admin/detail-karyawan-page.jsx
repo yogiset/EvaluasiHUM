@@ -125,7 +125,7 @@ const DetailKaryawanPage = () => {
               {errorValidation && (
                 <CustomAlert variant="destructive" data={errorData} />
               )}
-              <table className="w-full border-collapse border border-slate-400">
+              <table className="w-full border-collapse bg-sky-50 border border-slate-400">
                 <tbody>
                   <TrText
                     id="nama"
@@ -164,6 +164,22 @@ const DetailKaryawanPage = () => {
                     isEdit={isEdit}
                     onSelect={setTanggalmasuk}
                   />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Masa kerja
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      <p>{data.masakerja}</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Status
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      <p>{data.tingkatan}</p>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
               <div className="flex gap-x-2">
@@ -240,7 +256,7 @@ const TrSelect = ({
       <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
           <Select id={id} name={id} onValueChange={onValueChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-[280px]">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

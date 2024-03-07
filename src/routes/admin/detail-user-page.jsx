@@ -253,7 +253,7 @@ const TrSelect = ({
       <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
           <Select id={id} name={id} onValueChange={onValueChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-[280px]">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
