@@ -147,8 +147,8 @@ const AccountPage = () => {
           <div className="truncate">
             <h1 className="text-lg font-semibold">Password</h1>
             <p className="truncate">
-              Pastikan minimal 15 karakter ATAU minimal 8 karakter termasuk
-              angka dan huruf kecil.
+              Pastikan minimal 8 karakter/maksimal 15 karakter termasuk angka dan
+              huruf kecil.
             </p>
             {mutationPass.isError && (
               <div className="w-full flex items-center p-2 rounded border border-rose-700 bg-rose-50">
