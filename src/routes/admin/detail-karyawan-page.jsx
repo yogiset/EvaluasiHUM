@@ -35,6 +35,7 @@ const DetailKaryawanPage = () => {
   const [nik, setNik] = useState("");
   const [divisi, setDivisi] = useState("");
   const [jabatan, setJabatan] = useState("");
+  const [email, setEmail] = useState("");
   const [tanggalmasuk, setTanggalmasuk] = useState(Date.now());
   const [masakerja, setMasakerja] = useState("");
   const [tingkatan, setTingkatan] = useState("");
@@ -54,6 +55,7 @@ const DetailKaryawanPage = () => {
       setNama(response.data.nama);
       setDivisi(response.data.divisi);
       setJabatan(response.data.jabatan);
+      setEmail(response.data.email);
       setTanggalmasuk(toDate(response.data.tanggalmasuk));
       setMasakerja(response.data.masakerja);
       setTingkatan(response.data.tingkatan);
@@ -84,6 +86,7 @@ const DetailKaryawanPage = () => {
       nama,
       divisi,
       jabatan,
+      email,
       tanggalmasuk: tanggalmasuk,
       masakerja,
       tingkatan,
@@ -164,6 +167,13 @@ const DetailKaryawanPage = () => {
                     selectItems={exampleJabatan}
                     placeholder={data.jabatan}
                     onValueChange={(e) => setJabatan(e)}
+                  />
+                  <TrText
+                    id="email"
+                    title="Email"
+                    desc={data.email}
+                    isEdit={isEdit}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <TrDate
                     desc={tanggalmasuk}

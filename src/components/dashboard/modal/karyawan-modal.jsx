@@ -91,6 +91,13 @@ export const KaryawanModal = ({ open, onClose }) => {
               selectItems={exampleJabatan}
               placeholder="Pilih Jabatan"
             />
+            <FormInput
+              form={employeeForm}
+              label="Email"
+              id="email"
+              placeholder="Masukkan Email @"
+              type="text"
+            />
             <FormDate
               form={employeeForm}
               id="tanggalmasuk"
