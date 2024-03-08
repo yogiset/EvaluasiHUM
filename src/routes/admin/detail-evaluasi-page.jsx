@@ -30,6 +30,7 @@ const DetailEvaluasiPage = () => {
       nama: data.nama,
       divisi: data.divisi,
       jabatan: data.jabatan,
+      email: data.email,
       tanggal_masuk: data.tanggalmasuk,
       masa_kerja:data.masakerja,
       tingkatan:data.tingkatan,
@@ -69,6 +70,7 @@ const DetailEvaluasiPage = () => {
                 <h1 className="font-semibold">Nama: {data.nama}</h1>
                 <h1 className="font-semibold">Divisi: {data.divisi}</h1>
                 <h1 className="font-semibold">Jabatan: {data.jabatan}</h1>
+                <h1 className="font-semibold">Email: {data.email}</h1>
                 <h1 className="font-semibold">
                   Tanggal Masuk: {data.tanggalmasuk}
                 </h1>
