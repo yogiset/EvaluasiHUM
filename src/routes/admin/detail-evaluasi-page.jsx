@@ -16,7 +16,7 @@ const DetailEvaluasiPage = () => {
 
   async function fetchEvaluation() {
     const response = await axios.get(
-      `http://localhost:8082/evaluasi/findbyid/${evId}`
+      `http://localhost:8082/evaluasi/findbyideva/${evId}`
     );
 
     if (response.status === 200) {
@@ -27,9 +27,13 @@ const DetailEvaluasiPage = () => {
   function downloadPdf() {
     generatePdf({
       nik: data.nik,
-      nama: "Asep Syaipulloh",
-      jabatan: "Sales",
-      tanggal: data.tanggalevaluasi,
+      nama: data.nama,
+      divisi: data.divisi,
+      jabatan: data.jabatan,
+      tanggal_masuk: data.tanggalmasuk,
+      masa_kerja:data.masakerja,
+      tingkatan:data.tingkatan,
+      tanggal_evaluasi: data.tanggalevaluasi,
       hasilEvaluasi: data.hasilevaluasi,
       perluDitingkatkan: data.perluditingkatkan,
     });
@@ -62,11 +66,19 @@ const DetailEvaluasiPage = () => {
               <h1 className="text-lg md:text-xl font-bold">Detail Evaluasi</h1>
               <div className="my-4">
                 <h1 className="font-semibold">NIK: {data.nik}</h1>
+                <h1 className="font-semibold">Nama: {data.nama}</h1>
+                <h1 className="font-semibold">Divisi: {data.divisi}</h1>
+                <h1 className="font-semibold">Jabatan: {data.jabatan}</h1>
+                <h1 className="font-semibold">
+                  Tanggal Masuk: {data.tanggalmasuk}
+                </h1>
+                <h1 className="font-semibold">Masa Kerja: {data.masakerja}</h1>
+                <h1 className="font-semibold">Tingkatan: {data.tingkatan}</h1>
                 <h1 className="font-semibold">
                   Kode evaluasi: {data.kodeevaluasi}
                 </h1>
                 <h1 className="font-semibold">
-                  Tanggal: {data.tanggalevaluasi}
+                  Tanggal Evaluasi: {data.tanggalevaluasi}
                 </h1>
               </div>
               <div className="my-4">
