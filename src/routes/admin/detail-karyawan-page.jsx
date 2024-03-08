@@ -36,6 +36,8 @@ const DetailKaryawanPage = () => {
   const [divisi, setDivisi] = useState("");
   const [jabatan, setJabatan] = useState("");
   const [tanggalmasuk, setTanggalmasuk] = useState(Date.now());
+  const [masakerja, setMasakerja] = useState("");
+  const [tingkatan, setTingkatan] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-employee", karId],
@@ -53,6 +55,8 @@ const DetailKaryawanPage = () => {
       setDivisi(response.data.divisi);
       setJabatan(response.data.jabatan);
       setTanggalmasuk(toDate(response.data.tanggalmasuk));
+      setMasakerja(response.data.masakerja);
+      setTingkatan(response.data.tingkatan);
       return response.data;
     }
   }
@@ -81,6 +85,8 @@ const DetailKaryawanPage = () => {
       divisi,
       jabatan,
       tanggalmasuk: tanggalmasuk,
+      masakerja,
+      tingkatan,
     };
     console.log(formData);
     const { success, data, error } = employeeSchema.safeParse(formData);
@@ -163,6 +169,18 @@ const DetailKaryawanPage = () => {
                     desc={tanggalmasuk}
                     isEdit={isEdit}
                     onSelect={setTanggalmasuk}
+                  />
+                  <TrText
+                    id="masakerja"
+                    title="Masakerja"
+                    desc={data.masakerja}
+                    onChange={(e) => setMasakerja(e.target.value)}
+                  />
+                  <TrText
+                    id="tingkatan"
+                    title="Tingkatan"
+                    desc={data.tingkatan}
+                    onChange={(e) => setTingkatan(e.target.value)}
                   />
                 </tbody>
               </table>
