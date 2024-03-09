@@ -7,12 +7,18 @@ const BoardList = () => {
   const { role } = useAuth();
 
   const allBoards = [
+    { title: "TestEvaluasi", path: "/evaluasi/user-form", bg: "bg-black-400" },
     { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
     { title: "Karyawan", path: "/dashboard/karyawan", bg: "bg-sky-500" },
     { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },
   ];
 
-  const boards = role !== "ADMIN" ? allBoards.filter(board => board.title !== "Karyawan" && board.title !== "Pertanyaan") : allBoards;
+  const boards =
+    role !== "ADMIN"
+      ? allBoards.filter(
+          (board) => board.title !== "Karyawan" && board.title !== "Pertanyaan"
+        )
+      : allBoards;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

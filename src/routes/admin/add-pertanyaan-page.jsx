@@ -88,6 +88,16 @@ const AddQuestionPage = () => {
             className="space-y-6"
           >
             <div className="space-y-2">
+              <h1 className="text-xl font-bold">Jabatan</h1>
+
+              <FormSelect
+                form={questionForm}
+                id="jabatan"
+                selectItems={exampleJabatan}
+                placeholder="Pilih Jabatan"
+              />
+            </div>
+            <div className="space-y-2">
               <h1 className="text-xl font-bold">Rule</h1>
               <FormInput
                 form={questionForm}
@@ -117,16 +127,6 @@ const AddQuestionPage = () => {
                 label="Pertanyaan"
                 id="pertanyaan"
                 placeholder="Masukkan pertanyaan..."
-              />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-xl font-bold">Jabatan</h1>
-
-              <FormSelect
-                form={questionForm}
-                id="jabatan"
-                selectItems={exampleJabatan}
-                placeholder="Pilih Jabatan"
               />
             </div>
             <div className="space-y-2">

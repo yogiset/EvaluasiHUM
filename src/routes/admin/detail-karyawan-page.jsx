@@ -35,6 +35,7 @@ const DetailKaryawanPage = () => {
   const [nik, setNik] = useState("");
   const [divisi, setDivisi] = useState("");
   const [jabatan, setJabatan] = useState("");
+  const [email, setEmail] = useState("");
   const [tanggalmasuk, setTanggalmasuk] = useState(Date.now());
 
   const { data, isLoading, error } = useQuery({
@@ -52,6 +53,7 @@ const DetailKaryawanPage = () => {
       setNama(response.data.nama);
       setDivisi(response.data.divisi);
       setJabatan(response.data.jabatan);
+      setEmail(response.data.email);
       setTanggalmasuk(toDate(response.data.tanggalmasuk));
       return response.data;
     }
@@ -80,6 +82,7 @@ const DetailKaryawanPage = () => {
       nama,
       divisi,
       jabatan,
+      email,
       tanggalmasuk: tanggalmasuk,
     };
     console.log(formData);
@@ -158,6 +161,13 @@ const DetailKaryawanPage = () => {
                     selectItems={exampleJabatan}
                     placeholder={data.jabatan}
                     onValueChange={(e) => setJabatan(e)}
+                  />
+                  <TrText
+                    id="email"
+                    title="Email"
+                    desc={data.email}
+                    isEdit={isEdit}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <TrDate
                     desc={tanggalmasuk}
