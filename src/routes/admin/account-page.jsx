@@ -11,8 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 
 const AccountPage = () => {
-  const { id: userId } = useAuth();
-  const { idkar: karId } = useAuth();
+  const { id: userId, idkar: karId } = useAuth();
   const queryClient = useQueryClient();
   // eslint-disable-next-line no-unused-vars
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
@@ -26,7 +25,7 @@ const AccountPage = () => {
   const [newPass, setNewPass] = useState("");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["get-user", userId],
+    queryKey: ["get-user-account", userId],
     queryFn: async () => {
       const response = await axios.get(
         `http://localhost:8082/user/findById/${userId}`
@@ -40,7 +39,7 @@ const AccountPage = () => {
     isLoading: isLoading2,
     error: error2,
   } = useQuery({
-    queryKey: ["get-karyawan", karId],
+    queryKey: ["get-email", karId],
     queryFn: async () => {
       const response = await axios.get(
         `http://localhost:8082/karyawan/findbyid/${karId}`
@@ -54,7 +53,7 @@ const AccountPage = () => {
       return axios.post("http://localhost:8082/user/changeusername", formData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["get-user-account", userId] });
       toast.success("Updated successfully!");
       setIsEditName(false);
     },
@@ -75,14 +74,12 @@ const AccountPage = () => {
     mutationName.mutate(formData);
   }
 
-
-
   const mutationPass = useMutation({
     mutationFn: (formData) => {
       return axios.post("http://localhost:8082/user/changepassword", formData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["get-user-account", userId] });
       toast.success("Updated successfully!");
       removeCookie("token");
     },
@@ -103,7 +100,7 @@ const AccountPage = () => {
       return axios.post("http://localhost:8082/karyawan/changeemail", formData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-karyawan", karId] });
+      queryClient.invalidateQueries({ queryKey: ["get-email", karId] });
       toast.success("Updated successfully!");
       setIsEditEmail(false);
     },
@@ -112,16 +109,15 @@ const AccountPage = () => {
     },
   });
 
-
   function changeEmail() {
-    if (!email || !karId) return; 
-  
+    if (!email || !karId) return;
+
     const formData = {
       idkar: karId,
       oldemail: data2.email,
       newemail: email,
     };
-  
+
     mutationNames.mutate(formData);
   }
 
@@ -227,7 +223,7 @@ const AccountPage = () => {
           <div className="truncate">
             <h1 className="text-lg font-semibold">Password</h1>
             <p className="truncate">
-              Pastikan minimal 8 karakter/maksimal 15 karakter termasuk angka
+              Pastikan minimal 6 karakter/maksimal 15 karakter termasuk angka
               dan huruf kecil.
             </p>
             {mutationPass.isError && (
