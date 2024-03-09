@@ -7,7 +7,7 @@ const BoardList = () => {
   const { role } = useAuth();
 
   const allBoards = [
-    { title: "TestEvaluasi", path: "/evaluasi/user-form", bg: "bg-black-400" },
+    { title: "Test Evaluasi", path: "/evaluasi/user-form", bg: "bg-black-400" },
     { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
     { title: "Karyawan", path: "/dashboard/karyawan", bg: "bg-sky-500" },
     { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { employeeSchema } from "@/schema/employee-schema";
-import { format } from "date-fns";
+import { formatISO } from "date-fns";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
 import { FormDate } from "../form/form-date";
@@ -29,6 +29,7 @@ export const KaryawanModal = ({ open, onClose }) => {
     defaultValues: {
       nik: "",
       nama: "",
+      email: "",
     },
   });
 
@@ -47,8 +48,15 @@ export const KaryawanModal = ({ open, onClose }) => {
     },
   });
 
-  function onSubmit(formData) {
-    console.log(format(formData.tanggalmasuk, "dd MMMM yyyy")); // TODO: Wtf is the problem???
+  function onSubmit({ nik, nama, divisi, jabatan, email, tanggalmasuk }) {
+    const formData = {
+      nik,
+      nama,
+      divisi,
+      jabatan,
+      email,
+      tanggalmasuk: formatISO(tanggalmasuk, { representation: "date" }), // => '2000-01-01'
+    };
     mutation.mutate(formData);
   }
 
@@ -96,7 +104,7 @@ export const KaryawanModal = ({ open, onClose }) => {
               label="Email"
               id="email"
               placeholder="Masukkan Email @"
-              type="text"
+              type="email"
             />
             <FormDate
               form={employeeForm}

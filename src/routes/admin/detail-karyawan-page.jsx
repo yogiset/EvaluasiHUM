@@ -4,7 +4,8 @@ import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
-import { format, toDate } from "date-fns";
+import { format, formatISO, toDate } from "date-fns";
+import { id } from "date-fns/locale";
 import { employeeSchema } from "@/schema/employee-schema";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
@@ -83,9 +84,8 @@ const DetailKaryawanPage = () => {
       divisi,
       jabatan,
       email,
-      tanggalmasuk: tanggalmasuk,
+      tanggalmasuk: formatISO(tanggalmasuk, { representation: "date" }),
     };
-    console.log(formData);
     const { success, data, error } = employeeSchema.safeParse(formData);
 
     if (!success) {
@@ -295,7 +295,7 @@ const TrDate = ({ desc, isEdit, onSelect }) => {
         {isEdit ? (
           <DatePicker date={desc} onSelect={onSelect} />
         ) : (
-          <p>{format(desc, "dd MMMM yyyy")}</p>
+          <p>{format(desc, "dd MMMM yyyy", { locale: id })}</p>
         )}
       </td>
     </tr>

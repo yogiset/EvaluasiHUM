@@ -52,10 +52,10 @@ export const FormDate = ({ form, id, label }) => {
                 fromYear={1990}
                 toYear={new Date().getFullYear()}
                 classNames={{
-                  caption_dropdowns: "flex gap-x-2",
+                  caption_dropdowns: "flex font-semibold gap-x-2",
                   vhidden: "hidden",
                   caption_label: "hidden",
-                  dropdown: "border rounded",
+                  dropdown: "hover:bg-sky-50 py-0.5 rounded cursor-pointer",
                 }}
                 disabled={(date) =>
                   date > new Date() || date < new Date("1900-01-01")
