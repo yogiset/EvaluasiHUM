@@ -48,6 +48,15 @@ export const FormDate = ({ form, id, label }) => {
                 mode="single"
                 selected={field.value}
                 onSelect={field.onChange}
+                captionLayout="dropdown-buttons"
+                fromYear={1990}
+                toYear={new Date().getFullYear()}
+                classNames={{
+                  caption_dropdowns: "flex gap-x-2",
+                  vhidden: "hidden",
+                  caption_label: "hidden",
+                  dropdown: "border rounded",
+                }}
                 disabled={(date) =>
                   date > new Date() || date < new Date("1900-01-01")
                 }
