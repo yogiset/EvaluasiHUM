@@ -16,7 +16,7 @@ export const FormInput = ({ form, label, id, placeholder, type }) => {
         <FormItem className="w-full space-y-2">
           <FormLabel className="font-semibold">{label}</FormLabel>
           <FormControl>
-            <Input {...field} type={type} placeholder={placeholder} />
+            <Input {...field} type={type} placeholder={placeholder} required />
           </FormControl>
           <FormMessage className="text-xs" />
         </FormItem>
