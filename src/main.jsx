@@ -4,7 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "@/routes";
 import { CookiesProvider } from "react-cookie";
 import { QueryProvider } from "@/providers/query-provider";
-import { SonnerProvider } from "./providers/sonner-provider";
+import { SonnerProvider } from "@/providers/sonner-provider";
 
 import "./index.css";
 

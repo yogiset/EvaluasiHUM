@@ -4,7 +4,8 @@ import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
-import { format, toDate } from "date-fns";
+import { format, formatISO, toDate } from "date-fns";
+import { id } from "date-fns/locale";
 import { employeeSchema } from "@/schema/employee-schema";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
@@ -35,6 +36,7 @@ const DetailKaryawanPage = () => {
   const [nik, setNik] = useState("");
   const [divisi, setDivisi] = useState("");
   const [jabatan, setJabatan] = useState("");
+  const [email, setEmail] = useState("");
   const [tanggalmasuk, setTanggalmasuk] = useState(Date.now());
 
   const { data, isLoading, error } = useQuery({
@@ -52,6 +54,7 @@ const DetailKaryawanPage = () => {
       setNama(response.data.nama);
       setDivisi(response.data.divisi);
       setJabatan(response.data.jabatan);
+      setEmail(response.data.email);
       setTanggalmasuk(toDate(response.data.tanggalmasuk));
       return response.data;
     }
@@ -80,9 +83,9 @@ const DetailKaryawanPage = () => {
       nama,
       divisi,
       jabatan,
-      tanggalmasuk: tanggalmasuk,
+      email,
+      tanggalmasuk: formatISO(tanggalmasuk, { representation: "date" }),
     };
-    console.log(formData);
     const { success, data, error } = employeeSchema.safeParse(formData);
 
     if (!success) {
@@ -125,7 +128,7 @@ const DetailKaryawanPage = () => {
               {errorValidation && (
                 <CustomAlert variant="destructive" data={errorData} />
               )}
-              <table className="w-full border-collapse border border-slate-400">
+              <table className="w-full border-collapse bg-sky-50 border border-slate-400">
                 <tbody>
                   <TrText
                     id="nama"
@@ -159,11 +162,34 @@ const DetailKaryawanPage = () => {
                     placeholder={data.jabatan}
                     onValueChange={(e) => setJabatan(e)}
                   />
+                  <TrText
+                    id="email"
+                    title="Email"
+                    desc={data.email}
+                    isEdit={isEdit}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                   <TrDate
                     desc={tanggalmasuk}
                     isEdit={isEdit}
                     onSelect={setTanggalmasuk}
                   />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Masa kerja
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      <p>{data.masakerja}</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Status
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      <p>{data.tingkatan}</p>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
               <div className="flex gap-x-2">
@@ -240,7 +266,7 @@ const TrSelect = ({
       <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
           <Select id={id} name={id} onValueChange={onValueChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-[280px]">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
@@ -269,7 +295,7 @@ const TrDate = ({ desc, isEdit, onSelect }) => {
         {isEdit ? (
           <DatePicker date={desc} onSelect={onSelect} />
         ) : (
-          <p>{format(desc, "dd MMMM yyyy")}</p>
+          <p>{format(desc, "dd MMMM yyyy", { locale: id })}</p>
         )}
       </td>
     </tr>

@@ -126,6 +126,20 @@ const DetailQuestionPage = () => {
               onSubmit={editQuestionForm.handleSubmit(onSubmit)}
               className="space-y-6"
             >
+              {" "}
+              <div className="space-y-2">
+                <h1 className="text-xl font-bold">Jabatan</h1>
+                {isEdit ? (
+                  <FormSelect
+                    form={editQuestionForm}
+                    id="jabatan"
+                    selectItems={exampleJabatan}
+                    placeholder="Pilih Jabatan"
+                  />
+                ) : (
+                  <p>{data.jabatan}</p>
+                )}
+              </div>
               <div className="space-y-2">
                 <h1 className="text-xl font-bold">Rule</h1>
                 {isEdit ? (
@@ -150,19 +164,6 @@ const DetailQuestionPage = () => {
                   />
                 ) : (
                   <p>{data.pertanyaan}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-xl font-bold">Jabatan</h1>
-                {isEdit ? (
-                  <FormSelect
-                    form={editQuestionForm}
-                    id="jabatan"
-                    selectItems={exampleJabatan}
-                    placeholder="Pilih Jabatan"
-                  />
-                ) : (
-                  <p>{data.jabatan}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -198,9 +199,7 @@ const DetailQuestionPage = () => {
                   </Button>
                 </div>
               </div>
-
               <Separator />
-
               {isEdit ? (
                 <div className="flex gap-x-2">
                   <Button

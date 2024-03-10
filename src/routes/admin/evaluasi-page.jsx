@@ -153,8 +153,9 @@ const EvaluationCard = ({ data }) => {
           to={`/dashboard/evaluasi/${data.ideva}`}
           className="text-2xl font-semibold hover:underline"
         >
-          {data.hasilevaluasi}
+          {data.nama}
         </Link>
+        <h1 className="text-sm text-neutral-600">{data.hasilevaluasi}</h1>
         <h1 className="text-sm text-neutral-600">{data.tanggalevaluasi}</h1>
       </div>
       <div className="flex items-center gap-x-2">

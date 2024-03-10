@@ -22,7 +22,15 @@ export const employeeSchema = z.object({
     required_error: "Please select a position!",
     invalid_type_error: "Please select a position!",
   }),
-  tanggalmasuk: z.date({
+  email: z
+    .string({
+      required_error: "Email is required!",
+      invalid_type_error: "Email is required!",
+    })
+    .email("Please enter an email.")
+    .min(5, { message: "Email must be at least 5 characters." })
+    .max(50, { message: "Email is to long!" }),
+  tanggalmasuk: z.coerce.date({
     required_error: "Entry date is required.",
   }),
 });

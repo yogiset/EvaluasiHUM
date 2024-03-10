@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronsRight, Plus, Minus } from "lucide-react";
+import { ChevronsRight, Plus, Minus, RefreshCw } from "lucide-react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import generateUniqueId from "generate-unique-id";
 import { questionSchema } from "@/schema/question-schema";
 import { answerSchema } from "@/schema/answer-schema";
-import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/dashboard/form/form-input";
 import { FormTextarea } from "@/components/dashboard/form/form-textarea";
@@ -60,15 +61,25 @@ const AddQuestionPage = () => {
   function addAnswer(value) {
     setAnswers([...answers, value]);
   }
+
   function deleteAnswer(answer) {
     const newAnswers = answers.filter((e) => e.jawaban !== answer);
     setAnswers(newAnswers);
   }
 
+  function generateRuleCode() {
+    const newRuleCode = generateUniqueId({ length: 10 });
+    questionForm.setValue("koderule", newRuleCode);
+  }
+
+  function generateQuestionCode() {
+    const newQuestionCode = generateUniqueId({ length: 10 });
+    questionForm.setValue("kodepertanyaan", newQuestionCode);
+  }
+
   function onSubmit(formData) {
     if (answers.length === 0) return;
     const newFormData = { ...formData, jawabanList: answers };
-
     mutation.mutate(newFormData);
   }
 
@@ -87,15 +98,32 @@ const AddQuestionPage = () => {
             onSubmit={questionForm.handleSubmit(onSubmit)}
             className="space-y-6"
           >
+            <div className="max-w-[300px] space-y-2">
+              <h1 className="text-xl font-bold">Jabatan</h1>
+
+              <FormSelect
+                form={questionForm}
+                id="jabatan"
+                selectItems={exampleJabatan}
+                placeholder="Pilih Jabatan"
+              />
+            </div>
             <div className="space-y-2">
               <h1 className="text-xl font-bold">Rule</h1>
-              <FormInput
-                form={questionForm}
-                label="Kode Rule"
-                id="koderule"
-                placeholder="Masukkan kode rule"
-                type="text"
-              />
+              <div className="flex items-end gap-x-2">
+                <FormInput
+                  form={questionForm}
+                  label="Kode Rule"
+                  id="koderule"
+                  placeholder="Masukkan kode rule"
+                  type="text"
+                />
+                <Button variant="sky" type="button" onClick={generateRuleCode}>
+                  <RefreshCw className="w-5 h-5 mr-0 md:mr-2" />
+                  <span className="hidden md:inline">Generate</span>
+                </Button>
+              </div>
+
               <FormTextarea
                 form={questionForm}
                 label="Rule"
@@ -105,28 +133,28 @@ const AddQuestionPage = () => {
             </div>
             <div className="space-y-2">
               <h1 className="text-xl font-bold">Pertanyaan</h1>
-              <FormInput
-                form={questionForm}
-                label="Kode Pertanyaan"
-                id="kodepertanyaan"
-                placeholder="Masukkan kode pertanyaan"
-                type="text"
-              />
+              <div className="flex items-end gap-x-2">
+                <FormInput
+                  form={questionForm}
+                  label="Kode Pertanyaan"
+                  id="kodepertanyaan"
+                  placeholder="Masukkan kode pertanyaan"
+                  type="text"
+                />
+                <Button
+                  variant="sky"
+                  type="button"
+                  onClick={generateQuestionCode}
+                >
+                  <RefreshCw className="w-5 h-5 mr-0 md:mr-2" />
+                  <span className="hidden md:inline">Generate</span>
+                </Button>
+              </div>
               <FormTextarea
                 form={questionForm}
                 label="Pertanyaan"
                 id="pertanyaan"
                 placeholder="Masukkan pertanyaan..."
-              />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-xl font-bold">Jabatan</h1>
-
-              <FormSelect
-                form={questionForm}
-                id="jabatan"
-                selectItems={exampleJabatan}
-                placeholder="Pilih Jabatan"
               />
             </div>
             <div className="space-y-2">

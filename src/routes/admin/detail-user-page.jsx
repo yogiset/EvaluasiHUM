@@ -29,12 +29,12 @@ const DetailUserPage = () => {
   const [errorData, setErrorData] = useState([]);
   const [errorValidation, setErrorValidation] = useState(false);
 
+  const [nik, setNik] = useState("");
   const [kodeuser, setKodeuser] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState(true);
-  const [nik, setNik] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-user", userId],
@@ -47,11 +47,11 @@ const DetailUserPage = () => {
     );
 
     if (response.status === 200) {
+      setNik(response.data.nik);
       setKodeuser(response.data.kodeuser);
       setUsername(response.data.username);
       setRole(response.data.role);
       setStatus(response.data.status);
-      setNik(response.data.nik);
       return response.data;
     }
   }
@@ -74,11 +74,24 @@ const DetailUserPage = () => {
   });
 
   function saveEditedUser() {
-    const formData = { username, kodeuser, password, role, status, nik };
+    const formData = {
+      username,
+      kodeuser,
+      password,
+      role,
+      status,
+      nik,
+    };
     const { success, data, error } = userSchema.safeParse(formData);
 
     if (!success) {
       setErrorData(JSON.parse(error));
+      setErrorValidation(true);
+      return;
+    }
+
+    if (password.length > 0 && password.length < 6) {
+      setErrorData([{ message: "Password must be at least 6 characters" }]);
       setErrorValidation(true);
       return;
     }
@@ -115,15 +128,16 @@ const DetailUserPage = () => {
               {errorValidation && (
                 <CustomAlert variant="destructive" data={errorData} />
               )}
-              <table className="w-full border-collapse border border-slate-400">
+              <table className="w-full border-collapse bg-sky-50 border border-slate-400">
                 <tbody>
-                  <TrText
-                    id="nik"
-                    title="NIK"
-                    desc={data.nik}
-                    isEdit={isEdit}
-                    onChange={(e) => setNik(e.target.value)}
-                  />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      NIK
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      <p>{data.nik}</p>
+                    </td>
+                  </tr>
                   <TrText
                     id="kodeuser"
                     title="Kode user"
@@ -239,7 +253,7 @@ const TrSelect = ({
       <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
           <Select id={id} name={id} onValueChange={onValueChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-[280px]">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

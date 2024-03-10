@@ -75,14 +75,14 @@ const Login = () => {
                       htmlFor="username"
                       className="text-xl font-medium text-sky-800"
                     >
-                      Username
+                      Username/Email
                     </FormLabel>
                     <Input
                       {...field}
                       id="username"
                       type="text"
                       autoComplete="off"
-                      placeholder="Username"
+                      placeholder="Username/Email"
                       required
                     />
                     <FormMessage className="text-xs" />

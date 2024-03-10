@@ -11,22 +11,38 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 
 const AccountPage = () => {
-  const { id: userId } = useAuth();
+  const { id: userId, idkar: karId } = useAuth();
   const queryClient = useQueryClient();
   // eslint-disable-next-line no-unused-vars
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [isEditName, setIsEditName] = useState(false);
   const [isEditPass, setIsEditPass] = useState(false);
+  const [isEditEmail, setIsEditEmail] = useState(false);
 
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["get-user", userId],
+    queryKey: ["get-user-account", userId],
     queryFn: async () => {
       const response = await axios.get(
         `http://localhost:8082/user/findById/${userId}`
+      );
+      return response.data;
+    },
+  });
+
+  const {
+    data: data2,
+    isLoading: isLoading2,
+    error: error2,
+  } = useQuery({
+    queryKey: ["get-email", karId],
+    queryFn: async () => {
+      const response = await axios.get(
+        `http://localhost:8082/karyawan/findbyid/${karId}`
       );
       return response.data;
     },
@@ -37,7 +53,7 @@ const AccountPage = () => {
       return axios.post("http://localhost:8082/user/changeusername", formData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["get-user-account", userId] });
       toast.success("Updated successfully!");
       setIsEditName(false);
     },
@@ -63,7 +79,7 @@ const AccountPage = () => {
       return axios.post("http://localhost:8082/user/changepassword", formData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["get-user-account", userId] });
       toast.success("Updated successfully!");
       removeCookie("token");
     },
@@ -79,12 +95,37 @@ const AccountPage = () => {
 
     mutationPass.mutate(formData);
   }
+  const mutationNames = useMutation({
+    mutationFn: (formData) => {
+      return axios.post("http://localhost:8082/karyawan/changeemail", formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-email", karId] });
+      toast.success("Updated successfully!");
+      setIsEditEmail(false);
+    },
+    onError: () => {
+      toast.error("Failed to update!");
+    },
+  });
 
-  if (isLoading) {
+  function changeEmail() {
+    if (!email || !karId) return;
+
+    const formData = {
+      idkar: karId,
+      oldemail: data2.email,
+      newemail: email,
+    };
+
+    mutationNames.mutate(formData);
+  }
+
+  if (isLoading || isLoading2) {
     return <Loading />;
   }
 
-  if (error) {
+  if (error || error2) {
     return (
       <div className="w-full h-full flex justify-center items-center">
         <h1 className="text-xl font-semibold">Error!</h1>
@@ -135,7 +176,42 @@ const AccountPage = () => {
           ) : (
             <Button variant="sky" onClick={() => setIsEditName(true)}>
               <PencilLine className="mr-2 w-4 h-4" />
-              Edit
+              Edit Username
+            </Button>
+          )}
+        </div>
+        <div className="w-full flex justify-between items-center p-2 rounded border border-sky-200 gap-x-2">
+          {isEditEmail ? (
+            <Input
+              type="text"
+              defaultValue={data2.email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          ) : (
+            <h1 className="text-lg font-semibold">{data2.email}</h1>
+          )}
+          {isEditEmail ? (
+            <>
+              <Button
+                variant="sky"
+                onClick={changeEmail}
+                disabled={mutationNames.isPending}
+              >
+                Save
+              </Button>
+              <Button
+                variant="ghost"
+                className="px-1"
+                onClick={() => setIsEditEmail(false)}
+                disabled={mutationNames.isPending}
+              >
+                <X />
+              </Button>
+            </>
+          ) : (
+            <Button variant="sky" onClick={() => setIsEditEmail(true)}>
+              <PencilLine className="mr-2 w-4 h-4" />
+              Edit Email
             </Button>
           )}
         </div>
@@ -147,8 +223,8 @@ const AccountPage = () => {
           <div className="truncate">
             <h1 className="text-lg font-semibold">Password</h1>
             <p className="truncate">
-              Pastikan minimal 15 karakter ATAU minimal 8 karakter termasuk
-              angka dan huruf kecil.
+              Pastikan minimal 6 karakter/maksimal 15 karakter termasuk angka
+              dan huruf kecil.
             </p>
             {mutationPass.isError && (
               <div className="w-full flex items-center p-2 rounded border border-rose-700 bg-rose-50">

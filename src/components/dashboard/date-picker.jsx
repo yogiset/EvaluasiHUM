@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,11 +24,24 @@ export const DatePicker = ({ date, onSelect }) => {
           {date ? format(date, "dd MMMM yyyy") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto h-[300px] overflow-y-scroll p-0">
         <Calendar
           mode="single"
+          defaultMonth={date}
           selected={date}
           onSelect={onSelect}
+          captionLayout="dropdown-buttons"
+          fromYear={1990}
+          toYear={new Date().getFullYear()}
+          classNames={{
+            caption_dropdowns: "flex font-semibold gap-x-2",
+            vhidden: "hidden",
+            caption_label: "hidden",
+            dropdown: "hover:bg-sky-50 py-0.5 rounded cursor-pointer",
+          }}
+          disabled={(date) =>
+            date > new Date() || date < new Date("1900-01-01")
+          }
           initialFocus
         />
       </PopoverContent>

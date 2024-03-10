@@ -6,7 +6,7 @@ export const questionSchema = z.object({
       required_error: "Kode rule is required!",
       invalid_type_error: "Kode rule is required!",
     })
-    .min(3, { message: "Kode rule must be at least 3 characters." }),
+    .min(10, { message: "Kode rule must be at least 10 characters." }),
   rule: z
     .string({
       required_error: "Rule is required!",
@@ -17,7 +17,7 @@ export const questionSchema = z.object({
     .string({
       required_error: "Kode Pertanyaan is required!",
     })
-    .min(3, { message: "Kode Pertanyaan must be at least 3 characters." }),
+    .min(10, { message: "Kode Pertanyaan must be at least 10 characters." }),
   pertanyaan: z
     .string({
       required_error: "Pertanyaan is required!",
