@@ -1,11 +1,96 @@
-import { cn } from "@/lib/utils";
-import { LayoutGrid } from "lucide-react";
+import { useMemo } from "react";
+import { LayoutGrid, LineChart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { Chart } from "react-charts";
+import { chartsData } from "@/data/charts";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
-const BoardList = () => {
+const HomeDashboard = () => {
   const { role } = useAuth();
+  const datumColors = chartsData.map((e) => e.color);
+  const newChartsDatum = useMemo(() => chartsData, []);
 
+  const primaryAxis = useMemo(
+    () => ({
+      getValue: (datum) => format(datum.primary, "dd/MM/yyyy"),
+    }),
+    []
+  );
+
+  const secondaryAxes = useMemo(
+    () => [
+      {
+        getValue: (datum) => datum.result,
+        elementType: "line",
+      },
+    ],
+    []
+  );
+
+  return (
+    <div className="w-full h-full overflow-y-auto">
+      <div className="flex items-center p-4">
+        <LayoutGrid className="mr-2" />
+        <h1 className="text-2xl font-medium">Board</h1>
+      </div>
+      <div className="px-2 md:px-4">
+        <BoardList role={role} />
+      </div>
+      {role === "ADMIN" && (
+        <div className="p-4">
+          <div className="flex items-center">
+            <LineChart className="mr-2" />
+            <h1 className="text-2xl font-medium">Hasil Evaluasi</h1>
+          </div>
+          <div className="flex flex-wrap gap-2 pb-20">
+            <div className="w-[500px] h-[300px] mt-2">
+              <Chart
+                options={{
+                  data: newChartsDatum,
+                  defaultColors: datumColors,
+                  primaryAxis,
+                  secondaryAxes,
+                }}
+              />
+            </div>
+            <ul className="space-y-1">
+              <li className="text-sm font-medium">
+                Tanggal: {format(new Date(), "dd MMMM yyyy", { locale: id })}
+              </li>
+              <Separator />
+              {chartsData.map((e, index) => (
+                <li
+                  key={index}
+                  className="flex items-center text-sm font-medium"
+                >
+                  <div
+                    style={{ backgroundColor: e.color }}
+                    className="w-3 h-3 rounded-full mr-2"
+                  />
+                  {e.label}: {e.currentResult}
+                </li>
+              ))}
+              <Separator />
+              <li className="text-sm font-medium">
+                Total karyawan: 1127 karyawan
+              </li>
+              <li className="text-sm font-medium">
+                Total evaluasi: 1040 evaluasi
+              </li>
+              <li className="text-sm font-medium">Total user: 1083 user</li>
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const BoardList = ({ role }) => {
   const allBoards = [
     { title: "Test Evaluasi", path: "/evaluasi/user-form", bg: "bg-black-400" },
     { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
@@ -35,20 +120,6 @@ const BoardList = () => {
           <p className="relative font-semibold text-white">{board.title}</p>
         </Link>
       ))}
-    </div>
-  );
-};
-
-const HomeDashboard = () => {
-  return (
-    <div className="w-full h-full">
-      <div className="flex items-center p-4">
-        <LayoutGrid className="mr-2" />
-        <h1 className="text-2xl font-medium">Board</h1>
-      </div>
-      <div className="px-2 md:px-4">
-        <BoardList />
-      </div>
     </div>
   );
 };
