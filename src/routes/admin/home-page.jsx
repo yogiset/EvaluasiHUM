@@ -46,8 +46,8 @@ const HomeDashboard = () => {
             <LineChart className="mr-2" />
             <h1 className="text-2xl font-medium">Hasil Evaluasi</h1>
           </div>
-          <div className="flex flex-wrap gap-2 pb-20">
-            <div className="w-[500px] h-[300px] mt-2">
+          <div className="w-full flex flex-col md:flex-row gap-4 pb-20">
+            <div className="w-full h-[300px] mt-2">
               <Chart
                 options={{
                   data: newChartsDatum,
@@ -58,14 +58,14 @@ const HomeDashboard = () => {
               />
             </div>
             <ul className="space-y-1">
-              <li className="text-sm font-medium">
+              <li className="w-max text-sm font-medium">
                 Tanggal: {format(new Date(), "dd MMMM yyyy", { locale: id })}
               </li>
               <Separator />
               {chartsData.map((e, index) => (
                 <li
                   key={index}
-                  className="flex items-center text-sm font-medium"
+                  className="w-max flex items-center text-sm font-medium"
                 >
                   <div
                     style={{ backgroundColor: e.color }}
@@ -75,13 +75,15 @@ const HomeDashboard = () => {
                 </li>
               ))}
               <Separator />
-              <li className="text-sm font-medium">
+              <li className="w-max text-sm font-medium">
                 Total karyawan: 1127 karyawan
               </li>
-              <li className="text-sm font-medium">
+              <li className="w-max text-sm font-medium">
                 Total evaluasi: 1040 evaluasi
               </li>
-              <li className="text-sm font-medium">Total user: 1083 user</li>
+              <li className="w-max text-sm font-medium">
+                Total user: 1083 user
+              </li>
             </ul>
           </div>
         </div>
