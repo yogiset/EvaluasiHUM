@@ -17,7 +17,10 @@ const BoardList = () => {
   const boards =
     role !== "ADMIN"
       ? allBoards.filter(
-          (board) => board.title !== "Karyawan" && board.title !== "Pertanyaan"
+          (board) =>
+            board.title !== "Karyawan" &&
+            board.title !== "Pertanyaan" &&
+            board.title !== "Data Sales"
         )
       : allBoards;
 
