@@ -178,7 +178,7 @@ const SalesCard = ({ data }) => {
         </Link>
         <div className="flex gap-x-2 h-[20px]">
           <h1 className="text-sm font-medium text-neutral-600">
-            Target: {data.target}
+            Target: {data.target} Liter
           </h1>
           <Separator orientation="vertical" />
           <h1 className="text-sm font-medium text-neutral-600">
