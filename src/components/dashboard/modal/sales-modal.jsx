@@ -25,8 +25,8 @@ export const SalesModal = ({ open, onClose }) => {
   const salesForm = useForm({
     resolver: zodResolver(salesSchema),
     defaultValues: {
-      target: "",
-      tahun: "",
+      nik: "",
+      target: 0,
     },
   });
 
@@ -80,7 +80,7 @@ export const SalesModal = ({ open, onClose }) => {
               label="Target"
               id="target"
               placeholder="Masukkan Target"
-              type="text"
+              type="number"
             />
             <FormSelect
               form={salesForm}

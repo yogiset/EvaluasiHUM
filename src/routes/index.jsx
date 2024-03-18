@@ -14,6 +14,7 @@ import HomeDashboard from "./admin/home-page";
 import KaryawanPage from "./admin/karyawan-page";
 // import RulePage from "./admin/rule-page";
 import SalesPage from "./admin/sales-page";
+import DetailSalesPage from "./admin/detail-sales-page";
 import PertanyaanPage from "./admin/pertanyaan-page";
 import UserPage from "./admin/user-page";
 import DetailKaryawanPage from "./admin/detail-karyawan-page";
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
       {
         path: "sales",
         element: <SalesPage />,
+      },
+      {
+        path: "sales/:salesId",
+        element: <DetailSalesPage />,
       },
       {
         path: "pertanyaan",

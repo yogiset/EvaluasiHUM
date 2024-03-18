@@ -16,6 +16,7 @@ import { SalesModal } from "@/components/dashboard/modal/sales-modal";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const SalesPage = () => {
   const { role } = useAuth();
@@ -175,8 +176,15 @@ const SalesCard = ({ data }) => {
         >
           {data.nama}
         </Link>
-        <h1 className="text-sm text-neutral-600">{data.target}</h1>
-        <h1 className="text-sm text-neutral-600">{data.tahun}</h1>
+        <div className="flex gap-x-2 h-[20px]">
+          <h1 className="text-sm font-medium text-neutral-600">
+            Target: {data.target}
+          </h1>
+          <Separator orientation="vertical" />
+          <h1 className="text-sm font-medium text-neutral-600">
+            Tahun: {data.tahun}
+          </h1>
+        </div>
       </div>
       <div className="flex items-center gap-x-2">
         <Button

@@ -70,7 +70,7 @@ const DetailSalesPage = () => {
 
   function saveEditedData() {
     const formData = {
-        nik,
+      nik,
       target,
       tahun,
     };
@@ -118,7 +118,7 @@ const DetailSalesPage = () => {
               )}
               <table className="w-full border-collapse bg-sky-50 border border-slate-400">
                 <tbody>
-                <TrText
+                  <TrText
                     id="nik"
                     title="Nik"
                     desc={data.nik}
