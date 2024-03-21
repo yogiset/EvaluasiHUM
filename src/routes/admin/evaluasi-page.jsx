@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-// import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import {
@@ -16,7 +16,6 @@ import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 
 const EvaluasiPage = () => {
-  // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
 
@@ -118,12 +117,14 @@ const EvaluationList = ({ data }) => {
 };
 
 const EvaluationCard = ({ data }) => {
+  const { role } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { newModal } = useConfirmModal();
 
   const mutation = useMutation({
     mutationFn: (id) => {
+      if (role !== "ADMIN") return [];
       return axios.delete(`http://localhost:8082/evaluasi/hapusevaluasi/${id}`);
     },
     onSuccess: () => {
@@ -166,7 +167,7 @@ const EvaluationCard = ({ data }) => {
           <Info className="mr-0 md:mr-2 w-5 h-5" />
           <span className="hidden md:inline">Detail</span>
         </Button>
-        <Button
+        {role !== "ADMIN" ? null : (<Button
           variant="destructive"
           onClick={deleteEvaluation}
           disabled={mutation.isPending}
@@ -176,8 +177,10 @@ const EvaluationCard = ({ data }) => {
           ) : (
             <Trash2 className="mr-0 md:mr-2 w-5 h-5" />
           )}
-          <span className="hidden md:inline">Hapus</span>
-        </Button>
+          
+            <span className="hidden md:inline">Hapus</span>
+          
+        </Button>)}
       </div>
     </div>
   );
