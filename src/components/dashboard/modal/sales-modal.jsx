@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useState } from "react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,17 +17,18 @@ import {
 } from "@/components/ui/dialog";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun } from "@/data/userData";
+import { exampleTahun, exampleBulan } from "@/data/userData";
 
 export const SalesModal = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+  const [salesDetailDtoList, setSalesDetailDtoList] = useState([]);
 
-  // Define a form
   const salesForm = useForm({
     resolver: zodResolver(salesSchema),
     defaultValues: {
       nik: "",
       target: 0,
+      salesDetailDtoList: [], // Initialize salesDetailDtoList in the form
     },
   });
 
@@ -48,12 +50,9 @@ export const SalesModal = ({ open, onClose }) => {
     },
   });
 
-  function onSubmit({ nik, target, tahun }) {
-    const formData = {
-      nik,
-      target,
-      tahun,
-    };
+  function onSubmit(data) {
+    // Include salesDetailDtoList in the formData
+    const formData = { ...data, salesDetailDtoList };
     mutation.mutate(formData);
   }
 
@@ -89,6 +88,38 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
+            {/* Additional form fields for sales detail */}
+            {salesDetailDtoList.map((salesDetailDto, index) => (
+              <div key={index}>
+                <FormSelect
+                  form={salesForm}
+                  label="Bulan"
+                  id={`salesDetailDtoList[${index}].bulan`}
+                  placeholder="Pilih Bulan"
+                  selectItems={exampleBulan}
+                  type="text"
+                />
+                <FormInput
+                  form={salesForm}
+                  label="Target per Bulan"
+                  id={`salesDetailDtoList[${index}].targetbln`}
+                  placeholder="Masukkan Target per bulan"
+                  type="number"
+                />
+              </div>
+            ))}
+            {/* Button to add new sales detail */}
+            <Button
+              type="button"
+              onClick={() =>
+                setSalesDetailDtoList([
+                  ...salesDetailDtoList,
+                  { bulan: "", targetbln: 0 },
+                ])
+              }
+            >
+              Tambah target per bulan
+            </Button>
             <Button type="submit" variant="sky" disabled={mutation.isPending}>
               Tambah
             </Button>

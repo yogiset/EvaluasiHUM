@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ChevronsRight, PencilLine, Info } from "lucide-react";
+import { ChevronsRight, PencilLine, Info, Minus, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
+import { salesdetailSchema } from "@/schema/salesdetail-schema";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
+import { FormInput } from "@/components/dashboard/form/form-input";
+import { Form } from "@/components/ui/form";
+import { FormSelect } from "@/components/dashboard/form/form-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,19 +22,26 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun } from "@/data/userData";
+import { exampleTahun, exampleBulan } from "@/data/userData";
 
 const DetailSalesPage = () => {
   const navigate = useNavigate();
   const { salesId } = useParams();
   const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false); // Edit state
-
+  const [salesdetails, setSalesDetails] = useState([]);
   const [errorData, setErrorData] = useState([]);
   const [errorValidation, setErrorValidation] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
   const [target, setTarget] = useState("");
   const [tahun, setTahun] = useState("");
@@ -47,6 +60,7 @@ const DetailSalesPage = () => {
       setNik(response.data.nik);
       setTarget(response.data.target);
       setTahun(response.data.tahun);
+      setSalesDetails(response.data.salesDetailDtoList);
       return response.data;
     }
   }
@@ -84,6 +98,32 @@ const DetailSalesPage = () => {
 
     setErrorValidation(false);
     mutation.mutate(data);
+  }
+
+  function onClose() {
+    setOpen(false);
+  }
+
+  function addSalesDetail(value) {
+    setSalesDetails([...salesdetails, value]);
+  }
+
+  function deleteSalesDetail(index) {
+    const newSalesDetails = [...salesdetails];
+    newSalesDetails.splice(index, 1);
+    setSalesDetails(newSalesDetails);
+  }
+
+  function onSubmit(formData) {
+    if (salesdetails.length === 0 || !isEdit) return;
+    const newFormData = { ...formData, salesDetailDtoList: salesdetails };
+    mutation.mutate({ formData: newFormData, id: data.idsales });
+  }
+
+  function updateSalesDetail(index, field, value) {
+    const updatedSalesDetails = [...salesdetails];
+    updatedSalesDetails[index][field] = value;
+    setSalesDetails(updatedSalesDetails);
   }
 
   if (error) {
@@ -140,6 +180,54 @@ const DetailSalesPage = () => {
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
                   />
+                  <h1 className="text-lg md:text-xl font-semibold">
+                    Sales Detail
+                  </h1>
+                  {salesdetails.map((list, index) => (
+                    <tr key={index} className="border-b border-gray-200">
+                      <TrSelect
+                        id="bulan"
+                        title="Bulan"
+                        desc={list.bulan}
+                        isEdit={isEdit}
+                        selectItems={exampleBulan}
+                        placeholder={list.bulan}
+                        onValueChange={(e) =>
+                          updateSalesDetail(index, "bulan", e)
+                        }
+                      />
+                      <TrText
+                        id="targetbln"
+                        title="Targetbln"
+                        desc={list.targetbln}
+                        isEdit={isEdit}
+                        placeholder={list.targetbln}
+                        onChange={(e) =>
+                          updateSalesDetail(index, "targetbln", e.target.value)
+                        }
+                      />
+                      <Button
+                        type="button"
+                        className={cn(
+                          "h-4 bg-neutral-300 hover:bg-rose-400 text-black hover:text-white px-1 ml-2 rounded",
+                          !isEdit && "hidden"
+                        )}
+                        onClick={() => deleteSalesDetail(index)}
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                    </tr>
+                  ))}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setOpen(true)}
+                    className={cn("text-neutral-600", !isEdit && "hidden")}
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Tambah Detail Sales
+                  </Button>
                 </tbody>
               </table>
               <div className="flex gap-x-2">
@@ -180,6 +268,11 @@ const DetailSalesPage = () => {
               </div>
             </div>
           )}
+          <SalesDetailModal
+            addSalesDetail={addSalesDetail}
+            open={open}
+            onClose={onClose}
+          />
         </div>
       </div>
     </div>
@@ -232,6 +325,62 @@ const TrSelect = ({
         )}
       </td>
     </tr>
+  );
+};
+
+const SalesDetailModal = ({ addSalesDetail, open, onClose }) => {
+  const salesDetailForm = useForm({
+    resolver: zodResolver(salesdetailSchema),
+    defaultValues: {
+      bulan: "",
+      targetbln: 0,
+    },
+  });
+
+  function submit(formData) {
+    addSalesDetail(formData);
+    salesDetailForm.reset();
+    onClose();
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Tambah Detail Sales</DialogTitle>
+        </DialogHeader>
+        <Form {...salesDetailForm}>
+          <form
+            onSubmit={salesDetailForm.handleSubmit(submit)}
+            className="space-y-4"
+          >
+            <FormSelect
+              form={salesDetailForm}
+              label="Bulan"
+              id="bulan"
+              placeholder="Masukkan bulan"
+              selectItems={exampleBulan}
+              type="text"
+            />
+            <FormInput
+              form={salesDetailForm}
+              label="targetbln"
+              id="targetbln"
+              placeholder="Masukkan target/bulan"
+              type="number"
+            />
+            <div className="flex gap-x-2">
+              <Button type="submit" variant="sky">
+                Tambah
+              </Button>
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
