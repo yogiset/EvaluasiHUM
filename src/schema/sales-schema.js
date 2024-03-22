@@ -11,4 +11,11 @@ export const salesSchema = z.object({
     required_error: "Please select a Year!",
     invalid_type_error: "Please select a Year!",
   }),
+  salesDetailDtoList: z
+    .object({
+      bulan: z.string(),
+      targetbln: z.coerce.number().nonnegative(),
+    })
+    .optional()
+    .array(),
 });

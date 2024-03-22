@@ -28,7 +28,7 @@ export const SalesModal = ({ open, onClose }) => {
     defaultValues: {
       nik: "",
       target: 0,
-      salesDetailDtoList: [], // Initialize salesDetailDtoList in the form
+      salesDetailDtoList: [],
     },
   });
 
@@ -50,9 +50,16 @@ export const SalesModal = ({ open, onClose }) => {
     },
   });
 
-  function onSubmit(data) {
-    // Include salesDetailDtoList in the formData
-    const formData = { ...data, salesDetailDtoList };
+  function addSalesDetailDtoList() {
+    const prev = salesForm.getValues("salesDetailDtoList");
+    setSalesDetailDtoList([...salesDetailDtoList, { bulan: "", targetbln: 0 }]);
+    salesForm.setValue("salesDetailDtoList", [
+      ...prev,
+      { bulan: "", targetbln: 0 },
+    ]);
+  }
+
+  function onSubmit(formData) {
     mutation.mutate(formData);
   }
 
@@ -109,20 +116,14 @@ export const SalesModal = ({ open, onClose }) => {
               </div>
             ))}
             {/* Button to add new sales detail */}
-            <Button
-              type="button"
-              onClick={() =>
-                setSalesDetailDtoList([
-                  ...salesDetailDtoList,
-                  { bulan: "", targetbln: 0 },
-                ])
-              }
-            >
-              Tambah target per bulan
-            </Button>
-            <Button type="submit" variant="sky" disabled={mutation.isPending}>
-              Tambah
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" onClick={addSalesDetailDtoList}>
+                Tambah target per bulan
+              </Button>
+              <Button type="submit" variant="sky" disabled={mutation.isPending}>
+                Tambah
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
