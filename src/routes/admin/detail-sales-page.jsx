@@ -31,7 +31,7 @@ import {
 import { cn } from "@/lib/utils";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun, exampleBulan } from "@/data/userData";
+import { exampleTahun, exampleBulan, examplePersen } from "@/data/userData";
 
 const DetailSalesPage = () => {
   const navigate = useNavigate();
@@ -43,8 +43,11 @@ const DetailSalesPage = () => {
   const [errorValidation, setErrorValidation] = useState(false);
   const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
+  const [nama, setNama] = useState("");
   const [target, setTarget] = useState("");
   const [tahun, setTahun] = useState("");
+  const [tercapai, setTercapai] = useState("");
+  const [tercapaipersen, setTercapaiPersen] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-sales", salesId],
@@ -58,8 +61,11 @@ const DetailSalesPage = () => {
 
     if (response.status === 200) {
       setNik(response.data.nik);
+      setNama(response.data.nama);
       setTarget(response.data.target);
       setTahun(response.data.tahun);
+      setTercapai(response.data.tercapai);
+      setTercapaiPersen(response.data.tercapaipersen);
       setSalesDetails(response.data.salesDetailDtoList);
       return response.data;
     }
@@ -85,8 +91,11 @@ const DetailSalesPage = () => {
   function saveEditedData() {
     const formData = {
       nik,
+      nama,
       target,
       tahun,
+      tercapai,
+      tercapaipersen,
     };
     const { success, data, error } = salesSchema.safeParse(formData);
 
@@ -165,6 +174,12 @@ const DetailSalesPage = () => {
                     onChange={(e) => setNik(e.target.value)}
                   />
                   <TrText
+                    id="nama"
+                    title="Nama"
+                    desc={data.nama}
+                    onChange={(e) => setNama(e.target.value)}
+                  />
+                  <TrText
                     id="target"
                     title="Target"
                     desc={data.target}
@@ -179,6 +194,22 @@ const DetailSalesPage = () => {
                     selectItems={exampleTahun}
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
+                  />
+                  <TrText
+                    id="tercapai"
+                    title="Tercapai"
+                    desc={data.tercapai}
+                    isEdit={isEdit}
+                    onChange={(e) => setTercapai(e.target.value)}
+                  />
+                  <TrSelect
+                    id="tercapaipersen"
+                    title="Tercapai %"
+                    desc={data.tercapaipersen}
+                    isEdit={isEdit}
+                    selectItems={examplePersen}
+                    placeholder={data.tercapaipersen}
+                    onValueChange={(e) => setTercapaiPersen(e)}
                   />
                   <h1 className="text-lg md:text-xl font-semibold">
                     Sales Detail
@@ -198,12 +229,33 @@ const DetailSalesPage = () => {
                       />
                       <TrText
                         id="targetbln"
-                        title="Targetbln"
+                        title="Target/Bln"
                         desc={list.targetbln}
                         isEdit={isEdit}
                         placeholder={list.targetbln}
                         onChange={(e) =>
                           updateSalesDetail(index, "targetbln", e.target.value)
+                        }
+                      />
+                      <TrText
+                        id="tercapaii"
+                        title="Tercapai"
+                        desc={list.tercapaii}
+                        isEdit={isEdit}
+                        placeholder={list.tercapaii}
+                        onChange={(e) =>
+                          updateSalesDetail(index, "tercapaii", e.target.value)
+                        }
+                      />
+                      <TrSelect
+                        id="tercapaipersenn"
+                        title="Tercapai %"
+                        desc={list.tercapaipersenn}
+                        isEdit={isEdit}
+                        selectItems={examplePersen}
+                        placeholder={list.tercapaipersenn}
+                        onValueChange={(e) =>
+                          updateSalesDetail(index, "bulan", e)
                         }
                       />
                       <Button
@@ -334,6 +386,8 @@ const SalesDetailModal = ({ addSalesDetail, open, onClose }) => {
     defaultValues: {
       bulan: "",
       targetbln: 0,
+      tercapii: 0,
+      tercapaipersenn: "",
     },
   });
 
@@ -364,10 +418,25 @@ const SalesDetailModal = ({ addSalesDetail, open, onClose }) => {
             />
             <FormInput
               form={salesDetailForm}
-              label="targetbln"
+              label="Target/bln"
               id="targetbln"
               placeholder="Masukkan target/bulan"
               type="number"
+            />
+            <FormInput
+              form={salesDetailForm}
+              label="Tercapai"
+              id="tercapaii"
+              placeholder="Masukkan tercapai"
+              type="number"
+            />
+            <FormSelect
+              form={salesDetailForm}
+              label="Tercapai %"
+              id="tercapaipersenn"
+              placeholder="Masukkan tercapai persen"
+              selectItems={examplePersen}
+              type="text"
             />
             <div className="flex gap-x-2">
               <Button type="submit" variant="sky">

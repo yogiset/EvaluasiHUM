@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun, exampleBulan } from "@/data/userData";
+import { exampleTahun, exampleBulan, examplePersen } from "@/data/userData";
 
 export const SalesModal = ({ open, onClose }) => {
   const queryClient = useQueryClient();
@@ -28,6 +28,8 @@ export const SalesModal = ({ open, onClose }) => {
     defaultValues: {
       nik: "",
       target: 0,
+      tercapai: 0,
+      tercapaipersen: "",
       salesDetailDtoList: [], // Initialize salesDetailDtoList in the form
     },
   });
@@ -88,6 +90,21 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
+            <FormInput
+              form={salesForm}
+              label="Tercapai"
+              id="tercapai"
+              placeholder="Masukkan angka pencapaian"
+              type="number"
+            />
+            <FormSelect
+              form={salesForm}
+              label="Tercapai %"
+              id="tercapaipersen"
+              selectItems={examplePersen}
+              placeholder="Pilih Persentase"
+            />
+
             {/* Additional form fields for sales detail */}
             {salesDetailDtoList.map((salesDetailDto, index) => (
               <div key={index}>
@@ -101,10 +118,25 @@ export const SalesModal = ({ open, onClose }) => {
                 />
                 <FormInput
                   form={salesForm}
-                  label={`Target per Bulan ${index + 1}`}
+                  label={`Target pencapaian pada Bulan ${index + 1}`}
                   id={`salesDetailDtoList[${index}].targetbln`}
                   placeholder="Masukkan Target per bulan"
                   type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Pencapaian pada bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].tercapaii`}
+                  placeholder="Masukkan angka perncapaian"
+                  type="number"
+                />
+                <FormSelect
+                  form={salesForm}
+                  label={`Persentase pencapaian pada bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].tercapaipersenn`}
+                  placeholder="Pilih Persentase"
+                  selectItems={examplePersen}
+                  type="text"
                 />
               </div>
             ))}
