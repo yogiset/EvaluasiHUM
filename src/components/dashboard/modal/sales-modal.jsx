@@ -93,7 +93,7 @@ export const SalesModal = ({ open, onClose }) => {
               <div key={index}>
                 <FormSelect
                   form={salesForm}
-                  label="Bulan"
+                  label={`Bulan ${index + 1}`}
                   id={`salesDetailDtoList[${index}].bulan`}
                   placeholder="Pilih Bulan"
                   selectItems={exampleBulan}
@@ -101,7 +101,7 @@ export const SalesModal = ({ open, onClose }) => {
                 />
                 <FormInput
                   form={salesForm}
-                  label="Target per Bulan"
+                  label={`Target per Bulan ${index + 1}`}
                   id={`salesDetailDtoList[${index}].targetbln`}
                   placeholder="Masukkan Target per bulan"
                   type="number"
