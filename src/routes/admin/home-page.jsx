@@ -5,24 +5,22 @@ import { useAuth } from "@/hooks/use-auth";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Chart } from "react-charts";
-import { chartsData } from "@/data/charts"; // TODO: Remove this later
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { defaultData } from "@/data/charts";
 import { Separator } from "@/components/ui/separator";
 import { Loading } from "@/components/dashboard/loading";
 
 const HomeDashboard = () => {
   const { role } = useAuth();
   const [datumColors, setDatumColors] = useState([]);
-  const newChartsDatum = useMemo(() => chartsData, []); // TODO: Remove this later
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-chart-data"],
     queryFn: async () => {
       const { data } = await axios.get("http://localhost:8082/api/data");
-      console.log(data); // TODO: Remove this later
-      setDatumColors(chartsData.map((e) => e.color)); // TODO: Set color state with data from API
+      setDatumColors(data.dataChart.map((e) => e.color));
       return data;
     },
   });
@@ -71,9 +69,13 @@ const HomeDashboard = () => {
             ) : (
               <>
                 <div className="w-full h-[300px] mt-2">
+                  {/* {data.dataChart.length} */}
                   <Chart
                     options={{
-                      data: newChartsDatum, // TODO: Change this with data from API
+                      data:
+                        data.dataChart.length !== 0
+                          ? data.dataChart
+                          : defaultData,
                       defaultColors: datumColors,
                       primaryAxis,
                       secondaryAxes,
@@ -86,7 +88,7 @@ const HomeDashboard = () => {
                     {format(new Date(), "dd MMMM yyyy", { locale: id })}
                   </li>
                   <Separator />
-                  {chartsData.map((e, index) => (
+                  {data.dataChart.map((e, index) => (
                     <li
                       key={index}
                       className="w-max flex items-center text-sm font-medium"
