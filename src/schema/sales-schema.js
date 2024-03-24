@@ -11,10 +11,12 @@ export const salesSchema = z.object({
     required_error: "Please select a Year!",
     invalid_type_error: "Please select a Year!",
   }),
+  tercapai: z.coerce.number().nonnegative(),
   salesDetailDtoList: z
     .object({
       bulan: z.string(),
       targetbln: z.coerce.number().nonnegative(),
+      tercapaii: z.coerce.number().nonnegative(),
     })
     .optional()
     .array(),

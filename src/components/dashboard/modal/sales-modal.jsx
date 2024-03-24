@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { salesSchema } from "@/schema/sales-schema";
+import { calcPercent } from "@/lib/utils";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleTahun, exampleBulan } from "@/data/userData";
+import { Separator } from "@/components/ui/separator";
 
 export const SalesModal = ({ open, onClose }) => {
   const queryClient = useQueryClient();
@@ -28,6 +30,7 @@ export const SalesModal = ({ open, onClose }) => {
     defaultValues: {
       nik: "",
       target: 0,
+      tercapai: 0,
       salesDetailDtoList: [],
     },
   });
@@ -52,15 +55,34 @@ export const SalesModal = ({ open, onClose }) => {
 
   function addSalesDetailDtoList() {
     const prev = salesForm.getValues("salesDetailDtoList");
-    setSalesDetailDtoList([...salesDetailDtoList, { bulan: "", targetbln: 0 }]);
+    setSalesDetailDtoList([
+      ...salesDetailDtoList,
+      { bulan: "", targetbln: 0, tercapaii: 0 },
+    ]);
     salesForm.setValue("salesDetailDtoList", [
       ...prev,
-      { bulan: "", targetbln: 0 },
+      { bulan: "", targetbln: 0, tercapaii: 0 },
     ]);
   }
 
   function onSubmit(formData) {
-    mutation.mutate(formData);
+    const { nik, tahun, target, tercapai, salesDetailDtoList } = formData;
+    const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
+    const newSalesDetailDtoList = salesDetailDtoList.map((obj) => {
+      obj.tercapaipersenn =
+        calcPercent(obj.targetbln, obj.tercapaii).toString() + "%";
+      return obj;
+    });
+
+    const newFormData = {
+      nik,
+      tahun,
+      target,
+      tercapai,
+      tercapaipersen: tercapaipersen,
+      salesDetailDtoList: newSalesDetailDtoList,
+    };
+    mutation.mutate(newFormData);
   }
 
   return (
@@ -88,6 +110,13 @@ export const SalesModal = ({ open, onClose }) => {
               placeholder="Masukkan Target"
               type="number"
             />
+            <FormInput
+              form={salesForm}
+              label="Target tercapai"
+              id="tercapai"
+              placeholder="Masukkan Target Tercapai"
+              type="number"
+            />
             <FormSelect
               form={salesForm}
               label="Tahun"
@@ -98,6 +127,7 @@ export const SalesModal = ({ open, onClose }) => {
             {/* Additional form fields for sales detail */}
             {salesDetailDtoList.map((salesDetailDto, index) => (
               <div key={index}>
+                <Separator className="h-1 bg-blue-950 my-2" />
                 <FormSelect
                   form={salesForm}
                   label={`Bulan ${index + 1}`}
@@ -111,6 +141,13 @@ export const SalesModal = ({ open, onClose }) => {
                   label={`Target per Bulan ${index + 1}`}
                   id={`salesDetailDtoList[${index}].targetbln`}
                   placeholder="Masukkan Target per bulan"
+                  type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Target tercapai per Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].tercapaii`}
+                  placeholder="Masukkan Target tarcapai per bulan"
                   type="number"
                 />
               </div>
