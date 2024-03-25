@@ -52,6 +52,7 @@ const DetailSalesPage = () => {
     if (response.status === 200) {
       // console.table(response.data.salesDetailDtoList);
       setNik(response.data.nik);
+      setNama(response.data.nama);
       setTarget(response.data.target);
       setTahun(response.data.tahun);
       setTercapai(response.data.tercapai);
@@ -81,6 +82,7 @@ const DetailSalesPage = () => {
   function saveEditedData() {
     const formData = {
       nik,
+      nama,
       target,
       tercapai,
       tahun,
@@ -143,6 +145,12 @@ const DetailSalesPage = () => {
                     title="Nik"
                     desc={data.nik}
                     onChange={(e) => setNik(e.target.value)}
+                  />
+                  <TrText
+                    id="nama"
+                    title="Nama"
+                    desc={data.nama}
+                    onChange={(e) => setNama(e.target.value)}
                   />
                   <TrText
                     id="target"

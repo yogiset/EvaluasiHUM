@@ -34,6 +34,7 @@ export const exampleBulan = [
   "Desember"
 ];
 
+
 export const exampleTahun = [
   "2010",
   "2011",
@@ -84,3 +85,5 @@ export const exampleTahun = [
 ];
 
 export const exampleRole = ["ADMIN", "USER"];
+
+export const examplePersen = Array.from({ length: 100 }, (_, index) => `${index + 1}%`);
