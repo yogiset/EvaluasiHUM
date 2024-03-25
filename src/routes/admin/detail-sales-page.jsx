@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ChevronsRight, PencilLine, Info, Minus, Plus } from "lucide-react";
+import { ChevronsRight, PencilLine, Info, Trash2, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
-import { salesdetailSchema } from "@/schema/salesdetail-schema";
+import { calcPercent } from "@/lib/utils";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
-import { FormInput } from "@/components/dashboard/form/form-input";
-import { Form } from "@/components/ui/form";
-import { FormSelect } from "@/components/dashboard/form/form-select";
+import { SalesTargetModal } from "@/components/dashboard/modal/sales-target-modal";
+import { TdInput } from "@/components/dashboard/table/td/td-input";
+import { TdSelect } from "@/components/dashboard/table/td/td-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectTrigger,
@@ -22,13 +21,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleTahun, exampleBulan } from "@/data/userData";
@@ -38,13 +30,14 @@ const DetailSalesPage = () => {
   const { salesId } = useParams();
   const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false); // Edit state
-  const [salesdetails, setSalesDetails] = useState([]);
   const [errorData, setErrorData] = useState([]);
   const [errorValidation, setErrorValidation] = useState(false);
   const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
-  const [target, setTarget] = useState("");
+  const [target, setTarget] = useState(0);
+  const [tercapai, setTercapai] = useState(0);
   const [tahun, setTahun] = useState("");
+  const [salesDetails, setSalesDetails] = useState([]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-sales", salesId],
@@ -57,14 +50,17 @@ const DetailSalesPage = () => {
     );
 
     if (response.status === 200) {
+      // console.table(response.data.salesDetailDtoList);
       setNik(response.data.nik);
       setTarget(response.data.target);
       setTahun(response.data.tahun);
+      setTercapai(response.data.tercapai);
       setSalesDetails(response.data.salesDetailDtoList);
       return response.data;
     }
   }
 
+  // update sales
   const mutation = useMutation({
     mutationFn: (formData) => {
       return axios.put(
@@ -86,8 +82,11 @@ const DetailSalesPage = () => {
     const formData = {
       nik,
       target,
+      tercapai,
       tahun,
+      salesDetailDtoList: salesDetails,
     };
+    const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const { success, data, error } = salesSchema.safeParse(formData);
 
     if (!success) {
@@ -97,33 +96,11 @@ const DetailSalesPage = () => {
     }
 
     setErrorValidation(false);
-    mutation.mutate(data);
+    mutation.mutate({ ...data, tercapaipersen });
   }
 
   function onClose() {
     setOpen(false);
-  }
-
-  function addSalesDetail(value) {
-    setSalesDetails([...salesdetails, value]);
-  }
-
-  function deleteSalesDetail(index) {
-    const newSalesDetails = [...salesdetails];
-    newSalesDetails.splice(index, 1);
-    setSalesDetails(newSalesDetails);
-  }
-
-  function onSubmit(formData) {
-    if (salesdetails.length === 0 || !isEdit) return;
-    const newFormData = { ...formData, salesDetailDtoList: salesdetails };
-    mutation.mutate({ formData: newFormData, id: data.idsales });
-  }
-
-  function updateSalesDetail(index, field, value) {
-    const updatedSalesDetails = [...salesdetails];
-    updatedSalesDetails[index][field] = value;
-    setSalesDetails(updatedSalesDetails);
   }
 
   if (error) {
@@ -137,6 +114,9 @@ const DetailSalesPage = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
+      {/* sales detail modal */}
+      <SalesTargetModal open={open} onClose={onClose} idsales={salesId} />
+
       <div className="w-full flex items-center gap-x-2 font-medium p-2">
         <Link to={"/dashboard/sales"} className="hover:underline">
           Data Sales
@@ -169,8 +149,24 @@ const DetailSalesPage = () => {
                     title="Target"
                     desc={data.target}
                     isEdit={isEdit}
-                    onChange={(e) => setTarget(e.target.value)}
+                    onChange={(e) => setTarget(parseInt(e.target.value))}
                   />
+                  <TrText
+                    id="tercapai"
+                    title="Tercapai"
+                    desc={data.tercapai}
+                    isEdit={isEdit}
+                    onChange={(e) => setTercapai(parseInt(e.target.value))}
+                  />
+
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Tercapai(%)
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      {data.tercapaipersen}
+                    </td>
+                  </tr>
                   <TrSelect
                     id="tahun"
                     title="Tahun"
@@ -180,60 +176,13 @@ const DetailSalesPage = () => {
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
                   />
-                  <h1 className="text-lg md:text-xl font-semibold">
-                    Sales Detail
-                  </h1>
-                  {salesdetails.map((list, index) => (
-                    <tr key={index} className="border-b border-gray-200">
-                      <TrSelect
-                        id="bulan"
-                        title="Bulan"
-                        desc={list.bulan}
-                        isEdit={isEdit}
-                        selectItems={exampleBulan}
-                        placeholder={list.bulan}
-                        onValueChange={(e) =>
-                          updateSalesDetail(index, "bulan", e)
-                        }
-                      />
-                      <TrText
-                        id="targetbln"
-                        title="Targetbln"
-                        desc={list.targetbln}
-                        isEdit={isEdit}
-                        placeholder={list.targetbln}
-                        onChange={(e) =>
-                          updateSalesDetail(index, "targetbln", e.target.value)
-                        }
-                      />
-                      <Button
-                        type="button"
-                        className={cn(
-                          "h-4 bg-neutral-300 hover:bg-rose-400 text-black hover:text-white px-1 ml-2 rounded",
-                          !isEdit && "hidden"
-                        )}
-                        onClick={() => deleteSalesDetail(index)}
-                      >
-                        <Minus className="w-3 h-3" />
-                      </Button>
-                    </tr>
-                  ))}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setOpen(true)}
-                    className={cn("text-neutral-600", !isEdit && "hidden")}
-                  >
-                    <Plus className="w-4 h-4 mr-1" />
-                    Tambah Detail Sales
-                  </Button>
                 </tbody>
               </table>
               <div className="flex gap-x-2">
                 {isEdit ? (
                   <>
                     <Button
+                      size="sm"
                       variant="sky"
                       onClick={saveEditedData}
                       disabled={mutation.isPending}
@@ -241,6 +190,7 @@ const DetailSalesPage = () => {
                       Save
                     </Button>
                     <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => {
                         setIsEdit(false);
@@ -253,29 +203,182 @@ const DetailSalesPage = () => {
                   </>
                 ) : (
                   <>
-                    <Button variant="sky" onClick={() => setIsEdit(true)}>
+                    <Button
+                      size="sm"
+                      variant="sky"
+                      onClick={() => setIsEdit(true)}
+                    >
                       <PencilLine className="mr-2 w-5 h-5" />
                       Edit
                     </Button>
                     <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => navigate("/dashboard/sales")}
                     >
-                      Kembali
+                      Kembali ke halaman sebelumnya
                     </Button>
                   </>
                 )}
               </div>
+
+              <Separator className="bg-slate-400" />
+
+              <div className="flex justify-between items-center">
+                <h1 className="text-lg md:text-xl font-semibold">
+                  Detail Target
+                </h1>
+                <Button size="sm" onClick={() => setOpen(true)}>
+                  <Plus className="w-4 h-4 mr-1" />
+                  Tambah Target
+                </Button>
+              </div>
+              <table className="w-full border-collapse bg-sky-50 border border-slate-400">
+                <thead className="w-full border-collapse bg-sky-200 border border-slate-400">
+                  <tr>
+                    <th className="border border-slate-400 p-2">Bulan</th>
+                    <th className="border border-slate-400 p-2">Target</th>
+                    <th className="border border-slate-400 p-2">Tercapai</th>
+                    <th className="border border-slate-400 p-2">Tercapai(%)</th>
+                    <th className="w-1/6 border border-slate-400 p-2">Opsi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.salesDetailDtoList.map((list) => (
+                    <DetailTargetList
+                      key={list.id}
+                      list={list}
+                      salesId={salesId}
+                    />
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-          <SalesDetailModal
-            addSalesDetail={addSalesDetail}
-            open={open}
-            onClose={onClose}
-          />
         </div>
       </div>
     </div>
+  );
+};
+
+const DetailTargetList = ({ list, salesId }) => {
+  const queryClient = useQueryClient();
+  const [listEdit, setListEdit] = useState(false);
+  const [bulan, setBulan] = useState(list.bulan);
+  const [targetbln, setTargetbln] = useState(list.targetbln);
+  const [tercapaii, setTercapaii] = useState(list.tercapaii);
+
+  // edit sales detail dto list by id
+  const mutationEdit = useMutation({
+    mutationFn: (formData) => {
+      return axios.put(
+        `http://localhost:8082/salesdetail/editsalesdetail/${list.id}`,
+        formData
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
+      toast.success("Edited successfully!");
+      setListEdit(false);
+    },
+    onError: () => {
+      toast.error("Failed to edit!");
+    },
+  });
+
+  // delete sales detail by id
+  const mutationDel = useMutation({
+    mutationFn: (id) => {
+      return axios.delete(
+        `http://localhost:8082/salesdetail/deletesalesdetail/${id}`
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
+      toast.success("Deleted successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to delete!");
+    },
+  });
+
+  function saveEditedData() {
+    const formData = { bulan, targetbln, tercapaii };
+    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
+    mutationEdit.mutate({ ...formData, tercapaipersenn });
+  }
+
+  function deleteSalesDetail(id) {
+    mutationDel.mutate(id);
+  }
+  return (
+    <tr>
+      <TdSelect
+        id={`bln${list.id}`}
+        value={list.bulan}
+        placeholder={list.bulan}
+        selectItems={exampleBulan}
+        isEdit={listEdit}
+        onValueChange={(value) => setBulan(value)}
+      />
+      <TdInput
+        id={`targetbln${list.id}`}
+        value={list.targetbln}
+        desc="barrel"
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setTargetbln(parseInt(e.target.value))}
+      />
+      <TdInput
+        id={`tercapaii${list.id}`}
+        value={list.tercapaii}
+        desc="barrel"
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setTercapaii(parseInt(e.target.value))}
+      />
+      <td className="border border-slate-300 p-2">{list.tercapaipersenn}</td>
+      <td className="border border-slate-300 p-2">
+        <div className="flex justify-evenly gap-x-2">
+          {listEdit ? (
+            <>
+              <Button
+                variant="sky"
+                size="sm"
+                onClick={saveEditedData}
+                disabled={mutationEdit.isPending}
+              >
+                Save
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setListEdit(false)}
+                disabled={mutationEdit.isPending}
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="sky" size="sm" onClick={() => setListEdit(true)}>
+                <PencilLine className="sm:mr-2 w-4 h-4" />
+                <p className="hidden sm:inline">Edit</p>
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => deleteSalesDetail(list.id)}
+              >
+                <Trash2 className="w-4 h-4 sm:mr-2" />
+                <p className="hidden sm:inline">Hapus</p>
+              </Button>
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
   );
 };
 
@@ -325,62 +428,6 @@ const TrSelect = ({
         )}
       </td>
     </tr>
-  );
-};
-
-const SalesDetailModal = ({ addSalesDetail, open, onClose }) => {
-  const salesDetailForm = useForm({
-    resolver: zodResolver(salesdetailSchema),
-    defaultValues: {
-      bulan: "",
-      targetbln: 0,
-    },
-  });
-
-  function submit(formData) {
-    addSalesDetail(formData);
-    salesDetailForm.reset();
-    onClose();
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Tambah Detail Sales</DialogTitle>
-        </DialogHeader>
-        <Form {...salesDetailForm}>
-          <form
-            onSubmit={salesDetailForm.handleSubmit(submit)}
-            className="space-y-4"
-          >
-            <FormSelect
-              form={salesDetailForm}
-              label="Bulan"
-              id="bulan"
-              placeholder="Masukkan bulan"
-              selectItems={exampleBulan}
-              type="text"
-            />
-            <FormInput
-              form={salesDetailForm}
-              label="targetbln"
-              id="targetbln"
-              placeholder="Masukkan target/bulan"
-              type="number"
-            />
-            <div className="flex gap-x-2">
-              <Button type="submit" variant="sky">
-                Tambah
-              </Button>
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
   );
 };
 

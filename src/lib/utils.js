@@ -6,5 +6,6 @@ export function cn(...inputs) {
 }
 
 export function calcPercent(target, achieved) {
-  return achieved / (target / 100);
+  if (target == 0 && achieved == 0) return 0;
+  return ~~(achieved / (target / 100));
 }

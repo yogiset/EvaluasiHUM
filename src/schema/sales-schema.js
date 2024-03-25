@@ -11,12 +11,18 @@ export const salesSchema = z.object({
     required_error: "Please select a Year!",
     invalid_type_error: "Please select a Year!",
   }),
-  tercapai: z.coerce.number().nonnegative(),
+  tercapai: z.coerce
+    .number({
+      required_error: "Please fill this field!",
+    })
+    .nonnegative({ message: "Target must be a positive value." }),
   salesDetailDtoList: z
     .object({
-      bulan: z.string(),
-      targetbln: z.coerce.number().nonnegative(),
-      tercapaii: z.coerce.number().nonnegative(),
+      id: z.coerce.number().optional(),
+      bulan: z.string({ required_error: "Required!" }),
+      targetbln: z.coerce.number({ required_error: "Required!" }).nonnegative(),
+      tercapaii: z.coerce.number({ required_error: "Required!" }).nonnegative(),
+      tercapaipersenn: z.string().optional(),
     })
     .optional()
     .array(),
