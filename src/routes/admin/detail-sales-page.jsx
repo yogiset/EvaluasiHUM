@@ -50,9 +50,7 @@ const DetailSalesPage = () => {
     );
 
     if (response.status === 200) {
-      // console.table(response.data.salesDetailDtoList);
       setNik(response.data.nik);
-      setNama(response.data.nama);
       setTarget(response.data.target);
       setTahun(response.data.tahun);
       setTercapai(response.data.tercapai);
@@ -82,7 +80,7 @@ const DetailSalesPage = () => {
   function saveEditedData() {
     const formData = {
       nik,
-      nama,
+      // nama,
       target,
       tercapai,
       tahun,
@@ -140,17 +138,19 @@ const DetailSalesPage = () => {
               )}
               <table className="w-full border-collapse bg-sky-50 border border-slate-400">
                 <tbody>
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Nama
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      {data.nama}
+                    </td>
+                  </tr>
                   <TrText
                     id="nik"
                     title="Nik"
                     desc={data.nik}
                     onChange={(e) => setNik(e.target.value)}
-                  />
-                  <TrText
-                    id="nama"
-                    title="Nama"
-                    desc={data.nama}
-                    onChange={(e) => setNama(e.target.value)}
                   />
                   <TrText
                     id="target"
@@ -166,7 +166,6 @@ const DetailSalesPage = () => {
                     isEdit={isEdit}
                     onChange={(e) => setTercapai(parseInt(e.target.value))}
                   />
-
                   <tr>
                     <td className="font-medium border border-slate-300 px-2 py-2">
                       Tercapai(%)

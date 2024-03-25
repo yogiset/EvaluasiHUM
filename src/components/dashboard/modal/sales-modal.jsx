@@ -124,20 +124,6 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
-            <FormInput
-              form={salesForm}
-              label="Tercapai"
-              id="tercapai"
-              placeholder="Masukkan angka pencapaian"
-              type="number"
-            />
-            <FormSelect
-              form={salesForm}
-              label="Tercapai %"
-              id="tercapaipersen"
-              selectItems={examplePersen}
-              placeholder="Pilih Persentase"
-            />
 
             {/* Additional form fields for sales detail */}
             {salesDetailDtoList.map((salesDetailDto, index) => (
