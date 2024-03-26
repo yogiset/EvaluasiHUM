@@ -110,13 +110,6 @@ export const SalesModal = ({ open, onClose }) => {
               placeholder="Masukkan Target"
               type="number"
             />
-            <FormInput
-              form={salesForm}
-              label="Target tercapai"
-              id="tercapai"
-              placeholder="Masukkan Target Tercapai"
-              type="number"
-            />
             <FormSelect
               form={salesForm}
               label="Tahun"
