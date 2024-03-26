@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { salesDetailSchema } from "@/schema/sales-detail-schema";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { calcPercent } from "@/lib/utils";
+// import { calcPercent } from "@/lib/utils";
 import { toast } from "sonner";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";

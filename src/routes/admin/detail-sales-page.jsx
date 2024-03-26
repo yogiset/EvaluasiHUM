@@ -5,7 +5,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
-import { calcPercent } from "@/lib/utils";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
 import { SalesTargetModal } from "@/components/dashboard/modal/sales-target-modal";
@@ -35,7 +34,6 @@ const DetailSalesPage = () => {
   const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
   const [target, setTarget] = useState(0);
-  const [total, setTotal] = useState(0);
   const [tercapai, setTercapai] = useState(0);
   const [tahun, setTahun] = useState("");
   const [salesDetails, setSalesDetails] = useState([]);
@@ -81,7 +79,6 @@ const DetailSalesPage = () => {
   function saveEditedData() {
     const formData = {
       nik,
-      // nama,
       target,
       tercapai,
       tahun,
@@ -96,7 +93,7 @@ const DetailSalesPage = () => {
     }
 
     setErrorValidation(false);
-    mutation.mutate({ ...data, tercapaipersen });
+    mutation.mutate(data);
   }
 
   function onClose() {
@@ -155,16 +152,19 @@ const DetailSalesPage = () => {
                   <TrText
                     id="target"
                     title="Target"
-                    desc={data.target + " Liter"}
+                    desc={data.target}
+                    lastDesc="Liter"
                     isEdit={isEdit}
                     onChange={(e) => setTarget(parseInt(e.target.value))}
                   />
-                  <TrText
-                    id="tercapai"
-                    title="Tercapai"
-                    desc={data.tercapai + " Liter"}
-                    onChange={(e) => setTercapai(parseInt(e.target.value))}
-                  />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Tercapai
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      {data.tercapai} Liter
+                    </td>
+                  </tr>
                   <tr>
                     <td className="font-medium border border-slate-300 px-2 py-2">
                       Tercapai(%)
@@ -310,8 +310,7 @@ const DetailTargetList = ({ list, salesId }) => {
 
   function saveEditedData() {
     const formData = { bulan, targetbln, tercapaii };
-    //    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
-    mutationEdit.mutate({ ...formData });
+    mutationEdit.mutate(formData);
   }
 
   function deleteSalesDetail(id) {
@@ -388,7 +387,7 @@ const DetailTargetList = ({ list, salesId }) => {
   );
 };
 
-const TrText = ({ id, title, desc, isEdit, onChange }) => {
+const TrText = ({ id, title, desc, isEdit, lastDesc, onChange }) => {
   return (
     <tr>
       <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
@@ -396,7 +395,9 @@ const TrText = ({ id, title, desc, isEdit, onChange }) => {
         {isEdit ? (
           <Input id={id} defaultValue={desc} onChange={onChange} />
         ) : (
-          <p>{desc}</p>
+          <p>
+            {desc} {lastDesc}
+          </p>
         )}
       </td>
     </tr>

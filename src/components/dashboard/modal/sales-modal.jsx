@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { salesSchema } from "@/schema/sales-schema";
-import { calcPercent } from "@/lib/utils";
+// import { calcPercent } from "@/lib/utils";
 import { FormInput } from "../form/form-input";
 import { FormSelect } from "../form/form-select";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,7 @@ export const SalesModal = ({ open, onClose }) => {
 
   function onSubmit(formData) {
     const { nik, tahun, target, tercapai, salesDetailDtoList } = formData;
-    const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
+    // const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const newSalesDetailDtoList = salesDetailDtoList.map((obj) => {
       return obj;
     });
@@ -77,7 +77,7 @@ export const SalesModal = ({ open, onClose }) => {
       tahun,
       target,
       tercapai,
-      tercapaipersen: tercapaipersen,
+      // tercapaipersen: tercapaipersen,
       salesDetailDtoList: newSalesDetailDtoList,
     };
     mutation.mutate(newFormData);
