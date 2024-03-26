@@ -35,9 +35,9 @@ export const FormSelect = ({ form, label, id, selectItems, placeholder }) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {selectItems.map((position, index) => (
-                <SelectItem key={index} value={position}>
-                  {position}
+              {selectItems.map((item, index) => (
+                <SelectItem key={index} value={item}>
+                  {item}
                 </SelectItem>
               ))}
             </SelectContent>

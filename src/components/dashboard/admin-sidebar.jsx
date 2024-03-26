@@ -20,7 +20,7 @@ const navigations = [
     icon: <ClipboardList />,
   },
   { title: "Karyawan", path: "/dashboard/karyawan", icon: <UsersRound /> },
-  // { title: "Rule", path: "/dashboard/rule", icon: <BookMarked /> },
+  { title: "Data Sales", path: "/dashboard/sales", icon: <UsersRound /> },
   {
     title: "Pertanyaan",
     path: "/dashboard/pertanyaan",
@@ -35,6 +35,7 @@ export const AdminSidebar = ({ onClose }) => {
   const adminPath = [
     "/dashboard/karyawan",
     "/dashboard/pertanyaan",
+    "/dashboard/sales",
     "/dashboard/users",
   ];
 

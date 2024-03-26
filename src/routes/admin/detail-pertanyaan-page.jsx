@@ -222,7 +222,6 @@ const DetailQuestionPage = () => {
                 <div className="flex gap-x-2">
                   {/* TODO: Improve this later ↓↓↓ */}
                   <Button type="submit" className="hidden"></Button>
-
                   <Button
                     type="button"
                     variant="sky"

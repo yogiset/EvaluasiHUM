@@ -1,18 +1,29 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { LayoutGrid, LineChart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { Chart } from "react-charts";
-import { chartsData } from "@/data/charts";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { defaultData } from "@/data/charts";
 import { Separator } from "@/components/ui/separator";
+import { Loading } from "@/components/dashboard/loading";
 
 const HomeDashboard = () => {
   const { role } = useAuth();
-  const datumColors = chartsData.map((e) => e.color);
-  const newChartsDatum = useMemo(() => chartsData, []);
+  const [datumColors, setDatumColors] = useState([]);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["get-chart-data"],
+    queryFn: async () => {
+      const { data } = await axios.get("http://localhost:8082/api/data");
+      setDatumColors(data.dataChart.map((e) => e.color));
+      return data;
+    },
+  });
 
   const primaryAxis = useMemo(
     () => ({
@@ -47,44 +58,61 @@ const HomeDashboard = () => {
             <h1 className="text-2xl font-medium">Hasil Evaluasi</h1>
           </div>
           <div className="w-full flex flex-col md:flex-row gap-4 pb-20">
-            <div className="w-full h-[300px] mt-2">
-              <Chart
-                options={{
-                  data: newChartsDatum,
-                  defaultColors: datumColors,
-                  primaryAxis,
-                  secondaryAxes,
-                }}
-              />
-            </div>
-            <ul className="space-y-1">
-              <li className="w-max text-sm font-medium">
-                Tanggal: {format(new Date(), "dd MMMM yyyy", { locale: id })}
-              </li>
-              <Separator />
-              {chartsData.map((e, index) => (
-                <li
-                  key={index}
-                  className="w-max flex items-center text-sm font-medium"
-                >
-                  <div
-                    style={{ backgroundColor: e.color }}
-                    className="w-3 h-3 rounded-full mr-2"
+            {isLoading ? (
+              <div className="w-full h-full py-20">
+                <Loading />
+              </div>
+            ) : error ? (
+              <div className="w-full h-full text-center py-20">
+                <h1 className="text-lg font-bold">Error!</h1>
+              </div>
+            ) : (
+              <>
+                <div className="w-full h-[300px] mt-2">
+                  {/* {data.dataChart.length} */}
+                  <Chart
+                    options={{
+                      data:
+                        data.dataChart.length !== 0
+                          ? data.dataChart
+                          : defaultData,
+                      defaultColors: datumColors,
+                      primaryAxis,
+                      secondaryAxes,
+                    }}
                   />
-                  {e.label}: {e.currentResult}
-                </li>
-              ))}
-              <Separator />
-              <li className="w-max text-sm font-medium">
-                Total karyawan: 1127 karyawan
-              </li>
-              <li className="w-max text-sm font-medium">
-                Total evaluasi: 1040 evaluasi
-              </li>
-              <li className="w-max text-sm font-medium">
-                Total user: 1083 user
-              </li>
-            </ul>
+                </div>
+                <ul className="space-y-1">
+                  <li className="w-max text-sm font-medium">
+                    Tanggal:{" "}
+                    {format(new Date(), "dd MMMM yyyy", { locale: id })}
+                  </li>
+                  <Separator />
+                  {data.dataChart.map((e, index) => (
+                    <li
+                      key={index}
+                      className="w-max flex items-center text-sm font-medium"
+                    >
+                      <div
+                        style={{ backgroundColor: e.color }}
+                        className="w-3 h-3 rounded-full mr-2"
+                      />
+                      {e.label}: {e.currentResult}
+                    </li>
+                  ))}
+                  <Separator />
+                  <li className="w-max text-sm font-medium">
+                    Total karyawan: {data.totalKaryawan} karyawan
+                  </li>
+                  <li className="w-max text-sm font-medium">
+                    Total evaluasi: {data.totalEvaluasi} evaluasi
+                  </li>
+                  <li className="w-max text-sm font-medium">
+                    Total user: {data.totalUser} user
+                  </li>
+                </ul>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -95,6 +123,7 @@ const HomeDashboard = () => {
 const BoardList = ({ role }) => {
   const allBoards = [
     { title: "Test Evaluasi", path: "/evaluasi/user-form", bg: "bg-black-400" },
+    { title: "Data Sales", path: "/dashboard/sales", bg: "bg-blue-400" },
     { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
     { title: "Karyawan", path: "/dashboard/karyawan", bg: "bg-sky-500" },
     { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },
@@ -103,7 +132,10 @@ const BoardList = ({ role }) => {
   const boards =
     role !== "ADMIN"
       ? allBoards.filter(
-          (board) => board.title !== "Karyawan" && board.title !== "Pertanyaan"
+          (board) =>
+            board.title !== "Karyawan" &&
+            board.title !== "Pertanyaan" &&
+            board.title !== "Data Sales"
         )
       : allBoards;
 
