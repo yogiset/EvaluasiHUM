@@ -69,8 +69,6 @@ export const SalesModal = ({ open, onClose }) => {
     const { nik, tahun, target, tercapai, salesDetailDtoList } = formData;
     const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const newSalesDetailDtoList = salesDetailDtoList.map((obj) => {
-      obj.tercapaipersenn =
-        calcPercent(obj.targetbln, obj.tercapaii).toString() + "%";
       return obj;
     });
 

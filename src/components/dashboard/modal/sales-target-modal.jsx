@@ -57,7 +57,6 @@ export const SalesTargetModal = ({ open, onClose, idsales }) => {
       bulan,
       targetbln: parseInt(targetbln),
       tercapaii: parseInt(tercapaii),
-      tercapaipersenn: calcPercent(targetbln, tercapaii).toString() + "%",
     };
 
     mutation.mutate(formData);

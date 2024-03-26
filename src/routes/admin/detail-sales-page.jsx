@@ -87,7 +87,6 @@ const DetailSalesPage = () => {
       tahun,
       salesDetailDtoList: salesDetails,
     };
-        const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const { success, data, error } = salesSchema.safeParse(formData);
 
     if (!success) {
@@ -156,14 +155,14 @@ const DetailSalesPage = () => {
                   <TrText
                     id="target"
                     title="Target"
-                    desc={data.target}
+                    desc={data.target + " Liter"}
                     isEdit={isEdit}
                     onChange={(e) => setTarget(parseInt(e.target.value))}
                   />
                   <TrText
                     id="tercapai"
                     title="Tercapai"
-                    desc={data.tercapai}
+                    desc={data.tercapai + " Liter"}
                     onChange={(e) => setTercapai(parseInt(e.target.value))}
                   />
                   <tr>
@@ -311,8 +310,8 @@ const DetailTargetList = ({ list, salesId }) => {
 
   function saveEditedData() {
     const formData = { bulan, targetbln, tercapaii };
-    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
-    mutationEdit.mutate({ ...formData, tercapaipersenn });
+    //    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
+    mutationEdit.mutate({ ...formData });
   }
 
   function deleteSalesDetail(id) {
