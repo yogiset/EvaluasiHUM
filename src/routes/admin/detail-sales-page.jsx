@@ -35,6 +35,7 @@ const DetailSalesPage = () => {
   const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
   const [target, setTarget] = useState(0);
+  const [total, setTotal] = useState(0);
   const [tercapai, setTercapai] = useState(0);
   const [tahun, setTahun] = useState("");
   const [salesDetails, setSalesDetails] = useState([]);
@@ -86,7 +87,7 @@ const DetailSalesPage = () => {
       tahun,
       salesDetailDtoList: salesDetails,
     };
-    const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
+        const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const { success, data, error } = salesSchema.safeParse(formData);
 
     if (!success) {
@@ -163,7 +164,6 @@ const DetailSalesPage = () => {
                     id="tercapai"
                     title="Tercapai"
                     desc={data.tercapai}
-                    isEdit={isEdit}
                     onChange={(e) => setTercapai(parseInt(e.target.value))}
                   />
                   <tr>
@@ -331,7 +331,7 @@ const DetailTargetList = ({ list, salesId }) => {
       <TdInput
         id={`targetbln${list.id}`}
         value={list.targetbln}
-        desc="barrel"
+        desc="liter"
         type="number"
         isEdit={listEdit}
         onChange={(e) => setTargetbln(parseInt(e.target.value))}
@@ -339,7 +339,7 @@ const DetailTargetList = ({ list, salesId }) => {
       <TdInput
         id={`tercapaii${list.id}`}
         value={list.tercapaii}
-        desc="barrel"
+        desc="liter"
         type="number"
         isEdit={listEdit}
         onChange={(e) => setTercapaii(parseInt(e.target.value))}
