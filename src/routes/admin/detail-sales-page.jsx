@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info, Trash2, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -40,6 +41,7 @@ const DetailSalesPage = () => {
   const [tercapaipersen, setTercapaipersen] = useState(0);
   const [tahun, setTahun] = useState("");
   const [salesDetails, setSalesDetails] = useState([]);
+  const { role } = useAuth();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-sales", salesId],
@@ -221,6 +223,7 @@ const DetailSalesPage = () => {
                   </>
                 ) : (
                   <>
+                  {role !== "ADMIN" ? null : (
                     <Button
                       size="sm"
                       variant="sky"
@@ -229,6 +232,7 @@ const DetailSalesPage = () => {
                       <PencilLine className="mr-2 w-5 h-5" />
                       Edit
                     </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="outline"
@@ -246,10 +250,11 @@ const DetailSalesPage = () => {
                 <h1 className="text-lg md:text-xl font-semibold">
                   Detail Target
                 </h1>
+                {role !== "ADMIN" ? null : (
                 <Button size="sm" onClick={() => setOpen(true)}>
                   <Plus className="w-4 h-4 mr-1" />
                   Tambah Target
-                </Button>
+                </Button>)}
               </div>
               <table className="w-full border-collapse bg-sky-50 border border-slate-400">
                 <thead className="w-full border-collapse bg-sky-200 border border-slate-400">
@@ -258,7 +263,7 @@ const DetailSalesPage = () => {
                     <th className="border border-slate-400 p-2">Target</th>
                     <th className="border border-slate-400 p-2">Tercapai</th>
                     <th className="border border-slate-400 p-2">Tercapai(%)</th>
-                    <th className="w-1/6 border border-slate-400 p-2">Opsi</th>
+                    {role !== "ADMIN" ? null : (<th className="w-1/6 border border-slate-400 p-2">Opsi</th>)}
                   </tr>
                 </thead>
                 <tbody>
@@ -285,6 +290,7 @@ const DetailTargetList = ({ list, salesId }) => {
   const [bulan, setBulan] = useState(list.bulan);
   const [targetbln, setTargetbln] = useState(list.targetbln);
   const [tercapaii, setTercapaii] = useState(list.tercapaii);
+  const { role } = useAuth();
 
   // edit sales detail dto list by id
   const mutationEdit = useMutation({
@@ -379,10 +385,13 @@ const DetailTargetList = ({ list, salesId }) => {
             </>
           ) : (
             <>
+            {role !== "ADMIN" ? null : (
               <Button variant="sky" size="sm" onClick={() => setListEdit(true)}>
                 <PencilLine className="sm:mr-2 w-4 h-4" />
                 <p className="hidden sm:inline">Edit</p>
-              </Button>
+              </Button>)}
+
+              {role !== "ADMIN" ? null : (
               <Button
                 type="button"
                 variant="destructive"
@@ -391,7 +400,7 @@ const DetailTargetList = ({ list, salesId }) => {
               >
                 <Trash2 className="w-4 h-4 sm:mr-2" />
                 <p className="hidden sm:inline">Hapus</p>
-              </Button>
+              </Button>)}
             </>
           )}
         </div>

@@ -167,20 +167,21 @@ const EvaluationCard = ({ data }) => {
           <Info className="mr-0 md:mr-2 w-5 h-5" />
           <span className="hidden md:inline">Detail</span>
         </Button>
-        {role !== "ADMIN" ? null : (<Button
-          variant="destructive"
-          onClick={deleteEvaluation}
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? (
-            <Loader2 className="mr-0 md:mr-2 w-5 h-5 animate-spin" />
-          ) : (
-            <Trash2 className="mr-0 md:mr-2 w-5 h-5" />
-          )}
-          
+        {role !== "ADMIN" ? null : (
+          <Button
+            variant="destructive"
+            onClick={deleteEvaluation}
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? (
+              <Loader2 className="mr-0 md:mr-2 w-5 h-5 animate-spin" />
+            ) : (
+              <Trash2 className="mr-0 md:mr-2 w-5 h-5" />
+            )}
+
             <span className="hidden md:inline">Hapus</span>
-          
-        </Button>)}
+          </Button>
+        )}
       </div>
     </div>
   );

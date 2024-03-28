@@ -134,8 +134,7 @@ const BoardList = ({ role }) => {
       ? allBoards.filter(
           (board) =>
             board.title !== "Karyawan" &&
-            board.title !== "Pertanyaan" &&
-            board.title !== "Data Sales"
+            board.title !== "Pertanyaan"
         )
       : allBoards;
 

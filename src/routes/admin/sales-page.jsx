@@ -19,10 +19,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const SalesPage = () => {
-  const { role } = useAuth();
+  // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
+
 
   const {
     status,
@@ -44,7 +45,7 @@ const SalesPage = () => {
   });
 
   async function fetchAllSales(pageParam) {
-    if (role !== "ADMIN") return [];
+    // if (role !== "ADMIN") return [];
     const response = await axios.get("http://localhost:8082/sales/showall", {
       params: {
         page: pageParam,
@@ -75,9 +76,9 @@ const SalesPage = () => {
     alert(searchValue);
   }
 
-  if (role !== "ADMIN") {
-    return <ForbiddenPage />;
-  }
+  // if (role !== "ADMIN") {
+  //   return <ForbiddenPage />;
+  // }
 
   if (error) {
     return (
@@ -141,6 +142,7 @@ const SalesCard = ({ data }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { newModal } = useConfirmModal();
+  const { role } = useAuth();
 
   const mutation = useMutation({
     mutationFn: (id) => {
@@ -194,6 +196,7 @@ const SalesCard = ({ data }) => {
           <Info className="mr-0 md:mr-2 w-5 h-5" />
           <span className="hidden md:inline">Info</span>
         </Button>
+        {role !== "ADMIN" ? null : (
         <Button
           variant="destructive"
           onClick={deleteSales}
@@ -205,7 +208,7 @@ const SalesCard = ({ data }) => {
             <Trash2 className="mr-0 md:mr-2 w-5 h-5" />
           )}
           <span className="hidden md:inline">Hapus</span>
-        </Button>
+        </Button>)}
       </div>
     </div>
   );
