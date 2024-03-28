@@ -69,7 +69,7 @@ export const SalesModal = ({ open, onClose }) => {
   function onSubmit(formData) {
     const { nik, tahun, target, tercapai, keterangan, salesDetailDtoList } =
       formData;
-    const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
+    // const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const newSalesDetailDtoList = salesDetailDtoList.map((obj) => {
       return obj;
     });
@@ -79,7 +79,7 @@ export const SalesModal = ({ open, onClose }) => {
       tahun,
       target,
       tercapai,
-      tercapaipersen: tercapaipersen,
+      // tercapaipersen,
       keterangan,
       salesDetailDtoList: newSalesDetailDtoList,
     };
@@ -169,10 +169,3 @@ export const SalesModal = ({ open, onClose }) => {
     </Dialog>
   );
 };
-
-
-
-
-
-
-
