@@ -35,7 +35,7 @@ export const AdminSidebar = ({ onClose }) => {
   const adminPath = [
     "/dashboard/karyawan",
     "/dashboard/pertanyaan",
-    "/dashboard/sales",
+    // "/dashboard/sales",
     "/dashboard/users",
   ];
 
