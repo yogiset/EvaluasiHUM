@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
+// import { calcPercent } from "@/lib/utils";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
 import { SalesTargetModal } from "@/components/dashboard/modal/sales-target-modal";
@@ -34,7 +35,9 @@ const DetailSalesPage = () => {
   const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
   const [target, setTarget] = useState(0);
+  const [keterangan, setKeterangan] = useState(0);
   const [tercapai, setTercapai] = useState(0);
+  const [tercapaipersen, setTercapaipersen] = useState(0);
   const [tahun, setTahun] = useState("");
   const [salesDetails, setSalesDetails] = useState([]);
 
@@ -53,6 +56,8 @@ const DetailSalesPage = () => {
       setTarget(response.data.target);
       setTahun(response.data.tahun);
       setTercapai(response.data.tercapai);
+      setTercapaipersen(response.data.tercapaipersen);
+      setKeterangan(response.data.keterangan);
       setSalesDetails(response.data.salesDetailDtoList);
       return response.data;
     }
@@ -79,9 +84,12 @@ const DetailSalesPage = () => {
   function saveEditedData() {
     const formData = {
       nik,
+      // nama,
       target,
       tercapai,
       tahun,
+      tercapaipersen,
+      keterangan,
       salesDetailDtoList: salesDetails,
     };
     const { success, data, error } = salesSchema.safeParse(formData);
@@ -93,7 +101,7 @@ const DetailSalesPage = () => {
     }
 
     setErrorValidation(false);
-    mutation.mutate(data);
+    mutation.mutate({ ...data, tercapaipersen });
   }
 
   function onClose() {
@@ -152,19 +160,16 @@ const DetailSalesPage = () => {
                   <TrText
                     id="target"
                     title="Target"
-                    desc={data.target}
-                    lastDesc="Liter"
+                    desc={data.target + " Liter"}
                     isEdit={isEdit}
                     onChange={(e) => setTarget(parseInt(e.target.value))}
                   />
-                  <tr>
-                    <td className="font-medium border border-slate-300 px-2 py-2">
-                      Tercapai
-                    </td>
-                    <td className="border border-slate-300 px-2 py-2">
-                      {data.tercapai} Liter
-                    </td>
-                  </tr>
+                  <TrText
+                    id="tercapai"
+                    title="Tercapai"
+                    desc={data.tercapai + " Liter"}
+                    onChange={(e) => setTercapai(parseInt(e.target.value))}
+                  />
                   <tr>
                     <td className="font-medium border border-slate-300 px-2 py-2">
                       Tercapai(%)
@@ -181,6 +186,13 @@ const DetailSalesPage = () => {
                     selectItems={exampleTahun}
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
+                  />
+                  <TrText
+                    id="keterangan"
+                    title="Keterangan"
+                    desc={data.keterangan}
+                    isEdit={isEdit}
+                    onChange={(e) => setKeterangan(e.target.value)}
                   />
                 </tbody>
               </table>
@@ -310,7 +322,8 @@ const DetailTargetList = ({ list, salesId }) => {
 
   function saveEditedData() {
     const formData = { bulan, targetbln, tercapaii };
-    mutationEdit.mutate(formData);
+    //    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
+    mutationEdit.mutate({ ...formData });
   }
 
   function deleteSalesDetail(id) {
@@ -387,7 +400,7 @@ const DetailTargetList = ({ list, salesId }) => {
   );
 };
 
-const TrText = ({ id, title, desc, isEdit, lastDesc, onChange }) => {
+const TrText = ({ id, title, desc, isEdit, onChange }) => {
   return (
     <tr>
       <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
@@ -395,9 +408,7 @@ const TrText = ({ id, title, desc, isEdit, lastDesc, onChange }) => {
         {isEdit ? (
           <Input id={id} defaultValue={desc} onChange={onChange} />
         ) : (
-          <p>
-            {desc} {lastDesc}
-          </p>
+          <p>{desc}</p>
         )}
       </td>
     </tr>

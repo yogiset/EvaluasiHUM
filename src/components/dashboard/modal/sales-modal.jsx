@@ -31,6 +31,7 @@ export const SalesModal = ({ open, onClose }) => {
       nik: "",
       target: 0,
       tercapai: 0,
+      keterangan: "",
       salesDetailDtoList: [],
     },
   });
@@ -66,8 +67,9 @@ export const SalesModal = ({ open, onClose }) => {
   }
 
   function onSubmit(formData) {
-    const { nik, tahun, target, tercapai, salesDetailDtoList } = formData;
-    // const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
+    const { nik, tahun, target, tercapai, keterangan, salesDetailDtoList } =
+      formData;
+    const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const newSalesDetailDtoList = salesDetailDtoList.map((obj) => {
       return obj;
     });
@@ -77,7 +79,8 @@ export const SalesModal = ({ open, onClose }) => {
       tahun,
       target,
       tercapai,
-      // tercapaipersen: tercapaipersen,
+      tercapaipersen: tercapaipersen,
+      keterangan,
       salesDetailDtoList: newSalesDetailDtoList,
     };
     mutation.mutate(newFormData);
@@ -114,6 +117,13 @@ export const SalesModal = ({ open, onClose }) => {
               id="tahun"
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
+            />
+            <FormInput
+              form={salesForm}
+              label="Keterangan"
+              id="keterangan"
+              placeholder="Masukkan Keterangan"
+              type="text"
             />
 
             {/* Additional form fields for sales detail */}
@@ -159,3 +169,10 @@ export const SalesModal = ({ open, onClose }) => {
     </Dialog>
   );
 };
+
+
+
+
+
+
+
