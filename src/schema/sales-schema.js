@@ -16,6 +16,9 @@ export const salesSchema = z.object({
       required_error: "Please fill this field!",
     })
     .nonnegative({ message: "Target must be a positive value." }),
+    keterangan: z
+    .string({ required_error: "Keterangan is required!" })
+    .min(4, { message: "Keterangan must be at least 4 characters." }),  
   salesDetailDtoList: z
     .object({
       id: z.coerce.number().optional(),
