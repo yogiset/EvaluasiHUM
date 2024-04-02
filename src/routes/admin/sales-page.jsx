@@ -184,6 +184,10 @@ const SalesCard = ({ data }) => {
           </h1>
           <Separator orientation="vertical" />
           <h1 className="text-sm font-medium text-neutral-600">
+            Tercapai%: {data.tercapaipersen} %
+          </h1>
+          <Separator orientation="vertical" />
+          <h1 className="text-sm font-medium text-neutral-600">
             Tahun: {data.tahun}
           </h1>
         </div>

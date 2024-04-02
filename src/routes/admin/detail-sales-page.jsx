@@ -177,7 +177,7 @@ const DetailSalesPage = () => {
                       Tercapai(%)
                     </td>
                     <td className="border border-slate-300 px-2 py-2">
-                      {data.tercapaipersen}
+                      {data.tercapaipersen + " % "}
                     </td>
                   </tr>
                   <TrSelect
