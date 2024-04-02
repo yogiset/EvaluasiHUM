@@ -84,6 +84,12 @@ export const exampleTahun = [
   "2055",
 ];
 
+export const exampleKeterangan = [
+  "Achivement Premium ",
+  "Achivement Gadus ",
+  "Achivement Total Semua",
+];
+
 export const exampleRole = ["ADMIN", "USER"];
 
 export const examplePersen = Array.from({ length: 100 }, (_, index) => `${index + 1}%`);

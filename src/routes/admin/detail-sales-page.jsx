@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun, exampleBulan } from "@/data/userData";
+import { exampleTahun, exampleBulan, exampleKeterangan } from "@/data/userData";
 
 const DetailSalesPage = () => {
   const navigate = useNavigate();
@@ -189,11 +189,13 @@ const DetailSalesPage = () => {
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
                   />
-                  <TrText
+                  <TrSelect
                     id="keterangan"
                     title="Keterangan"
                     desc={data.keterangan}
                     isEdit={isEdit}
+                    selectItems={exampleKeterangan}
+                    placeholder={data.keterangan}
                     onChange={(e) => setKeterangan(e.target.value)}
                   />
                 </tbody>

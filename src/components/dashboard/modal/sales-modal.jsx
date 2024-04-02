@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun, exampleBulan } from "@/data/userData";
+import { exampleTahun, exampleBulan, exampleKeterangan } from "@/data/userData";
 import { Separator } from "@/components/ui/separator";
 
 export const SalesModal = ({ open, onClose }) => {
@@ -118,12 +118,12 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
-            <FormInput
+            <FormSelect
               form={salesForm}
               label="Keterangan"
               id="keterangan"
-              placeholder="Masukkan Keterangan"
-              type="text"
+              selectItems={exampleKeterangan}
+              placeholder="Pilih Keterangan"
             />
 
             {/* Additional form fields for sales detail */}
