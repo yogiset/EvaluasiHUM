@@ -31,9 +31,8 @@ export const exampleBulan = [
   "September",
   "Oktober",
   "November",
-  "Desember"
+  "Desember",
 ];
-
 
 export const exampleTahun = [
   "2010",
@@ -84,6 +83,15 @@ export const exampleTahun = [
   "2055",
 ];
 
+export const exampleKeterangan = [
+  "Achivement Premium ",
+  "Achivement Gadus ",
+  "Achivement Total Semua",
+];
+
 export const exampleRole = ["ADMIN", "USER"];
 
-export const examplePersen = Array.from({ length: 100 }, (_, index) => `${index + 1}%`);
+export const examplePersen = Array.from(
+  { length: 100 },
+  (_, index) => `${index + 1}%`
+);
