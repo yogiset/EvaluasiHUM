@@ -24,11 +24,6 @@ export const picosSchema = z.object({
       required_error: "Please fill this field!",
     })
     .nonnegative({ message: "Crosssellratio Persen must be a positive value." }),
-  penetration: z.coerce
-    .number({
-      required_error: "Please fill this field!",
-    })
-    .nonnegative({ message: "Penetration must be a positive value." }),
   premiumcontribution: z.coerce
     .number({
       required_error: "Please fill this field!",
