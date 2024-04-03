@@ -127,6 +127,8 @@ const BoardList = ({ role }) => {
     { title: "Evaluasi", path: "/dashboard/evaluasi", bg: "bg-rose-400" },
     { title: "Karyawan", path: "/dashboard/karyawan", bg: "bg-sky-500" },
     { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },
+    { title: "Picos", path: "/dashboard/picos", bg: "bg-yellow-500" },
+    { title: "CPT", path: "/dashboard/cpt", bg: "bg-green-500" },
   ];
 
   const boards =
