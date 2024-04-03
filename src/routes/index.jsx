@@ -13,7 +13,11 @@ import DetailEvaluasiPage from "./admin/detail-evaluasi-page";
 import HomeDashboard from "./admin/home-page";
 import KaryawanPage from "./admin/karyawan-page";
 // import RulePage from "./admin/rule-page";
+import CptPage from "./admin/cpt-page";
 import SalesPage from "./admin/sales-page";
+import PicosPage from "./admin/picos-page";
+import DetailPicosPage from "./admin/detail-picos-page";
+import DetailCptPage from "./admin/detail-cpt-page";
 import DetailSalesPage from "./admin/detail-sales-page";
 import PertanyaanPage from "./admin/pertanyaan-page";
 import UserPage from "./admin/user-page";
@@ -81,6 +85,22 @@ export const router = createBrowserRouter([
       {
         path: "sales",
         element: <SalesPage />,
+      },
+      {
+        path: "picos",
+        element: <PicosPage />,
+      },
+      {
+        path: "picos/:picosId",
+        element: <DetailPicosPage />,
+      },
+      {
+        path: "cpt",
+        element: <CptPage />,
+      },
+      {
+        path: "cpt/:cptId",
+        element: <DetailCptPage />,
       },
       {
         path: "sales/:salesId",

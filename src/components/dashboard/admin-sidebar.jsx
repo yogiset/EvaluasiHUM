@@ -19,6 +19,16 @@ const navigations = [
     path: "/dashboard/evaluasi",
     icon: <ClipboardList />,
   },
+  {
+    title: "Picos",
+    path: "/dashboard/picos",
+    icon: <ClipboardList />,
+  },
+  {
+    title: "CPT",
+    path: "/dashboard/cpt",
+    icon: <ClipboardList />,
+  },
   { title: "Karyawan", path: "/dashboard/karyawan", icon: <UsersRound /> },
   { title: "Data Sales", path: "/dashboard/sales", icon: <UsersRound /> },
   {
