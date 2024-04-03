@@ -98,6 +98,7 @@ const DetailCptPage = () => {
     }
 
     setErrorValidation(false);
+    console.log(data);
     mutation.mutate(data);
   }
 

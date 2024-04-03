@@ -16,22 +16,24 @@ export const cptSchema = z.object({
       required_error: "Please fill this field!",
     })
     .nonnegative({ message: "Coverage must be a positive value." }),
-  coveragepersen: z.coerce
-    .number({
-      required_error: "Please fill this field!",
-    })
-    .nonnegative({ message: "Coverage Persen must be a positive value." }),
+  coveragepersen: z.optional(
+    z.coerce
+      .number({
+        required_error: "Please fill this field!",
+      })
+      .nonnegative({ message: "Coverage Persen must be a positive value." })
+  ),
   penetration: z.coerce
     .number({
       required_error: "Please fill this field!",
     })
     .nonnegative({ message: "Penetration must be a positive value." }),
-  throughput: z
+  throughput: z.coerce
     .number({ required_error: "Throughput is required!" })
-    .nonnegative({ message: "Hitrate must be a positive value." }), 
+    .nonnegative({ message: "Hitrate must be a positive value." }),
   hitrate: z.coerce
     .number({
       required_error: "Please fill this field!",
     })
-    .nonnegative({ message: "Hitrate must be a positive value." }), 
+    .nonnegative({ message: "Hitrate must be a positive value." }),
 });
