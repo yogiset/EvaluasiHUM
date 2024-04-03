@@ -27,8 +27,8 @@ export const cptSchema = z.object({
     })
     .nonnegative({ message: "Penetration must be a positive value." }),
   throughput: z
-    .string({ required_error: "Throughput is required!" })
-    .min(1, { message: "Throughput must be at least 1 characters." }),
+    .number({ required_error: "Throughput is required!" })
+    .nonnegative({ message: "Hitrate must be a positive value." }), 
   hitrate: z.coerce
     .number({
       required_error: "Please fill this field!",
