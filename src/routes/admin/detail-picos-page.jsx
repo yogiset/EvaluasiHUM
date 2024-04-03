@@ -241,7 +241,7 @@ const TrNumber = ({ id, title, desc, isEdit, onChange }) => {
       <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
       <td className="border border-slate-300 px-2 py-2">
         {isEdit ? (
-          <input
+          <Input
             type="number"
             id={id}
             defaultValue={desc}
