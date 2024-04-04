@@ -187,7 +187,7 @@ const DetailCptPage = () => {
                     isEdit={isEdit}
                     onChange={(e) => setThroughput(e.target.value)}
                   />
-                  <TrText
+                  <TrNumber
                     id="hitrate"
                     title="Hitrate"
                     desc={data.hitrate + " % "}
