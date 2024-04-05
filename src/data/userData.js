@@ -89,6 +89,26 @@ export const exampleKeterangan = [
   "Achivement Total Semua",
 ];
 
+export const exampleKriteria = [
+  "Achivement Premium ",
+  "Achivement Gadus ",
+  "Achivement Total Semua",
+  "Picos",
+  "CPT",
+];
+
+export const exampleNilai = ["5", "4", "3", "2", "1"];
+
+export const exampleHimpunan = ["86-100", "76-85", "66-75", "51-65", "0-50"];
+
+export const exampleKeterangann = [
+  "Sangat Baik",
+  "Baik",
+  "Cukup",
+  "Kurang Baik",
+  "Sangat Buruk",
+];
+
 export const exampleRole = ["ADMIN", "USER"];
 
 export const examplePersen = Array.from(
