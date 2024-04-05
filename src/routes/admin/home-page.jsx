@@ -129,14 +129,17 @@ const BoardList = ({ role }) => {
     { title: "Pertanyaan", path: "/dashboard/pertanyaan", bg: "bg-orange-500" },
     { title: "Picos", path: "/dashboard/picos", bg: "bg-yellow-500" },
     { title: "CPT", path: "/dashboard/cpt", bg: "bg-green-500" },
+    {
+      title: "HimpunanKriteria",
+      path: "/dashboard/himpunankriteria",
+      bg: "bg-violet-500",
+    },
   ];
 
   const boards =
     role !== "ADMIN"
       ? allBoards.filter(
-          (board) =>
-            board.title !== "Karyawan" &&
-            board.title !== "Pertanyaan"
+          (board) => board.title !== "Karyawan" && board.title !== "Pertanyaan"
         )
       : allBoards;
 
