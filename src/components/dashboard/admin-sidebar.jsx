@@ -29,6 +29,11 @@ const navigations = [
     path: "/dashboard/cpt",
     icon: <ClipboardList />,
   },
+  {
+    title: "HimpunanKriteria",
+    path: "/dashboard/himpunankriteria",
+    icon: <ClipboardList />,
+  },
   { title: "Karyawan", path: "/dashboard/karyawan", icon: <UsersRound /> },
   { title: "Data Sales", path: "/dashboard/sales", icon: <UsersRound /> },
   {
