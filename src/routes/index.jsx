@@ -6,6 +6,7 @@ import ErrorPage from "@/components/error-page";
 import Login from "./admin/login-page";
 import Root from "./user/root";
 import UsersForm from "./user/users-form";
+import HimpunanKriteriaPage from "./admin/himpunan-kriteria-page";
 import EvaluationPage from "./user/evaluations";
 import ResultsPage from "./user/results-page";
 import EvaluasiPage from "./admin/evaluasi-page";
@@ -16,6 +17,7 @@ import KaryawanPage from "./admin/karyawan-page";
 import CptPage from "./admin/cpt-page";
 import SalesPage from "./admin/sales-page";
 import PicosPage from "./admin/picos-page";
+import DetailHimpunanKriteriaPage from "./admin/detail-himpunan-kriteria";
 import DetailPicosPage from "./admin/detail-picos-page";
 import DetailCptPage from "./admin/detail-cpt-page";
 import DetailSalesPage from "./admin/detail-sales-page";
@@ -93,6 +95,14 @@ export const router = createBrowserRouter([
       {
         path: "picos/:picosId",
         element: <DetailPicosPage />,
+      },
+      {
+        path: "himpunankriteria",
+        element: <HimpunanKriteriaPage />,
+      },
+      {
+        path: "himpunankriteria/:kriteriaId",
+        element: <DetailHimpunanKriteriaPage />,
       },
       {
         path: "cpt",
