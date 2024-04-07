@@ -8,7 +8,6 @@ import { himpunankriteriaSchema } from "@/schema/himpunan-kriteria-schema";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectTrigger,
@@ -18,7 +17,12 @@ import {
 } from "@/components/ui/select";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleKriteria, exampleKeterangann, exampleNilai, exampleHimpunan } from "@/data/userData";
+import {
+  exampleKriteria,
+  exampleKeterangann,
+  exampleNilai,
+  exampleHimpunan,
+} from "@/data/userData";
 
 const DetailHimpunanKriteriaPage = () => {
   const navigate = useNavigate();
@@ -29,8 +33,8 @@ const DetailHimpunanKriteriaPage = () => {
   const [errorData, setErrorData] = useState([]);
   const [errorValidation, setErrorValidation] = useState(false);
 
-  const [nmkriteria, setNmkriteria] = useState("");
-  const [nmhimpunan, setNmHimpunan] = useState("");
+  const [nmKriteria, setNmKriteria] = useState("");
+  const [nmHimpunan, setNmHimpunan] = useState("");
   const [nilai, setNilai] = useState("");
   const [keterangan, setKeterangan] = useState("");
 
@@ -45,7 +49,7 @@ const DetailHimpunanKriteriaPage = () => {
     );
 
     if (response.status === 200) {
-      setNmkriteria(response.data.nmkriteria);
+      setNmKriteria(response.data.nmkriteria);
       setNmHimpunan(response.data.nmhimpunan);
       setNilai(response.data.nilai);
       setKeterangan(response.data.keterangan);
@@ -74,11 +78,12 @@ const DetailHimpunanKriteriaPage = () => {
 
   function saveEditedData() {
     const formData = {
-      nmkriteria,
-      nmhimpunan,
+      nmkriteria: nmKriteria,
+      nmhimpunan: nmHimpunan,
       nilai,
       keterangan,
     };
+
     const { success, data, error } = himpunankriteriaSchema.safeParse(formData);
 
     if (!success) {
@@ -130,23 +135,25 @@ const DetailHimpunanKriteriaPage = () => {
                     isEdit={isEdit}
                     selectItems={exampleKriteria}
                     placeholder={data.nmkriteria}
-                    onValueChange={(e) => setNmkriteria(e)}
+                    onValueChange={(e) => setNmKriteria(e)}
                   />
-                  <TrText
-                    id="nmhimpunan"
+                  <TrSelect
+                    id="nmHimpunan"
                     title="Nama Himpunan"
                     desc={data.nmhimpunan}
-                    selectItems={exampleHimpunan}
                     isEdit={isEdit}
+                    selectItems={exampleHimpunan}
                     placeholder={data.nmhimpunan}
-                    onChange={(e) => setNmHimpunan(e.target.value)}
+                    onValueChange={(e) => setNmHimpunan(e)}
                   />
-                  <TrNumber
+                  <TrSelect
                     id="nilai"
                     title="Nilai"
                     desc={data.nilai}
+                    selectItems={exampleNilai}
+                    placeholder={data.nilai}
                     isEdit={isEdit}
-                    onChange={(e) => setNilai(e.target.value)}
+                    onValueChange={(e) => setNilai(e)}
                   />
                   <TrSelect
                     id="keterangan"
@@ -155,7 +162,7 @@ const DetailHimpunanKriteriaPage = () => {
                     selectItems={exampleKeterangann}
                     placeholder={data.keterangan}
                     isEdit={isEdit}
-                    onChange={(e) => setKeterangan(e.target.value)}
+                    onValueChange={(e) => setKeterangan(e)}
                   />
                 </tbody>
               </table>
@@ -200,41 +207,6 @@ const DetailHimpunanKriteriaPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-const TrNumber = ({ id, title, desc, isEdit, onChange }) => {
-  return (
-    <tr>
-      <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
-      <td className="border border-slate-300 px-2 py-2">
-        {isEdit ? (
-          <Input
-            type="number"
-            id={id}
-            defaultValue={desc}
-            onChange={onChange}
-          />
-        ) : (
-          <p>{desc}</p>
-        )}
-      </td>
-    </tr>
-  );
-};
-
-const TrText = ({ id, title, desc, isEdit, onChange }) => {
-  return (
-    <tr>
-      <td className="font-medium border border-slate-300 px-2 py-2">{title}</td>
-      <td className="border border-slate-300 px-2 py-2">
-        {isEdit ? (
-          <Input id={id} defaultValue={desc} onChange={onChange} />
-        ) : (
-          <p>{desc}</p>
-        )}
-      </td>
-    </tr>
   );
 };
 

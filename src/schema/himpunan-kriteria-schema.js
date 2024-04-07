@@ -17,7 +17,7 @@ export const himpunankriteriaSchema = z.object({
     .number({
       required_error: "Please fill this field!",
     })
-    .nonnegative({ message: "Nilai must be a positive value." }),  
+    .nonnegative({ message: "Nilai must be a positive value." }),
   keterangan: z
     .string({
       required_error: "Keterangan himpunan is required!",
