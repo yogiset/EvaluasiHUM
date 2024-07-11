@@ -37,8 +37,8 @@ const SalesPage = () => {
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
-      lastPage.totalPages === lastPageParam.length ||
-      lastPage.content.length === 0
+        lastPage.totalPages === lastPageParam.length ||
+        lastPage.content.length === 0
         ? undefined
         : lastPageParam.length + 1,
   });
@@ -179,8 +179,8 @@ const SalesCard = ({ data }) => {
         </Link>
         <div className="flex gap-x-2 h-[20px]">
           <h1 className="text-sm font-medium text-neutral-600">
-            Target: {data.target} Liter
-          </h1>
+            Target: {data.target}
+            {data.keterangan !== 'Coverage' && ' Liter'}  </h1>
           <Separator orientation="vertical" />
           <h1 className="text-sm font-medium text-neutral-600">
             Tercapai%: {data.tercapaipersen} %
@@ -188,6 +188,9 @@ const SalesCard = ({ data }) => {
           <Separator orientation="vertical" />
           <h1 className="text-sm font-medium text-neutral-600">
             Tahun: {data.tahun}
+          </h1>
+          <h1 className="text-sm font-medium text-neutral-600">
+            Keterangan: {data.keterangan}
           </h1>
         </div>
       </div>

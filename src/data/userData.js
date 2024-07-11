@@ -87,6 +87,7 @@ export const exampleKeterangan = [
   "Achivement Premium ",
   "Achivement Gadus ",
   "Achivement Total Semua",
+  "Coverage",
 ];
 
 export const exampleRole = ["ADMIN", "USER"];
