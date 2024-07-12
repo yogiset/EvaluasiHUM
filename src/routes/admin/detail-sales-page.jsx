@@ -162,14 +162,15 @@ const DetailSalesPage = () => {
                   <TrText
                     id="target"
                     title="Target"
-                    desc={data.target + " Liter"}
+                    desc={data.target + (data.keterangan !== 'Coverage' ? " Liter" : "")}
                     isEdit={isEdit}
                     onChange={(e) => setTarget(parseInt(e.target.value))}
                   />
                   <TrText
                     id="tercapai"
                     title="Tercapai"
-                    desc={data.tercapai + " Liter"}
+                    desc={data.tercapai + (data.keterangan !== 'Coverage' ? " Liter" : "")}
+                    isEdit={isEdit}
                     onChange={(e) => setTercapai(parseInt(e.target.value))}
                   />
                   <tr>
@@ -355,7 +356,7 @@ const DetailTargetList = ({ list, salesId }) => {
       <TdInput
         id={`targetbln${list.id}`}
         value={list.targetbln}
-        desc="liter"
+        desc=""
         type="number"
         isEdit={listEdit}
         onChange={(e) => setTargetbln(parseInt(e.target.value))}
@@ -363,7 +364,7 @@ const DetailTargetList = ({ list, salesId }) => {
       <TdInput
         id={`tercapaii${list.id}`}
         value={list.tercapaii}
-        desc="liter"
+        desc=""
         type="number"
         isEdit={listEdit}
         onChange={(e) => setTercapaii(parseInt(e.target.value))}
