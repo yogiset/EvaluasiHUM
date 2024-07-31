@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
 import { himpunankriteriaSchema } from "@/schema/himpunan-kriteria-schema";
 import { Loading } from "@/components/dashboard/loading";
@@ -24,6 +23,7 @@ import {
   exampleNilai,
   exampleHimpunan,
 } from "@/data/userData";
+import { getApi, putApi } from "@/lib/fetcher";
 
 const DetailHimpunanKriteriaPage = () => {
   const navigate = useNavigate();
@@ -46,26 +46,20 @@ const DetailHimpunanKriteriaPage = () => {
   });
 
   async function fetchHimpunankriteria() {
-    const response = await axios.get(
-      `http://localhost:8082/kriteria/findbyid/${kriteriaId}`
-    );
+    const response = await getApi(`/kriteria/findbyid/${kriteriaId}`);
 
-    if (response.status === 200) {
-      setNmKriteria(response.data.nmkriteria);
-      setNmHimpunan(response.data.nmhimpunan);
-      setNilai(response.data.nilai);
-      setKeterangan(response.data.keterangan);
-      return response.data;
+    if (response) {
+      setNmKriteria(response.nmkriteria);
+      setNmHimpunan(response.nmhimpunan);
+      setNilai(response.nilai);
+      setKeterangan(response.keterangan);
+      return response;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: (formData) => {
-      return axios.put(
-        `http://localhost:8082/kriteria/edithim/${kriteriaId}`,
-        formData
-      );
-    },
+    mutationFn: (formData) =>
+      putApi(`/kriteria/edithim/${kriteriaId}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get-himpunan-kriteria", kriteriaId],
@@ -73,8 +67,8 @@ const DetailHimpunanKriteriaPage = () => {
       toast.success("Updated successfully!");
       setIsEdit(false);
     },
-    onError: () => {
-      toast.error("Failed to update!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
@@ -191,12 +185,12 @@ const DetailHimpunanKriteriaPage = () => {
                   </>
                 ) : (
                   <>
-                  {role !== "ADMIN" ? null : (
-                    <Button variant="sky" onClick={() => setIsEdit(true)}>
-                      <PencilLine className="mr-2 w-5 h-5" />
-                      Edit
-                    </Button>
-                  )}
+                    {role !== "ADMIN" ? null : (
+                      <Button variant="sky" onClick={() => setIsEdit(true)}>
+                        <PencilLine className="mr-2 w-5 h-5" />
+                        Edit
+                      </Button>
+                    )}
 
                     <Button
                       variant="outline"

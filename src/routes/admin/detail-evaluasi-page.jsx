@@ -1,28 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { ChevronsRight, Info, Download } from "lucide-react";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { generatePdf } from "@/lib/generate-pdf";
 import { Loading } from "@/components/dashboard/loading";
 import { Button } from "@/components/ui/button";
+import { getApi } from "@/lib/fetcher";
 
 const DetailEvaluasiPage = () => {
   const { evId } = useParams();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-evaluasi", evId],
-    queryFn: fetchEvaluation,
+    queryFn: () => getApi(`/evaluasi/findbyideva/${evId}`),
   });
-
-  async function fetchEvaluation() {
-    const response = await axios.get(
-      `http://localhost:8082/evaluasi/findbyideva/${evId}`
-    );
-
-    if (response.status === 200) {
-      return response.data;
-    }
-  }
 
   function downloadPdf() {
     generatePdf({
@@ -32,8 +22,8 @@ const DetailEvaluasiPage = () => {
       jabatan: data.jabatan,
       email: data.email,
       tanggal_masuk: data.tanggalmasuk,
-      masa_kerja:data.masakerja,
-      tingkatan:data.tingkatan,
+      masa_kerja: data.masakerja,
+      tingkatan: data.tingkatan,
       tanggal_evaluasi: data.tanggalevaluasi,
       hasilEvaluasi: data.hasilevaluasi,
       perluDitingkatkan: data.perluditingkatkan,

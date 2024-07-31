@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
 import { cptSchema } from "@/schema/cpt-schema";
 import { Loading } from "@/components/dashboard/loading";
@@ -20,6 +19,7 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleTahun } from "@/data/userData";
+import { getApi, putApi } from "@/lib/fetcher";
 
 const DetailCptPage = () => {
   const navigate = useNavigate();
@@ -47,35 +47,31 @@ const DetailCptPage = () => {
   });
 
   async function fetchCpt() {
-    const response = await axios.get(
-      `http://localhost:8082/cpt/findbyid/${cptId}`
-    );
+    const response = await getApi(`/cpt/findbyid/${cptId}`);
 
-    if (response.status === 200) {
-      setNik(response.data.nik);
-      setNama(response.data.nama);
-      setTahun(response.data.tahun);
-      setPanolCustomer(response.data.panolcustomer);
-      setCoverage(response.data.coverage);
-      setCoveragepersen(response.data.coveragepersen);
-      setPenetration(response.data.penetration);
-      setThroughput(response.data.throughput);
-      setHitrate(response.data.hitrate);
-      return response.data;
+    if (response) {
+      setNik(response.nik);
+      setNama(response.nama);
+      setTahun(response.tahun);
+      setPanolCustomer(response.panolcustomer);
+      setCoverage(response.coverage);
+      setCoveragepersen(response.coveragepersen);
+      setPenetration(response.penetration);
+      setThroughput(response.throughput);
+      setHitrate(response.hitrate);
+      return response;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: (formData) => {
-      return axios.put(`http://localhost:8082/cpt/editcpt/${cptId}`, formData);
-    },
+    mutationFn: (formData) => putApi(`/cpt/editcpt/${cptId}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-cpt", cptId] });
       toast.success("Updated successfully!");
       setIsEdit(false);
     },
-    onError: () => {
-      toast.error("Failed to update!");
+    onError: (error) => {
+      toast.error(error.response);
     },
   });
 
@@ -221,12 +217,12 @@ const DetailCptPage = () => {
                   </>
                 ) : (
                   <>
-                  {role !== "ADMIN" ? null : (
-                    <Button variant="sky" onClick={() => setIsEdit(true)}>
-                      <PencilLine className="mr-2 w-5 h-5" />
-                      Edit
-                    </Button>
-                  )}
+                    {role !== "ADMIN" ? null : (
+                      <Button variant="sky" onClick={() => setIsEdit(true)}>
+                        <PencilLine className="mr-2 w-5 h-5" />
+                        Edit
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       onClick={() => navigate("/dashboard/cpt")}

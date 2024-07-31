@@ -3,7 +3,6 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
-import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -16,6 +15,7 @@ import { HimpunanKriteriaModal } from "@/components/dashboard/modal/himpunan-kri
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { deleteApi, getApi } from "@/lib/fetcher";
 
 const HimpunanKriteriaPage = () => {
   // const { role } = useAuth();
@@ -30,6 +30,7 @@ const HimpunanKriteriaPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-all-himpunan-kriteria"],
     queryFn: ({ pageParam }) => fetchAllHimpunanKriteria(pageParam),
@@ -44,15 +45,10 @@ const HimpunanKriteriaPage = () => {
 
   async function fetchAllHimpunanKriteria(pageParam) {
     // if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/kriteria/showall", {
-      params: {
-        page: pageParam,
-      },
+    return getApi("/kriteria/showall", {
+      page: pageParam,
+      search: searchValue,
     });
-
-    if (response.status === 200) {
-      return response.data;
-    }
   }
 
   useEffect(() => {
@@ -69,9 +65,7 @@ const HimpunanKriteriaPage = () => {
   // onSubmit event ↓↓↓
   function onSearch(e) {
     e.preventDefault();
-
-    // TODO: Handle on search
-    alert(searchValue);
+    refetch();
   }
 
   // if (role !== "ADMIN") {
@@ -81,7 +75,7 @@ const HimpunanKriteriaPage = () => {
   if (error) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <h1 className="text-xl font-semibold">Error!</h1>
+        <h1 className="text-xl font-semibold">{error.message}</h1>
       </div>
     );
   }
@@ -123,7 +117,7 @@ const HimpunanKriteriaList = ({ data }) => {
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">Kriteria sedang ngopi☕</h1>
+          <h1 className="text-lg font-semibold">Tidak ada data kriteria.</h1>
         </div>
       ) : (
         <Fragment>
@@ -143,17 +137,15 @@ const KriteriaCard = ({ data }) => {
   const { role } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/kriteria/deletehim/${id}`);
-    },
+    mutationFn: (id) => deleteApi(`/kriteria/deletehim/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get-all-himpunan-kriteria"],
       });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

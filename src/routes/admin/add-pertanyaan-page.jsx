@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronsRight, Plus, Minus, RefreshCw } from "lucide-react";
-import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,6 +23,7 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleJabatan } from "@/data/userData";
+import { postApi } from "@/lib/fetcher";
 
 const AddQuestionPage = () => {
   const queryClient = useQueryClient();
@@ -32,9 +32,7 @@ const AddQuestionPage = () => {
   const [open, setOpen] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: (formData) => {
-      return axios.post("http://localhost:8082/pertanyaan/addall", formData);
-    },
+    mutationFn: (formData) => postApi("/pertanyaan/addall", formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-questions"] });
       toast.success("Added successfully!");

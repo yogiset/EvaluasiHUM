@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ChevronsRight, Plus, Minus, Info } from "lucide-react";
-import axios from "axios";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,6 +24,7 @@ import { cn } from "@/lib/utils";
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleJabatan } from "@/data/userData";
+import { getApi, putApi } from "@/lib/fetcher";
 
 const DetailQuestionPage = () => {
   const { questionId } = useParams();
@@ -50,33 +50,27 @@ const DetailQuestionPage = () => {
   });
 
   async function fetchQuestion() {
-    const response = await axios.get(
-      `http://localhost:8082/pertanyaan/findbyidperjaw/${questionId}`
-    );
+    const response = await getApi(`/pertanyaan/findbyidperjaw/${questionId}`);
 
-    if (response.status === 200) {
-      editQuestionForm.setValue("rule", response.data.rule);
-      editQuestionForm.setValue("pertanyaan", response.data.pertanyaan);
-      editQuestionForm.setValue("jabatan", response.data.jabatan);
-      setAnswers(response.data.jawabanList);
-      return response.data;
+    if (response) {
+      editQuestionForm.setValue("rule", response.rule);
+      editQuestionForm.setValue("pertanyaan", response.pertanyaan);
+      editQuestionForm.setValue("jabatan", response.jabatan);
+      setAnswers(response.jawabanList);
+      return response;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: ({ formData, id }) => {
-      return axios.put(
-        `http://localhost:8082/pertanyaan/editall/${id}`,
-        formData
-      );
-    },
+    mutationFn: ({ formData, id }) =>
+      putApi(`/pertanyaan/editall/${id}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-questions"] });
       toast.success("Edited successfully!");
       navigate("/dashboard/pertanyaan");
     },
-    onError: () => {
-      toast.error("Failed to edit!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

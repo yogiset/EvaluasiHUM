@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info, Trash2, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
 // import { calcPercent } from "@/lib/utils";
@@ -25,6 +24,7 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleTahun, exampleBulan, exampleKeterangan } from "@/data/userData";
+import { deleteApi, getApi, putApi } from "@/lib/fetcher";
 
 const DetailSalesPage = () => {
   const navigate = useNavigate();
@@ -49,37 +49,31 @@ const DetailSalesPage = () => {
   });
 
   async function fetchSales() {
-    const response = await axios.get(
-      `http://localhost:8082/sales/findbyid/${salesId}`
-    );
+    const response = await getApi(`sales/findbyid/${salesId}`);
 
-    if (response.status === 200) {
-      setNik(response.data.nik);
-      setTarget(response.data.target);
-      setTahun(response.data.tahun);
-      setTercapai(response.data.tercapai);
-      setTercapaipersen(response.data.tercapaipersen);
-      setKeterangan(response.data.keterangan);
-      setSalesDetails(response.data.salesDetailDtoList);
-      return response.data;
+    if (response) {
+      setNik(response.nik);
+      setTarget(response.target);
+      setTahun(response.tahun);
+      setTercapai(response.tercapai);
+      setTercapaipersen(response.tercapaipersen);
+      setKeterangan(response.keterangan);
+      setSalesDetails(response.salesDetailDtoList);
+      return response;
     }
   }
 
   // update sales
   const mutation = useMutation({
-    mutationFn: (formData) => {
-      return axios.put(
-        `http://localhost:8082/sales/editdatasales/${salesId}`,
-        formData
-      );
-    },
+    mutationFn: (formData) =>
+      putApi(`/sales/editdatasales/${salesId}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
       toast.success("Updated successfully!");
       setIsEdit(false);
     },
-    onError: () => {
-      toast.error("Failed to update!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
@@ -302,35 +296,27 @@ const DetailTargetList = ({ list, salesId }) => {
 
   // edit sales detail dto list by id
   const mutationEdit = useMutation({
-    mutationFn: (formData) => {
-      return axios.put(
-        `http://localhost:8082/salesdetail/editsalesdetail/${list.id}`,
-        formData
-      );
-    },
+    mutationFn: (formData) =>
+      putApi(`/salesdetail/editsalesdetail/${list.id}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
       toast.success("Edited successfully!");
       setListEdit(false);
     },
-    onError: () => {
-      toast.error("Failed to edit!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
   // delete sales detail by id
   const mutationDel = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(
-        `http://localhost:8082/salesdetail/deletesalesdetail/${id}`
-      );
-    },
+    mutationFn: (id) => deleteApi(`/salesdetail/deletesalesdetail/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

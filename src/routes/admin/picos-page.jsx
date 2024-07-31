@@ -3,7 +3,6 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
-import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -16,6 +15,7 @@ import { PicosModal } from "@/components/dashboard/modal/picos-modal";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { deleteApi, getApi } from "@/lib/fetcher";
 
 const PicosPage = () => {
   // const { role } = useAuth();
@@ -30,6 +30,7 @@ const PicosPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-all-picos"],
     queryFn: ({ pageParam }) => fetchAllPicos(pageParam),
@@ -44,15 +45,7 @@ const PicosPage = () => {
 
   async function fetchAllPicos(pageParam) {
     // if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/picos/showall", {
-      params: {
-        page: pageParam,
-      },
-    });
-
-    if (response.status === 200) {
-      return response.data;
-    }
+    return getApi("/picos/showall", { page: pageParam, search: searchValue });
   }
 
   useEffect(() => {
@@ -71,7 +64,7 @@ const PicosPage = () => {
     e.preventDefault();
 
     // TODO: Handle on search
-    alert(searchValue);
+    refetch();
   }
 
   // if (role !== "ADMIN") {
@@ -81,7 +74,7 @@ const PicosPage = () => {
   if (error) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <h1 className="text-xl font-semibold">Error!</h1>
+        <h1 className="text-xl font-semibold">{error.message}</h1>
       </div>
     );
   }
@@ -123,7 +116,7 @@ const PicosList = ({ data }) => {
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">Picos sedang ngopi☕</h1>
+          <h1 className="text-lg font-semibold">Tidak ada data picos</h1>
         </div>
       ) : (
         <Fragment>
@@ -143,15 +136,13 @@ const PicosCard = ({ data }) => {
   const { role } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/picos/deletepicos/${id}`);
-    },
+    mutationFn: (id) => deleteApi(`/picos/deletepicos/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-all-picos"] });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
