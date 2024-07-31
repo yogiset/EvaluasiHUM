@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,6 +38,7 @@ const DetailHimpunanKriteriaPage = () => {
   const [nmHimpunan, setNmHimpunan] = useState("");
   const [nilai, setNilai] = useState("");
   const [keterangan, setKeterangan] = useState("");
+  const { role } = useAuth();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-himpunan-kriteria", kriteriaId],
@@ -189,10 +191,13 @@ const DetailHimpunanKriteriaPage = () => {
                   </>
                 ) : (
                   <>
+                  {role !== "ADMIN" ? null : (
                     <Button variant="sky" onClick={() => setIsEdit(true)}>
                       <PencilLine className="mr-2 w-5 h-5" />
                       Edit
                     </Button>
+                  )}
+
                     <Button
                       variant="outline"
                       onClick={() => navigate("/dashboard/himpunankriteria")}

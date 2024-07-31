@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info, Trash2, Plus } from "lucide-react";
@@ -162,14 +162,14 @@ const DetailSalesPage = () => {
                   <TrText
                     id="target"
                     title="Target"
-                    desc={data.target + (data.keterangan !== 'Coverage' ? " Liter" : "")}
+                    desc={data.target}
                     isEdit={isEdit}
                     onChange={(e) => setTarget(parseInt(e.target.value))}
                   />
                   <TrText
                     id="tercapai"
                     title="Tercapai"
-                    desc={data.tercapai + (data.keterangan !== 'Coverage' ? " Liter" : "")}
+                    desc={data.tercapai}
                     isEdit={isEdit}
                     onChange={(e) => setTercapai(parseInt(e.target.value))}
                   />
@@ -197,7 +197,7 @@ const DetailSalesPage = () => {
                     isEdit={isEdit}
                     selectItems={exampleKeterangan}
                     placeholder={data.keterangan}
-                    onChange={(e) => setKeterangan(e.target.value)}
+                    onChange={(e) => setKeterangan(e)}
                   />
                 </tbody>
               </table>

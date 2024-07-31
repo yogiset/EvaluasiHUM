@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,6 +38,7 @@ const DetailPicosPage = () => {
   const [lowtouchratio, setLowtouchratio] = useState("");
   const [crosssellratio, setCrosssellratio] = useState("");
   const [premiumcontribution, setPremiumcontribution] = useState("");
+  const { role } = useAuth();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-picos", picosId],
@@ -214,16 +216,19 @@ const DetailPicosPage = () => {
                   </>
                 ) : (
                   <>
+                  {role !== "ADMIN" ? null : (
                     <Button variant="sky" onClick={() => setIsEdit(true)}>
                       <PencilLine className="mr-2 w-5 h-5" />
                       Edit
                     </Button>
+                    )}
                     <Button
                       variant="outline"
                       onClick={() => navigate("/dashboard/picos")}
                     >
                       Kembali
                     </Button>
+                    
                   </>
                 )}
               </div>

@@ -130,9 +130,19 @@ const BoardList = ({ role }) => {
     { title: "Picos", path: "/dashboard/picos", bg: "bg-yellow-500" },
     { title: "CPT", path: "/dashboard/cpt", bg: "bg-green-500" },
     {
-      title: "HimpunanKriteria",
+      title: "Himpunan Kriteria",
       path: "/dashboard/himpunankriteria",
       bg: "bg-violet-500",
+    },
+    {
+      title: "Bobot Kriteria",
+      path: "/dashboard/bobotkriteria",
+      bg: "bg-pink-500",
+    },
+    {
+      title: "Rangking",
+      path: "/dashboard/rank",
+      bg: "bg-red-500",
     },
   ];
 

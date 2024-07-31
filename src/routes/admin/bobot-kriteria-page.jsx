@@ -12,13 +12,12 @@ import {
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
-import { SalesModal } from "@/components/dashboard/modal/sales-modal";
-import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
+import { BobotKriteriaModal } from "@/components/dashboard/modal/bobot-kriteria-modal";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const SalesPage = () => {
+const BobotKriteriaPage = () => {
   // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
@@ -32,40 +31,27 @@ const SalesPage = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["get-all-sales"],
-    queryFn: ({ pageParam }) => fetchAllSales(pageParam),
+    queryKey: ["get-all-bobot-kriteria"],
+    queryFn: ({ pageParam }) => fetchAllBobotKriteria(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
-        lastPage.totalPages === lastPageParam.length ||
-        lastPage.content.length === 0
+      lastPage.totalPages === lastPageParam.length ||
+      lastPage.content.length === 0
         ? undefined
         : lastPageParam.length + 1,
   });
 
-  async function fetchAllSales(pageParam) {
+  async function fetchAllBobotKriteria(pageParam) {
     // if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/sales/showall?page=1&limit=50", {
+    const response = await axios.get("http://localhost:8082/bobotkriteria/showall", {
       params: {
         page: pageParam,
       },
     });
-  
-    if (response.status === 200 && response.data.content.length > 0) {
-      const uniqueNames = new Set();
-      const filteredData = response.data.content.filter((item) => {
-        if (
-          item.keterangan === "Achivement Total" &&
-          !uniqueNames.has(item.nama)) {
-          uniqueNames.add(item.nama);
-          return true;
-        }
-        return false;
-      });
-      return { ...response.data, content: filteredData };
-    } else {
-      // Return an empty array if no data is available
-      return { ...response.data, content: [] };
+
+    if (response.status === 200) {
+      return response.data;
     }
   }
 
@@ -105,14 +91,14 @@ const SalesPage = () => {
       <div className="w-full flex justify-end items-center gap-x-2 p-2">
         <SearchBar
           onSubmit={onSearch}
-          placeholder="Cari sales..."
+          placeholder="Cari Kriteria..."
           onChange={(e) => setSearchValue(e.target.value)}
         />
         {/* modal start */}
         <Button variant="sky" onClick={() => setOpen(true)}>
           Tambah
         </Button>
-        <SalesModal open={open} onClose={onClose} />
+        <BobotKriteriaModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
       {status === "pending" ? (
@@ -120,7 +106,7 @@ const SalesPage = () => {
       ) : (
         <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
           {data.pages.map((group, i) => (
-            <SalesList key={i} data={group.content} />
+            <BobotKriteriaList key={i} data={group.content} />
           ))}
 
           {hasNextPage && (
@@ -132,17 +118,17 @@ const SalesPage = () => {
   );
 };
 
-const SalesList = ({ data }) => {
+const BobotKriteriaList = ({ data }) => {
   return (
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">Sales sedang ngopi☕</h1>
+          <h1 className="text-lg font-semibold">Bobot sedang ngopi☕</h1>
         </div>
       ) : (
         <Fragment>
           {data?.map((elem) => (
-            <SalesCard key={elem.idsales} data={elem} />
+            <BobotCard key={elem.idbobot} data={elem} />
           ))}
         </Fragment>
       )}
@@ -150,7 +136,7 @@ const SalesList = ({ data }) => {
   );
 };
 
-const SalesCard = ({ data }) => {
+const BobotCard = ({ data }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { newModal } = useConfirmModal();
@@ -158,10 +144,12 @@ const SalesCard = ({ data }) => {
 
   const mutation = useMutation({
     mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/sales/deletedatasales/${id}`);
+      return axios.delete(`http://localhost:8082/bobotkriteria/deletebobot/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-all-sales"] });
+      queryClient.invalidateQueries({
+        queryKey: ["get-all-bobot-kriteria"],
+      });
       toast.success("Deleted successfully!");
     },
     onError: () => {
@@ -169,14 +157,14 @@ const SalesCard = ({ data }) => {
     },
   });
 
-  function deleteSales() {
+  function deleteBobot() {
     newModal({
       title: "Peringatan!",
       message:
-        "Semua data yang terkait dengan sales ini akan dihapus. Apakah anda yakin ingin menghapusnya?",
+        "Semua data yang terkait dengan Kriteria bobot ini akan dihapus. Apakah anda yakin ingin menghapusnya?",
     }).then((res) => {
       if (res) {
-        mutation.mutate(data.idsales);
+        mutation.mutate(data.idbobot);
       }
     });
   }
@@ -185,33 +173,22 @@ const SalesCard = ({ data }) => {
     <div className="w-full flex justify-between items-center border shadow-md rounded-md p-2">
       <div className="space-y-1 truncate">
         <Link
-          to={`/dashboard/sales/${data.idsales}`}
+          to={`/dashboard/bobotkriteria/${data.idbobot}`}
           className="text-2xl font-semibold hover:underline"
         >
-          {data.nama}
+          {data.nmkriteria}
         </Link>
         <div className="flex gap-x-2 h-[20px]">
-          {/* <h1 className="text-sm font-medium text-neutral-600">
-            Target: {data.target}
-            {data.keterangan !== 'Coverage' && ' Liter'}  </h1>
           <Separator orientation="vertical" />
           <h1 className="text-sm font-medium text-neutral-600">
-            Tercapai%: {data.tercapaipersen} %
+            Bobot: {data.bobot}
           </h1>
-          <Separator orientation="vertical" /> */}
-          <h1 className="text-sm font-medium text-neutral-600">
-            Tahun: {data.tahun}
-          </h1>
-          {/* <Separator orientation="vertical" />
-          <h1 className="text-sm font-medium text-neutral-600">
-            Keterangan: {data.keterangan}
-          </h1> */}
         </div>
       </div>
       <div className="flex items-center gap-x-2">
         <Button
           variant="sky"
-          onClick={() => navigate(`/dashboard/sales/${data.idsales}`)}
+          onClick={() => navigate(`/dashboard/bobotkriteria/${data.idbobot}`)}
         >
           <Info className="mr-0 md:mr-2 w-5 h-5" />
           <span className="hidden md:inline">Info</span>
@@ -219,7 +196,7 @@ const SalesCard = ({ data }) => {
         {role !== "ADMIN" ? null : (
           <Button
             variant="destructive"
-            onClick={deleteSales}
+            onClick={deleteBobot}
             disabled={mutation.isPending}
           >
             {mutation.isPending ? (
@@ -235,4 +212,4 @@ const SalesCard = ({ data }) => {
   );
 };
 
-export default SalesPage;
+export default BobotKriteriaPage;

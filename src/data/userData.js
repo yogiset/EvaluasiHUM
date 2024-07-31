@@ -84,28 +84,31 @@ export const exampleTahun = [
 ];
 
 export const exampleKeterangan = [
-  "Achivement Premium ",
-  "Achivement Gadus ",
-  "Achivement Total Semua",
+  "Achivement Premium",
+  "Achivement Gadus",
+  "Achivement Total",
+  "Coverage(Jumlah Customer dan Jumlah Visit)",
 ];
 
 export const exampleKriteria = [
-  "Achivement Premium ",
-  "Achivement Gadus ",
-  "Achivement Total Semua",
-  "Picos",
-  "CPT",
+  "Achivement Premium",
+  "Achivement Gadus",
+  "Achivement Total",
+  "Jumlah Customer",
+  "Jumlah Visit"
 ];
 
-export const exampleNilai = ["5", "4", "3", "2", "1"];
+export const exampleNilai = ["1", "2", "3", "4", "5","6","7"];
 
-export const exampleHimpunan = ["86-100", "76-85", "66-75", "51-65", "0-50"];
+export const exampleHimpunan = ["1-15", "1-20", "1-30", "16-35", "21-40", "31-45", "31-60", "35-45", "41-50", "46-55", "51-60","56-65", "56-70", "61-70", "61-90", "66-75", "71-80", "71-90", "76-90", "81-100", "91-100", "91-120", "121-150", "151-180", "181-200"];
 
 export const exampleKeterangann = [
   "Sangat Baik",
   "Baik",
   "Cukup",
   "Kurang Baik",
+  "Tidak Baik",
+  "Buruk",
   "Sangat Buruk",
 ];
 

@@ -14,33 +14,43 @@ import { cn } from "@/lib/utils";
 
 const navigations = [
   { title: "Home", path: "/dashboard/home", icon: <Home /> },
-  {
-    title: "Evaluasi",
-    path: "/dashboard/evaluasi",
-    icon: <ClipboardList />,
-  },
+  // {
+  //   title: "Evaluasi",
+  //   path: "/dashboard/evaluasi",
+  //   icon: <ClipboardList />,
+  // },
   {
     title: "Picos",
     path: "/dashboard/picos",
     icon: <ClipboardList />,
   },
   {
-    title: "CPT",
+    title: "CPT (Jumlah Customer dan Jumlah Visit)",
     path: "/dashboard/cpt",
     icon: <ClipboardList />,
   },
   {
-    title: "HimpunanKriteria",
+    title: "Himpunan Kriteria",
     path: "/dashboard/himpunankriteria",
+    icon: <ClipboardList />,
+  },
+  {
+    title: "Bobot Kriteria",
+    path: "/dashboard/bobotkriteria",
+    icon: <ClipboardList />,
+  },
+  {
+    title: "Ranking",
+    path: "/dashboard/rank",
     icon: <ClipboardList />,
   },
   { title: "Karyawan", path: "/dashboard/karyawan", icon: <UsersRound /> },
   { title: "Data Sales", path: "/dashboard/sales", icon: <UsersRound /> },
-  {
-    title: "Pertanyaan",
-    path: "/dashboard/pertanyaan",
-    icon: <MessageCircleQuestion />,
-  },
+  // {
+  //   title: "Pertanyaan",
+  //   path: "/dashboard/pertanyaan",
+  //   icon: <MessageCircleQuestion />,
+  // },
   { title: "User", path: "/dashboard/users", icon: <UsersRound /> },
   { title: "Akun", path: "/dashboard/akun", icon: <UserCog /> },
 ];
