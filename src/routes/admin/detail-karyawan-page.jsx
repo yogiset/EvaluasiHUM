@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { toast } from "sonner";
 import { format, formatISO, toDate } from "date-fns";
 import { id } from "date-fns/locale";
@@ -21,7 +22,6 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleDivisi, exampleJabatan } from "@/data/userData";
-import { getApi, putApi } from "@/lib/fetcher";
 
 const DetailKaryawanPage = () => {
   const navigate = useNavigate();
@@ -45,29 +45,35 @@ const DetailKaryawanPage = () => {
   });
 
   async function fetchEmployee() {
-    const response = await getApi(`/karyawan/findbyid/${karId}`);
+    const response = await axios.get(
+      `http://localhost:8082/karyawan/findbyid/${karId}`
+    );
 
-    if (response) {
-      setNik(response.nik);
-      setNama(response.nama);
-      setDivisi(response.divisi);
-      setJabatan(response.jabatan);
-      setEmail(response.email);
-      setTanggalmasuk(toDate(response.tanggalmasuk));
-      return response;
+    if (response.status === 200) {
+      setNik(response.data.nik);
+      setNama(response.data.nama);
+      setDivisi(response.data.divisi);
+      setJabatan(response.data.jabatan);
+      setEmail(response.data.email);
+      setTanggalmasuk(toDate(response.data.tanggalmasuk));
+      return response.data;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: (formData) =>
-      putApi(`/karyawan/editkaryawan/${karId}`, formData),
+    mutationFn: (formData) => {
+      return axios.put(
+        `http://localhost:8082/karyawan/editkaryawan/${karId}`,
+        formData
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-employee", karId] });
       toast.success("Updated successfully!");
       setIsEdit(false);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 

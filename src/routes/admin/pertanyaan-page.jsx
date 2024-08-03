@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Info, Trash2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
+import axios from "axios";
 import {
   useQueryClient,
   useMutation,
@@ -14,7 +15,6 @@ import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Loading } from "@/components/dashboard/loading";
 import { Button } from "@/components/ui/button";
-import { deleteApi, getApi } from "@/lib/fetcher";
 
 const PertanyaanPage = () => {
   // const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -44,7 +44,19 @@ const PertanyaanPage = () => {
 
   async function fetchQuestions(pageParam) {
     if (role !== "ADMIN") return [];
-    return getApi("/pertanyaan/showall", { page: pageParam });
+
+    const response = await axios.get(
+      "http://localhost:8082/pertanyaan/showall",
+      {
+        params: {
+          page: pageParam,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    }
   }
 
   useEffect(() => {
@@ -128,13 +140,15 @@ const QuestionCard = ({ data }) => {
   const { newModal } = useConfirmModal();
 
   const mutation = useMutation({
-    mutationFn: (id) => deleteApi(`/pertanyaan/deleteall/${id}`),
+    mutationFn: (id) => {
+      return axios.delete(`http://localhost:8082/pertanyaan/deleteall/${id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-questions"] });
       toast.success("Deleted successfully!");
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   });
 

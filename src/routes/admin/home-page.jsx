@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { LayoutGrid, LineChart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Chart } from "react-charts";
 import { format } from "date-fns";
@@ -10,7 +11,6 @@ import { cn } from "@/lib/utils";
 import { defaultData } from "@/data/charts";
 import { Separator } from "@/components/ui/separator";
 import { Loading } from "@/components/dashboard/loading";
-import { getApi } from "@/lib/fetcher";
 
 const HomeDashboard = () => {
   const { role } = useAuth();
@@ -19,9 +19,9 @@ const HomeDashboard = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-chart-data"],
     queryFn: async () => {
-      const response = await getApi("/api/data");
-      setDatumColors(response.dataChart.map((e) => e.color));
-      return response;
+      const { data } = await axios.get("http://localhost:8082/api/data");
+      setDatumColors(data.dataChart.map((e) => e.color));
+      return data;
     },
   });
 
@@ -140,7 +140,7 @@ const BoardList = ({ role }) => {
       bg: "bg-pink-500",
     },
     {
-      title: "Rangking",
+      title: "Ranking",
       path: "/dashboard/rank",
       bg: "bg-red-500",
     },

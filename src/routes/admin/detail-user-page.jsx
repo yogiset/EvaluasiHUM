@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { toast } from "sonner";
 import { userSchema } from "@/schema/user-schema";
@@ -18,7 +19,6 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleRole } from "@/data/userData";
-import { getApi, putApi } from "@/lib/fetcher";
 
 const DetailUserPage = () => {
   const navigate = useNavigate();
@@ -42,27 +42,34 @@ const DetailUserPage = () => {
   });
 
   async function fetchUser() {
-    const response = await getApi(`/user/findById/${userId}`);
+    const response = await axios.get(
+      `http://localhost:8082/user/findById/${userId}`
+    );
 
-    if (response) {
-      setNik(response.nik);
-      setKodeuser(response.kodeuser);
-      setUsername(response.username);
-      setRole(response.role);
-      setStatus(response.status);
-      return response;
+    if (response.status === 200) {
+      setNik(response.data.nik);
+      setKodeuser(response.data.kodeuser);
+      setUsername(response.data.username);
+      setRole(response.data.role);
+      setStatus(response.data.status);
+      return response.data;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: (formData) => putApi(`/user/edituser/${userId}`, formData),
+    mutationFn: (formData) => {
+      return axios.put(
+        `http://localhost:8082/user/edituser/${userId}`,
+        formData
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-user", userId] });
       toast.success("Updated successfully!");
       setIsEdit(false);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 

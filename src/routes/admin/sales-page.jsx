@@ -3,6 +3,7 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
+import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -12,16 +13,17 @@ import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { SalesModal } from "@/components/dashboard/modal/sales-modal";
+import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
-import { deleteApi, getApi } from "@/lib/fetcher";
+import { Separator } from "@/components/ui/separator";
 
 const SalesPage = () => {
   // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
-
+  const { role } = useAuth();
   const {
     status,
     data,
@@ -35,36 +37,51 @@ const SalesPage = () => {
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
-      lastPage.totalPages === lastPageParam.length ||
-      lastPage.content.length === 0
+        lastPage.totalPages === lastPageParam.length ||
+        lastPage.content.length === 0
         ? undefined
         : lastPageParam.length + 1,
   });
 
+  // async function fetchAllSales(pageParam) {
+  //   // if (role !== "ADMIN") return [];
+  //   const response = await axios.get("http://localhost:8082/sales/showall?page=1&limit=50", {
+  //     params: {
+  //       page: pageParam,
+  //     },
+  //   });
+  
+  //   if (response.status === 200 && response.data.content.length > 0) {
+  //     const uniqueNames = new Set();
+  //     const filteredData = response.data.content.filter((item) => {
+  //       if (
+  //         item.keterangan === "Achivement Total" &&
+  //         !uniqueNames.has(item.nama)) {
+  //         uniqueNames.add(item.nama);
+  //         return true;
+  //       }
+  //       return false;
+  //     });
+  //     return { ...response.data, content: filteredData };
+  //   } else {
+  //     // Return an empty array if no data is available
+  //     return { ...response.data, content: [] };
+  //   }
+  // }
+
   async function fetchAllSales(pageParam) {
-    const response = await getApi("/sales/showall", {
-      page: pageParam,
-      limit: 50,
+    // if (role !== "ADMIN") return [];
+    const response = await axios.get("http://localhost:8082/sales/showall", {
+      params: {
+        page: pageParam,
+      },
     });
 
-    if (response.content.length > 0) {
-      const uniqueNames = new Set();
-      const filteredData = response.content.filter((item) => {
-        if (
-          item.keterangan === "Achivement Total" &&
-          !uniqueNames.has(item.nama)
-        ) {
-          uniqueNames.add(item.nama);
-          return true;
-        }
-        return false;
-      });
-      return { ...response, content: filteredData };
-    } else {
-      // Return an empty array if no data is available
-      return { ...response, content: [] };
+    if (response.status === 200) {
+      return response.data;
     }
   }
+
 
   useEffect(() => {
     if (inView) {
@@ -85,10 +102,14 @@ const SalesPage = () => {
     alert(searchValue);
   }
 
+  // if (role !== "ADMIN") {
+  //   return <ForbiddenPage />;
+  // }
+
   if (error) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <h1 className="text-xl font-semibold">{error.message}</h1>
+        <h1 className="text-xl font-semibold">Error!</h1>
       </div>
     );
   }
@@ -102,9 +123,11 @@ const SalesPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
         {/* modal start */}
+        {role !== "ADMIN" ? null : (
         <Button variant="sky" onClick={() => setOpen(true)}>
           Tambah
         </Button>
+        )}
         <SalesModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
@@ -130,7 +153,7 @@ const SalesList = ({ data }) => {
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">Tidak ada data sales</h1>
+          <h1 className="text-lg font-semibold">Sales sedang ngopi☕</h1>
         </div>
       ) : (
         <Fragment>
@@ -150,13 +173,15 @@ const SalesCard = ({ data }) => {
   const { role } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: (id) => deleteApi(`/sales/deletedatasales/${id}`),
+    mutationFn: (id) => {
+      return axios.delete(`http://localhost:8082/sales/deletedatasales/${id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-all-sales"] });
       toast.success("Deleted successfully!");
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   });
 
@@ -193,10 +218,6 @@ const SalesCard = ({ data }) => {
           <h1 className="text-sm font-medium text-neutral-600">
             Tahun: {data.tahun}
           </h1>
-          {/* <Separator orientation="vertical" />
-          <h1 className="text-sm font-medium text-neutral-600">
-            Keterangan: {data.keterangan}
-          </h1> */}
         </div>
       </div>
       <div className="flex items-center gap-x-2">

@@ -29,9 +29,14 @@ export const SalesModal = ({ open, onClose }) => {
     resolver: zodResolver(salesSchema),
     defaultValues: {
       nik: "",
-      target: 0,
-      tercapai: 0,
-      keterangan: "",
+      targettotal: 0,
+      tercapaitotal: 0,
+      targetgadus: 0,
+      tercapaigadus: 0,
+      targetpremium: 0,
+      tercapaipremium: 0,
+      jumlahcustomer: 0,
+      jumlahvisit: 0,
       salesDetailDtoList: [],
     },
   });
@@ -58,16 +63,16 @@ export const SalesModal = ({ open, onClose }) => {
     const prev = salesForm.getValues("salesDetailDtoList");
     setSalesDetailDtoList([
       ...salesDetailDtoList,
-      { bulan: "", targetbln: 0, tercapaii: 0 },
+      { bulan: "", targetblntotal: 0, tercapaiitotal: 0, targetblngadus: 0, tercapaiigadus: 0, targetblnpremium: 0, tercapaiipremium: 0, jumlahvisit: 0 },
     ]);
     salesForm.setValue("salesDetailDtoList", [
       ...prev,
-      { bulan: "", targetbln: 0, tercapaii: 0 },
+      { bulan: "", targetblntotal: 0, tercapaiitotal: 0, targetblngadus: 0, tercapaiigadus: 0, targetblnpremium: 0, tercapaiipremium: 0, jumlahvisit: 0 },
     ]);
   }
 
   function onSubmit(formData) {
-    const { nik, tahun, target, tercapai, keterangan, salesDetailDtoList } =
+    const { nik, tahun, targettotal, tercapaitotal, targetgadus, tercapaigadus, targetpremium, tercapaipremium, jumlahcustomer, jumlahvisit, salesDetailDtoList } =
       formData;
     // const tercapaipersen = calcPercent(target, tercapai).toString() + "%";
     const newSalesDetailDtoList = salesDetailDtoList.map((obj) => {
@@ -77,10 +82,14 @@ export const SalesModal = ({ open, onClose }) => {
     const newFormData = {
       nik,
       tahun,
-      target,
-      tercapai,
-      // tercapaipersen,
-      keterangan,
+      targettotal,
+      tercapaitotal,
+      targetgadus,
+      tercapaigadus,
+      targetpremium,
+      tercapaipremium,
+      jumlahcustomer,
+      jumlahvisit,
       salesDetailDtoList: newSalesDetailDtoList,
     };
     mutation.mutate(newFormData);
@@ -104,13 +113,6 @@ export const SalesModal = ({ open, onClose }) => {
               placeholder="Masukkan Nik"
               type="text"
             />
-            <FormInput
-              form={salesForm}
-              label="Target"
-              id="target"
-              placeholder="Masukkan Target"
-              type="number"
-            />
             <FormSelect
               form={salesForm}
               label="Tahun"
@@ -118,12 +120,33 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
-            <FormSelect
+            <FormInput
               form={salesForm}
-              label="Keterangan"
-              id="keterangan"
-              selectItems={exampleKeterangan}
-              placeholder="Pilih Keterangan"
+              label="Achivement Total Target"
+              id="targettotal"
+              placeholder="Masukkan Total Target"
+              type="number"
+            />
+            <FormInput
+              form={salesForm}
+              label="Achivement Gadus Target"
+              id="targetgadus"
+              placeholder="Masukkan Target Gadus"
+              type="number"
+            />
+            <FormInput
+              form={salesForm}
+              label="Achivement Premium Target"
+              id="targetpremium"
+              placeholder="Masukkan Target Premium"
+              type="number"
+            />
+            <FormInput
+              form={salesForm}
+              label="Jumlah Customer"
+              id="jumlahcustomer"
+              placeholder="Masukkan Jumlah Customer"
+              type="number"
             />
 
             {/* Additional form fields for sales detail */}
@@ -140,16 +163,51 @@ export const SalesModal = ({ open, onClose }) => {
                 />
                 <FormInput
                   form={salesForm}
-                  label={`Target pencapaian pada Bulan ${index + 1}`}
-                  id={`salesDetailDtoList[${index}].targetbln`}
-                  placeholder="Masukkan Target per bulan"
+                  label={`Achivement Total Target Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].targetblntotal`}
+                  placeholder="Masukkan Total Target per bulan"
                   type="number"
                 />
                 <FormInput
                   form={salesForm}
-                  label={`Target tercapai per Bulan ${index + 1}`}
-                  id={`salesDetailDtoList[${index}].tercapaii`}
-                  placeholder="Masukkan Target tarcapai per bulan"
+                  label={`Achivement Total Tercapai Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].tercapaiitotal`}
+                  placeholder="Masukkan total Target tarcapai per bulan"
+                  type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Achivement Gadus Target Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].targetblngadus`}
+                  placeholder="Masukkan Target Gadus per bulan"
+                  type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Achivement Gadus Tercapai Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].tercapaiigadus`}
+                  placeholder="Masukkan Target Gadus tarcapai per bulan"
+                  type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Achivement Premium Target Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].targetblnpremium`}
+                  placeholder="Masukkan Target Premium per bulan"
+                  type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Achivement Premium Tercapai Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].tercapaiipremium`}
+                  placeholder="Masukkan Target Premium tarcapai per bulan"
+                  type="number"
+                />
+                <FormInput
+                  form={salesForm}
+                  label={`Jumlah Visit per Bulan ${index + 1}`}
+                  id={`salesDetailDtoList[${index}].jumlahvisit`}
+                  placeholder="Masukkan Jumlah visit tarcapai per bulan"
                   type="number"
                 />
               </div>

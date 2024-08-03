@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info, Trash2, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
 // import { calcPercent } from "@/lib/utils";
@@ -24,7 +25,6 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleTahun, exampleBulan, exampleKeterangan } from "@/data/userData";
-import { deleteApi, getApi, putApi } from "@/lib/fetcher";
 
 const DetailSalesPage = () => {
   const navigate = useNavigate();
@@ -35,10 +35,17 @@ const DetailSalesPage = () => {
   const [errorValidation, setErrorValidation] = useState(false);
   const [open, setOpen] = useState(false);
   const [nik, setNik] = useState("");
-  const [target, setTarget] = useState(0);
-  const [keterangan, setKeterangan] = useState(0);
-  const [tercapai, setTercapai] = useState(0);
-  const [tercapaipersen, setTercapaipersen] = useState(0);
+  const [targettotal, setTargettotal] = useState(0);
+  const [tercapaitotal, setTercapaitotal] = useState(0);
+  const [tercapaipersentotal, setTercapaipersentotal] = useState(0);
+  const [targetgadus, setTargetgadus] = useState(0);
+  const [tercapaigadus, setTercapaigadus] = useState(0);
+  const [tercapaipersengadus, setTercapaipersengadus] = useState(0);
+  const [targetpremium, setTargetpremium] = useState(0);
+  const [tercapaipremium, setTercapaipremium] = useState(0);
+  const [tercapaipersenpremium, setTercapaipersenpremium] = useState(0);
+  const [jumlahcustomer, setJumlahcustomer] = useState(0);
+  const [jumlahvisit, setJumlahvisit] = useState(0);
   const [tahun, setTahun] = useState("");
   const [salesDetails, setSalesDetails] = useState([]);
   const { role } = useAuth();
@@ -49,31 +56,44 @@ const DetailSalesPage = () => {
   });
 
   async function fetchSales() {
-    const response = await getApi(`sales/findbyid/${salesId}`);
+    const response = await axios.get(
+      `http://localhost:8082/sales/findbyid/${salesId}`
+    );
 
-    if (response) {
-      setNik(response.nik);
-      setTarget(response.target);
-      setTahun(response.tahun);
-      setTercapai(response.tercapai);
-      setTercapaipersen(response.tercapaipersen);
-      setKeterangan(response.keterangan);
-      setSalesDetails(response.salesDetailDtoList);
-      return response;
+    if (response.status === 200) {
+      setNik(response.data.nik);
+      setTahun(response.data.tahun);
+      setTargettotal(response.data.targettotal);
+      setTercapaitotal(response.data.tercapaitotal);
+      setTercapaipersentotal(response.data.tercapaipersentotal);
+      setTargetgadus(response.data.targetgadus);
+      setTercapaigadus(response.data.tercapaigadus);
+      setTercapaipersengadus(response.data.tercapaipersengadus);
+      setTargetpremium(response.data.targetpremium);
+      setTercapaipremium(response.data.tercapaipremium);
+      setTercapaipersenpremium(response.data.tercapaipersenpremium);
+      setJumlahcustomer(response.data.jumlahcustomer);
+      setJumlahvisit(response.data.jumlahvisit);
+      setSalesDetails(response.data.salesDetailDtoList);
+      return response.data;
     }
   }
 
   // update sales
   const mutation = useMutation({
-    mutationFn: (formData) =>
-      putApi(`/sales/editdatasales/${salesId}`, formData),
+    mutationFn: (formData) => {
+      return axios.put(
+        `http://localhost:8082/sales/editdatasales/${salesId}`,
+        formData
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
       toast.success("Updated successfully!");
       setIsEdit(false);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to update!");
     },
   });
 
@@ -81,11 +101,18 @@ const DetailSalesPage = () => {
     const formData = {
       nik,
       // nama,
-      target,
-      tercapai,
       tahun,
-      tercapaipersen,
-      keterangan,
+      targettotal,
+      tercapaitotal,
+      tercapaipersentotal,
+      targetgadus,
+      tercapaigadus,
+      tercapaipersengadus,
+      targetpremium,
+      tercapaipremium,
+      tercapaipersenpremium,
+      jumlahcustomer,
+      jumlahvisit,
       salesDetailDtoList: salesDetails,
     };
     const { success, data, error } = salesSchema.safeParse(formData);
@@ -97,7 +124,7 @@ const DetailSalesPage = () => {
     }
 
     setErrorValidation(false);
-    mutation.mutate({ ...data, tercapaipersen });
+    mutation.mutate({ ...data, tercapaipersentotal, tercapaipersengadus, tercapaipersenpremium, jumlahvisit });
   }
 
   function onClose() {
@@ -153,28 +180,6 @@ const DetailSalesPage = () => {
                     desc={data.nik}
                     onChange={(e) => setNik(e.target.value)}
                   />
-                  <TrText
-                    id="target"
-                    title="Target"
-                    desc={data.target}
-                    isEdit={isEdit}
-                    onChange={(e) => setTarget(parseInt(e.target.value))}
-                  />
-                  <TrText
-                    id="tercapai"
-                    title="Tercapai"
-                    desc={data.tercapai}
-                    isEdit={isEdit}
-                    onChange={(e) => setTercapai(parseInt(e.target.value))}
-                  />
-                  <tr>
-                    <td className="font-medium border border-slate-300 px-2 py-2">
-                      Tercapai(%)
-                    </td>
-                    <td className="border border-slate-300 px-2 py-2">
-                      {data.tercapaipersen + " % "}
-                    </td>
-                  </tr>
                   <TrSelect
                     id="tahun"
                     title="Tahun"
@@ -184,14 +189,85 @@ const DetailSalesPage = () => {
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
                   />
-                  <TrSelect
-                    id="keterangan"
-                    title="Keterangan"
-                    desc={data.keterangan}
+                  <TrText
+                    id="targettotal"
+                    title="Achivement Total Target"
+                    desc={data.targettotal}
                     isEdit={isEdit}
-                    selectItems={exampleKeterangan}
-                    placeholder={data.keterangan}
-                    onChange={(e) => setKeterangan(e)}
+                    onChange={(e) => setTargettotal(parseInt(e.target.value))}
+                  />
+                  <TrText
+                    id="tercapaitotal"
+                    title="Achivement Total Tercapai"
+                    desc={data.tercapaitotal}
+                    isEdit={isEdit}
+                    onChange={(e) => setTercapaitotal(parseInt(e.target.value))}
+                  />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Achivement Total Tercapai(%)
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      {data.tercapaipersentotal + " % "}
+                    </td>
+                  </tr>
+                  <TrText
+                    id="targetgadus"
+                    title="Achivement Gadus Target"
+                    desc={data.targetgadus}
+                    isEdit={isEdit}
+                    onChange={(e) => setTargetgadus(parseInt(e.target.value))}
+                  />
+                  <TrText
+                    id="tercapaigadus"
+                    title="Achivement Gadus Tercapai"
+                    desc={data.tercapaigadus}
+                    isEdit={isEdit}
+                    onChange={(e) => setTercapaigadus(parseInt(e.target.value))}
+                  />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Achivement Gadus Tercapai(%)
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      {data.tercapaipersengadus + " % "}
+                    </td>
+                  </tr>
+                  <TrText
+                    id="targetpremium"
+                    title="Achivement Premium Target"
+                    desc={data.targetpremium}
+                    isEdit={isEdit}
+                    onChange={(e) => setTargetpremium(parseInt(e.target.value))}
+                  />
+                  <TrText
+                    id="tercapaipremium"
+                    title="Achivement Premium Tercapai"
+                    desc={data.tercapaipremium}
+                    isEdit={isEdit}
+                    onChange={(e) => setTercapaipremium(parseInt(e.target.value))}
+                  />
+                  <tr>
+                    <td className="font-medium border border-slate-300 px-2 py-2">
+                      Achivement Premium Tercapai(%)
+                    </td>
+                    <td className="border border-slate-300 px-2 py-2">
+                      {data.tercapaipersenpremium + " % "}
+                    </td>
+                  </tr>
+                  <TrText
+                    id="jumlahcustomer"
+                    title="Jumlah Customer"
+                    desc={data.jumlahcustomer}
+                    isEdit={isEdit}
+                    onChange={(e) => setJumlahcustomer(parseInt(e.target.value))}
+                  />
+                  <TrText
+                    id="jumlahvisit"
+                    title="Jumlah Visit(%)"
+                    desc={data.jumlahvisit}
+                    isEdit={isEdit}
+                    onChange={(e) => setJumlahvisit(parseFloat(e.target.value))}
                   />
                 </tbody>
               </table>
@@ -258,9 +334,16 @@ const DetailSalesPage = () => {
                 <thead className="w-full border-collapse bg-sky-200 border border-slate-400">
                   <tr>
                     <th className="border border-slate-400 p-2">Bulan</th>
-                    <th className="border border-slate-400 p-2">Target</th>
-                    <th className="border border-slate-400 p-2">Tercapai</th>
-                    <th className="border border-slate-400 p-2">Tercapai(%)</th>
+                    <th className="border border-slate-400 p-2">Achivement Total Target</th>
+                    <th className="border border-slate-400 p-2">Achivement Total Tercapai</th>
+                    <th className="border border-slate-400 p-2">Achivement Total Tercapai(%)</th>
+                    <th className="border border-slate-400 p-2">Achivement Gadus Target</th>
+                    <th className="border border-slate-400 p-2">Achivement Gadus Tercapai</th>
+                    <th className="border border-slate-400 p-2">Achivement Gadus Tercapai(%)</th>
+                    <th className="border border-slate-400 p-2">Achivement Premium Target</th>
+                    <th className="border border-slate-400 p-2">Achivement Premium Tercapai</th>
+                    <th className="border border-slate-400 p-2">Achivement Premium Tercapai(%)</th>
+                    <th className="border border-slate-400 p-2">Jumlah Visit(%)</th>
                     {role !== "ADMIN" ? null : (
                       <th className="w-1/6 border border-slate-400 p-2">
                         Opsi
@@ -290,38 +373,51 @@ const DetailTargetList = ({ list, salesId }) => {
   const queryClient = useQueryClient();
   const [listEdit, setListEdit] = useState(false);
   const [bulan, setBulan] = useState(list.bulan);
-  const [targetbln, setTargetbln] = useState(list.targetbln);
-  const [tercapaii, setTercapaii] = useState(list.tercapaii);
+  const [targetblntotal, setTargetblntotal] = useState(list.targetblntotal);
+  const [tercapaiitotal, setTercapaiitotal] = useState(list.tercapaiitotal);
+  const [targetblngadus, setTargetblngadus] = useState(list.targetblngadus);
+  const [tercapaiigadus, setTercapaiigadus] = useState(list.tercapaiigadus);
+  const [targetblnpremium, setTargetblnpremium] = useState(list.targetblnpremium);
+  const [tercapaiipremium, setTercapaiipremium] = useState(list.tercapaiipremium);
+  const [jumlahvisit, setJumlahvisit] = useState(list.jumlahvisit);
   const { role } = useAuth();
 
   // edit sales detail dto list by id
   const mutationEdit = useMutation({
-    mutationFn: (formData) =>
-      putApi(`/salesdetail/editsalesdetail/${list.id}`, formData),
+    mutationFn: (formData) => {
+      return axios.put(
+        `http://localhost:8082/salesdetail/editsalesdetail/${list.id}`,
+        formData
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
       toast.success("Edited successfully!");
       setListEdit(false);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to edit!");
     },
   });
 
   // delete sales detail by id
   const mutationDel = useMutation({
-    mutationFn: (id) => deleteApi(`/salesdetail/deletesalesdetail/${id}`),
+    mutationFn: (id) => {
+      return axios.delete(
+        `http://localhost:8082/salesdetail/deletesalesdetail/${id}`
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-sales", salesId] });
       toast.success("Deleted successfully!");
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   });
 
   function saveEditedData() {
-    const formData = { bulan, targetbln, tercapaii };
+    const formData = { bulan, targetblntotal, tercapaiitotal, targetblngadus, tercapaiigadus, targetblnpremium, tercapaiipremium, jumlahvisit};
     //    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
     mutationEdit.mutate({ ...formData });
   }
@@ -340,22 +436,64 @@ const DetailTargetList = ({ list, salesId }) => {
         onValueChange={(value) => setBulan(value)}
       />
       <TdInput
-        id={`targetbln${list.id}`}
-        value={list.targetbln}
+        id={`targetblntotal${list.id}`}
+        value={list.targetblntotal}
         desc=""
         type="number"
         isEdit={listEdit}
-        onChange={(e) => setTargetbln(parseInt(e.target.value))}
+        onChange={(e) => setTargetblntotal(parseInt(e.target.value))}
       />
       <TdInput
-        id={`tercapaii${list.id}`}
-        value={list.tercapaii}
+        id={`tercapaiitotal${list.id}`}
+        value={list.tercapaiitotal}
         desc=""
         type="number"
         isEdit={listEdit}
-        onChange={(e) => setTercapaii(parseInt(e.target.value))}
+        onChange={(e) => setTercapaiitotal(parseInt(e.target.value))}
       />
-      <td className="border border-slate-300 p-2">{list.tercapaipersenn}</td>
+      <td className="border border-slate-300 p-2">{list.tercapaipersenntotal}</td>
+      <TdInput
+        id={`targetblngadus${list.id}`}
+        value={list.targetblngadus}
+        desc=""
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setTargetblngadus(parseInt(e.target.value))}
+      />
+      <TdInput
+        id={`tercapaiigadus${list.id}`}
+        value={list.tercapaiigadus}
+        desc=""
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setTercapaiigadus(parseInt(e.target.value))}
+      />
+      <td className="border border-slate-300 p-2">{list.tercapaipersenngadus}</td>
+      <TdInput
+        id={`targetblnpremium${list.id}`}
+        value={list.targetblnpremium}
+        desc=""
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setTargetblnpremium(parseInt(e.target.value))}
+      />
+      <TdInput
+        id={`tercapaiipremium${list.id}`}
+        value={list.tercapaiipremium}
+        desc=""
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setTercapaiipremium(parseInt(e.target.value))}
+      />
+      <td className="border border-slate-300 p-2">{list.tercapaipersennpremium}</td>
+      <TdInput
+        id={`jumlahvisit${list.id}`}
+        value={list.jumlahvisit}
+        desc=""
+        type="number"
+        isEdit={listEdit}
+        onChange={(e) => setJumlahvisit(parseFloat(e.target.value))}
+      />
       <td className="border border-slate-300 p-2">
         <div className="flex justify-evenly gap-x-2">
           {listEdit ? (

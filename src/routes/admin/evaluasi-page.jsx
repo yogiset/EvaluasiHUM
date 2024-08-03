@@ -3,6 +3,7 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
+import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -13,7 +14,6 @@ import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
-import { deleteApi, getApi } from "@/lib/fetcher";
 
 const EvaluasiPage = () => {
   const { ref, inView } = useInView();
@@ -39,7 +39,16 @@ const EvaluasiPage = () => {
   });
 
   async function fetchEvaluationResults(pageParam) {
-    return getApi("/evaluasi/showall", { page: pageParam });
+    const response = await axios.get("http://localhost:8082/evaluasi/showall", {
+      params: {
+        page: pageParam,
+      },
+    });
+
+    if (response.status === 200) {
+      // console.log(response);
+      return response.data;
+    }
   }
 
   useEffect(() => {
@@ -116,14 +125,14 @@ const EvaluationCard = ({ data }) => {
   const mutation = useMutation({
     mutationFn: (id) => {
       if (role !== "ADMIN") return [];
-      return deleteApi(`/evaluasi/hapusevaluasi/${id}`);
+      return axios.delete(`http://localhost:8082/evaluasi/hapusevaluasi/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-evaluation-results"] });
       toast.success("Deleted successfully!");
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   });
 

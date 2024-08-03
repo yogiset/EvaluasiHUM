@@ -3,6 +3,7 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
+import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -15,7 +16,6 @@ import { UserModal } from "@/components/dashboard/modal/user-modal";
 import { ForbiddenPage } from "@/components/dashboard/forbidden-page";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
-import { deleteApi, getApi } from "@/lib/fetcher";
 
 const UserPage = () => {
   const { role } = useAuth();
@@ -30,7 +30,6 @@ const UserPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-users"],
     queryFn: ({ pageParam }) => fetchUsers(pageParam),
@@ -45,8 +44,16 @@ const UserPage = () => {
 
   async function fetchUsers(pageParam) {
     if (role !== "ADMIN") return [];
-    if (searchValue) return getApi(`/user/findbynama/${searchValue}`);
-    return getApi("/user/showall", { page: pageParam });
+
+    const response = await axios.get("http://localhost:8082/user/showall", {
+      params: {
+        page: pageParam,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    }
   }
 
   useEffect(() => {
@@ -63,7 +70,9 @@ const UserPage = () => {
   // onSubmit event ↓↓↓
   function onSearch(e) {
     e.preventDefault();
-    refetch();
+
+    // TODO: Handle on search
+    alert(searchValue);
   }
 
   if (role !== "ADMIN") {
@@ -115,7 +124,7 @@ const UsersList = ({ data }) => {
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">Tidak ada data user</h1>
+          <h1 className="text-lg font-semibold">User sedang ngopi☕</h1>
         </div>
       ) : (
         <Fragment>
@@ -134,7 +143,9 @@ const UserCard = ({ data }) => {
   const { newModal } = useConfirmModal();
 
   const mutation = useMutation({
-    mutationFn: (id) => deleteApi(`/user/hapususer/${id}`),
+    mutationFn: (id) => {
+      return axios.delete(`http://localhost:8082/user/hapususer/${id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-users"] });
       toast.success("Deleted successfully!");

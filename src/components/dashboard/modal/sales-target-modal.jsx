@@ -24,8 +24,13 @@ export const SalesTargetModal = ({ open, onClose, idsales }) => {
     resolver: zodResolver(salesDetailSchema),
     defaultValues: {
       bulan: "",
-      targetbln: 0,
-      tercapaii: 0,
+      targetblntotal: 0,
+      tercapaiitotal: 0,
+      targetblngadus: 0,
+      tercapaiigadus: 0,
+      targetblnpremium: 0,
+      tercapaiipremium: 0,
+      jumlahvisit: 0,
     },
   });
 
@@ -49,14 +54,20 @@ export const SalesTargetModal = ({ open, onClose, idsales }) => {
 
   function onSubmit(e) {
     e.preventDefault();
-    const { bulan, targetbln, tercapaii } = salesTargetForm.getValues();
+    const { bulan, targetblntotal, tercapaiitotal, targetblngadus, tercapaiigadus, targetblnpremium, tercapaiipremium, jumlahvisit } = salesTargetForm.getValues();
     if (bulan.length === 0) return;
 
     const formData = {
       idsales: parseInt(idsales),
       bulan,
-      targetbln: parseInt(targetbln),
-      tercapaii: parseInt(tercapaii),
+      targetblntotal: parseInt(targetblntotal),
+      tercapaiitotal: parseInt(tercapaiitotal),
+      targetblngadus: parseInt(targetblngadus),
+      tercapaiigadus: parseInt(tercapaiigadus),
+      targetblnpremium: parseInt(targetblnpremium),
+      tercapaiipremium: parseInt(tercapaiipremium),
+      jumlahvisit: parseFloat(jumlahvisit)
+
     };
 
     mutation.mutate(formData);
@@ -80,18 +91,54 @@ export const SalesTargetModal = ({ open, onClose, idsales }) => {
             />
             <FormInput
               form={salesTargetForm}
-              label="Target Bulan"
-              id="targetbln"
-              placeholder="Masukkan target/bulan"
+              label="Target Total per Bulan"
+              id="targetblntotal"
+              placeholder="Masukkan total target /bulan"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
-              label="Tercapai"
-              id="tercapaii"
-              placeholder="Masukkan tercapai/bulan"
+              label="Tercapaitotal"
+              id="tercapaiitotal"
+              placeholder="Masukkan total tercapai/bulan"
               type="number"
             />
+            <FormInput
+              form={salesTargetForm}
+              label="Target gadus Bulan"
+              id="targetblngadus"
+              placeholder="Masukkan target gadus/bulan"
+              type="number"
+            />
+            <FormInput
+              form={salesTargetForm}
+              label="Tercapaigadus"
+              id="tercapaiigadus"
+              placeholder="Masukkan gadus tercapai/bulan"
+              type="number"
+            />
+            <FormInput
+              form={salesTargetForm}
+              label="Target premium Bulan"
+              id="targetblnpremium"
+              placeholder="Masukkan target premium/bulan"
+              type="number"
+            />
+            <FormInput
+              form={salesTargetForm}
+              label="Tercapaipremium"
+              id="tercapaiipremium"
+              placeholder="Masukkan premium tercapai/bulan"
+              type="number"
+            />
+            <FormInput
+              form={salesTargetForm}
+              label="Jumlahvisit"
+              id="jumlahvisit"
+              placeholder="Masukkan jumlahvisit/bulan"
+              type="number"
+            />
+
             <div className="flex gap-x-2">
               <Button type="submit" variant="sky" disabled={mutation.isPending}>
                 Tambah

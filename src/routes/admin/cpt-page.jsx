@@ -22,7 +22,7 @@ const CptPage = () => {
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
-
+  const {role } = useAuth();
   const {
     status,
     data,
@@ -95,9 +95,12 @@ const CptPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
         {/* modal start */}
+        { role !== "ADMIN" ? null : (
         <Button variant="sky" onClick={() => setOpen(true)}>
           Tambah
         </Button>
+        )}
+        
         <CptModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>

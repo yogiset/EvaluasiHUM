@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { toast } from "sonner";
 import { picosSchema } from "@/schema/picos-schema";
 import { Loading } from "@/components/dashboard/loading";
@@ -19,7 +20,6 @@ import {
 
 // TODO: Remove or change this later ↓↓↓
 import { exampleBulan, exampleTahun } from "@/data/userData";
-import { getApi, putApi } from "@/lib/fetcher";
 
 const DetailPicosPage = () => {
   const navigate = useNavigate();
@@ -46,23 +46,30 @@ const DetailPicosPage = () => {
   });
 
   async function fetchPicos() {
-    const response = await getApi(`/picos/findbyid/${picosId}`);
+    const response = await axios.get(
+      `http://localhost:8082/picos/findbyid/${picosId}`
+    );
 
-    if (response) {
-      setNik(response.nik);
-      setNama(response.nama);
-      setBulan(response.bulan);
-      setTahun(response.tahun);
-      setPipelinestrength(response.pipelinestrength);
-      setLowtouchratio(response.lowtouchratio);
-      setCrosssellratio(response.crosssellratio);
-      setPremiumcontribution(response.premiumcontribution);
-      return response;
+    if (response.status === 200) {
+      setNik(response.data.nik);
+      setNama(response.data.nama);
+      setBulan(response.data.bulan);
+      setTahun(response.data.tahun);
+      setPipelinestrength(response.data.pipelinestrength);
+      setLowtouchratio(response.data.lowtouchratio);
+      setCrosssellratio(response.data.crosssellratio);
+      setPremiumcontribution(response.data.premiumcontribution);
+      return response.data;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: (formData) => putApi(`picos/editpicos/${picosId}`, formData),
+    mutationFn: (formData) => {
+      return axios.put(
+        `http://localhost:8082/picos/editpicos/${picosId}`,
+        formData
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-picos", picosId] });
       toast.success("Updated successfully!");
@@ -209,11 +216,11 @@ const DetailPicosPage = () => {
                   </>
                 ) : (
                   <>
-                    {role !== "ADMIN" ? null : (
-                      <Button variant="sky" onClick={() => setIsEdit(true)}>
-                        <PencilLine className="mr-2 w-5 h-5" />
-                        Edit
-                      </Button>
+                  {role !== "ADMIN" ? null : (
+                    <Button variant="sky" onClick={() => setIsEdit(true)}>
+                      <PencilLine className="mr-2 w-5 h-5" />
+                      Edit
+                    </Button>
                     )}
                     <Button
                       variant="outline"
@@ -221,6 +228,7 @@ const DetailPicosPage = () => {
                     >
                       Kembali
                     </Button>
+                    
                   </>
                 )}
               </div>
