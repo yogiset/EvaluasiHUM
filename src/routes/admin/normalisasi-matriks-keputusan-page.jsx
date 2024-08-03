@@ -8,7 +8,7 @@ import { Loading } from "@/components/dashboard/loading";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Separator } from "@/components/ui/separator";
 
-const RankPage = () => {
+const NormalisasiMatriksKeputusanPage = () => {
     // const { role } = useAuth();
     const { ref, inView } = useInView();
     const [searchValue, setSearchValue] = useState("");
@@ -20,8 +20,8 @@ const RankPage = () => {
         fetchNextPage,
         hasNextPage,
     } = useInfiniteQuery({
-        queryKey: ["get-all-rank"],
-        queryFn: ({ pageParam }) => fetchAllRank(pageParam),
+        queryKey: ["get-all-normalisasi-matriks-keputusan"],
+        queryFn: ({ pageParam }) => fetchAllNormalisasiMatriksKeputusan(pageParam),
         initialPageParam: 1,
         getNextPageParam: (lastPage, lastPageParam) =>
             lastPage.length === 0 ||
@@ -31,9 +31,9 @@ const RankPage = () => {
                 : lastPageParam.length + 1,
     });
 
-    async function fetchAllRank(pageParam) {
+    async function fetchAllNormalisasiMatriksKeputusan(pageParam) {
         // if (role !== "ADMIN") return [];
-        const response = await axios.get("http://localhost:8082/sales/perangkingan?page=1&limit=17", {
+        const response = await axios.get("http://localhost:8082/sales/normalisasimatrikskeputusan?page=1&limit=17", {
             params: {
                 page: pageParam,
             },
@@ -76,7 +76,7 @@ const RankPage = () => {
             <div className="w-full flex justify-end items-center gap-x-2 p-2">
                 <SearchBar
                     onSubmit={onSearch}
-                    placeholder="Cari Rank"
+                    placeholder="Cari Normalisasi Matriks"
                     onChange={(e) => setSearchValue(e.target.value)}
                 />
             </div>
@@ -85,7 +85,7 @@ const RankPage = () => {
             ) : (
                 <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
                     {data.pages.map((group, i) => (
-                        <RankList key={i} data={group.content} />
+                        <NormalisasiMatriksKeputusanList key={i} data={group.content} />
                     ))}
 
                     {hasNextPage && (
@@ -97,17 +97,17 @@ const RankPage = () => {
     );
 };
 
-const RankList = ({ data }) => {
+const NormalisasiMatriksKeputusanList = ({ data }) => {
     return (
         <>
             {data.length < 1 ? (
                 <div className="w-full h-full flex justify-center items-center">
-                    <h1 className="text-lg font-semibold">Rank Kosong</h1>
+                    <h1 className="text-lg font-semibold">Normalisasi Matriks Keputusan Kosong</h1>
                 </div>
             ) : (
                 <Fragment>
                     {data?.map((elem) => (
-                        <RankCard key={elem.idsales} data={elem} />
+                        <NormalisasiMatriksKeputusanCard key={elem.idsales} data={elem} />
                     ))}
                 </Fragment>
             )}
@@ -115,7 +115,7 @@ const RankList = ({ data }) => {
     );
 };
 
-const RankCard = ({ data }) => {
+const NormalisasiMatriksKeputusanCard = ({ data }) => {
     return (
         <div className="w-full flex justify-between items-center border shadow-md rounded-md p-2">
             <div className="space-y-1 truncate">
@@ -126,15 +126,15 @@ const RankCard = ({ data }) => {
                     </h1>
                     <Separator orientation="vertical" />
                     <h1 className="text-sm font-medium text-neutral-600">
-                        Achivement Total: {data.achivementtotal}
+                        Achivement Total: {data.achievtotal}
                     </h1>
                     <Separator orientation="vertical" />
                     <h1 className="text-sm font-medium text-neutral-600">
-                        Achivement Gadus: {data.achivementgadus}
+                        Achivement Gadus: {data.achievgadus}
                     </h1>
                     <Separator orientation="vertical" />
                     <h1 className="text-sm font-medium text-neutral-600">
-                        Achivement Premium: {data.achivementpremium}
+                        Achivement Premium: {data.achievpremium}
                     </h1>
                     <Separator orientation="vertical" />
                     <h1 className="text-sm font-medium text-neutral-600">
@@ -144,18 +144,10 @@ const RankCard = ({ data }) => {
                     <h1 className="text-sm font-medium text-neutral-600">
                         Jumlah Visit: {data.jumvisit}
                     </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Hasil: {data.hasil}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Rank: {data.rank}
-                    </h1>
                 </div>
             </div>
         </div>
     );
 };
 
-export default RankPage;
+export default NormalisasiMatriksKeputusanPage;
