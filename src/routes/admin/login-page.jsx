@@ -121,16 +121,15 @@ const Login = () => {
               >
                 LOGIN
               </Button>
-              <p className="text-sm">Forgot Your Password?</p>
+              {/* <p className="text-sm">Forgot Your Password?</p> */}
             </form>
           </Form>
         </section>
         <section className="hero-login hidden md:inline w-[350px] min-h-full">
           <div className="w-full h-full flex flex-col justify-center items-center gap-4 bg-sky-800 text-white rounded-l-[100px] rounded-r-3xl">
-            <h2 className="text-center text-4xl font-bold">Hi, Admin!</h2>
+            <h2 className="text-center text-4xl font-bold">Hi!</h2>
             <p className="text-center">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi,
-              corporis!
+              Yoghi Setiawan 22371150 Sistem Informasi
             </p>
           </div>
         </section>
