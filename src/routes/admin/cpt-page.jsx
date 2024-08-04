@@ -1,9 +1,8 @@
-                                                                                        import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
-import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -16,13 +15,13 @@ import { CptModal } from "@/components/dashboard/modal/cpt-modal";
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { deleteApi, getApi } from "@/lib/fetcher";
 
 const CptPage = () => {
-  // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
-  const {role } = useAuth();
+  const { role } = useAuth();
   const {
     status,
     data,
@@ -30,9 +29,10 @@ const CptPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-all-cpt"],
-    queryFn: ({ pageParam }) => fetchAllCpt(pageParam),
+    queryFn: ({ pageParam }) => fetchAllCpt(pageParam, searchValue),
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
@@ -42,17 +42,8 @@ const CptPage = () => {
         : lastPageParam.length + 1,
   });
 
-  async function fetchAllCpt(pageParam) {
-    // if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/cpt/showall", {
-      params: {
-        page: pageParam,
-      },
-    });
-
-    if (response.status === 200) {
-      return response.data;
-    }
+  async function fetchAllCpt(pageParam, searchValue) {
+    return getApi("/cpt/showall", { page: pageParam, nama: searchValue });
   }
 
   useEffect(() => {
@@ -66,17 +57,10 @@ const CptPage = () => {
     setOpen(false);
   }
 
-  // onSubmit event ↓↓↓
   function onSearch(e) {
     e.preventDefault();
-
-    // TODO: Handle on search
-    alert(searchValue);
+    refetch();
   }
-
-  // if (role !== "ADMIN") {
-  //   return <ForbiddenPage />;
-  // }
 
   if (error) {
     return (
@@ -95,12 +79,12 @@ const CptPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
         {/* modal start */}
-        { role !== "ADMIN" ? null : (
-        <Button variant="sky" onClick={() => setOpen(true)}>
-          Tambah
-        </Button>
+        {role !== "ADMIN" ? null : (
+          <Button variant="sky" onClick={() => setOpen(true)}>
+            Tambah
+          </Button>
         )}
-        
+
         <CptModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
@@ -126,7 +110,7 @@ const CptList = ({ data }) => {
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">CPT sedang ngopi☕</h1>
+          <h1 className="text-lg font-semibold">Data CPT tidak ada.</h1>
         </div>
       ) : (
         <Fragment>
@@ -146,15 +130,13 @@ const CptCard = ({ data }) => {
   const { role } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/cpt/deletecpt/${id}`);
-    },
+    mutationFn: (id) => deleteApi(`/cpt/deletecpt/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-all-cpt"] });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

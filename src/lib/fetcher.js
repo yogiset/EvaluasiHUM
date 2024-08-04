@@ -1,11 +1,13 @@
 import axios from "axios";
-const apiUrl = import.meta.env.VITE_BASE_URL;
+const apiUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8082";
 
 export const getApi = async (endpoint, params) => {
   try {
     const response = await axios.get(apiUrl + endpoint, {
       params,
     });
+
+    console.log(response.data);
 
     if (response.status === 200) {
       return response.data;

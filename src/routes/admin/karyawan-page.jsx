@@ -3,12 +3,12 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
-import axios from "axios";
 import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
+import { deleteApi, getApi } from "@/lib/fetcher";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
@@ -30,9 +30,10 @@ const KaryawanPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-all-employee"],
-    queryFn: ({ pageParam }) => fetchAllEmployee(pageParam),
+    queryFn: ({ pageParam }) => fetchAllEmployee(pageParam, searchValue),
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
@@ -42,17 +43,9 @@ const KaryawanPage = () => {
         : lastPageParam.length + 1,
   });
 
-  async function fetchAllEmployee(pageParam) {
+  async function fetchAllEmployee(pageParam, searchValue) {
     if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/karyawan/showall", {
-      params: {
-        page: pageParam,
-      },
-    });
-
-    if (response.status === 200) {
-      return response.data;
-    }
+    return getApi("/karyawan/showall", { page: pageParam, nama: searchValue });
   }
 
   useEffect(() => {
@@ -69,9 +62,7 @@ const KaryawanPage = () => {
   // onSubmit event ↓↓↓
   function onSearch(e) {
     e.preventDefault();
-
-    // TODO: Handle on search
-    alert(searchValue);
+    refetch();
   }
 
   if (role !== "ADMIN") {
@@ -123,7 +114,7 @@ const KaryawanList = ({ data }) => {
     <>
       {data.length < 1 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <h1 className="text-lg font-semibold">Karyawan sedang ngopi☕</h1>
+          <h1 className="text-lg font-semibold">Tidak ada data karyawan.</h1>
         </div>
       ) : (
         <Fragment>
@@ -142,15 +133,13 @@ const KaryawanCard = ({ data }) => {
   const { newModal } = useConfirmModal();
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/karyawan/hapuskaryawan/${id}`);
-    },
+    mutationFn: (id) => deleteApi(`/karyawan/hapuskaryawan/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-all-employee"] });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

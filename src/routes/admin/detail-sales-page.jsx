@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronsRight, PencilLine, Info, Trash2, Plus } from "lucide-react";
@@ -6,7 +6,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { salesSchema } from "@/schema/sales-schema";
-// import { calcPercent } from "@/lib/utils";
 import { Loading } from "@/components/dashboard/loading";
 import { CustomAlert } from "@/components/dashboard/custom-alert";
 import { SalesTargetModal } from "@/components/dashboard/modal/sales-target-modal";
@@ -24,7 +23,7 @@ import {
 } from "@/components/ui/select";
 
 // TODO: Remove or change this later ↓↓↓
-import { exampleTahun, exampleBulan, exampleKeterangan } from "@/data/userData";
+import { exampleTahun, exampleBulan } from "@/data/userData";
 
 const DetailSalesPage = () => {
   const navigate = useNavigate();
@@ -124,7 +123,13 @@ const DetailSalesPage = () => {
     }
 
     setErrorValidation(false);
-    mutation.mutate({ ...data, tercapaipersentotal, tercapaipersengadus, tercapaipersenpremium, jumlahvisit });
+    mutation.mutate({
+      ...data,
+      tercapaipersentotal,
+      tercapaipersengadus,
+      tercapaipersenpremium,
+      jumlahvisit,
+    });
   }
 
   function onClose() {
@@ -245,7 +250,9 @@ const DetailSalesPage = () => {
                     title="Achivement Premium Tercapai"
                     desc={data.tercapaipremium}
                     isEdit={isEdit}
-                    onChange={(e) => setTercapaipremium(parseInt(e.target.value))}
+                    onChange={(e) =>
+                      setTercapaipremium(parseInt(e.target.value))
+                    }
                   />
                   <tr>
                     <td className="font-medium border border-slate-300 px-2 py-2">
@@ -260,7 +267,9 @@ const DetailSalesPage = () => {
                     title="Jumlah Customer"
                     desc={data.jumlahcustomer}
                     isEdit={isEdit}
-                    onChange={(e) => setJumlahcustomer(parseInt(e.target.value))}
+                    onChange={(e) =>
+                      setJumlahcustomer(parseInt(e.target.value))
+                    }
                   />
                   <TrText
                     id="jumlahvisit"
@@ -334,16 +343,36 @@ const DetailSalesPage = () => {
                 <thead className="w-full border-collapse bg-sky-200 border border-slate-400">
                   <tr>
                     <th className="border border-slate-400 p-2">Bulan</th>
-                    <th className="border border-slate-400 p-2">Achivement Total Target</th>
-                    <th className="border border-slate-400 p-2">Achivement Total Tercapai</th>
-                    <th className="border border-slate-400 p-2">Achivement Total Tercapai(%)</th>
-                    <th className="border border-slate-400 p-2">Achivement Gadus Target</th>
-                    <th className="border border-slate-400 p-2">Achivement Gadus Tercapai</th>
-                    <th className="border border-slate-400 p-2">Achivement Gadus Tercapai(%)</th>
-                    <th className="border border-slate-400 p-2">Achivement Premium Target</th>
-                    <th className="border border-slate-400 p-2">Achivement Premium Tercapai</th>
-                    <th className="border border-slate-400 p-2">Achivement Premium Tercapai(%)</th>
-                    <th className="border border-slate-400 p-2">Jumlah Visit(%)</th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Total Target
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Total Tercapai
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Total Tercapai(%)
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Gadus Target
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Gadus Tercapai
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Gadus Tercapai(%)
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Premium Target
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Premium Tercapai
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Achivement Premium Tercapai(%)
+                    </th>
+                    <th className="border border-slate-400 p-2">
+                      Jumlah Visit(%)
+                    </th>
                     {role !== "ADMIN" ? null : (
                       <th className="w-1/6 border border-slate-400 p-2">
                         Opsi
@@ -377,8 +406,12 @@ const DetailTargetList = ({ list, salesId }) => {
   const [tercapaiitotal, setTercapaiitotal] = useState(list.tercapaiitotal);
   const [targetblngadus, setTargetblngadus] = useState(list.targetblngadus);
   const [tercapaiigadus, setTercapaiigadus] = useState(list.tercapaiigadus);
-  const [targetblnpremium, setTargetblnpremium] = useState(list.targetblnpremium);
-  const [tercapaiipremium, setTercapaiipremium] = useState(list.tercapaiipremium);
+  const [targetblnpremium, setTargetblnpremium] = useState(
+    list.targetblnpremium
+  );
+  const [tercapaiipremium, setTercapaiipremium] = useState(
+    list.tercapaiipremium
+  );
   const [jumlahvisit, setJumlahvisit] = useState(list.jumlahvisit);
   const { role } = useAuth();
 
@@ -417,7 +450,16 @@ const DetailTargetList = ({ list, salesId }) => {
   });
 
   function saveEditedData() {
-    const formData = { bulan, targetblntotal, tercapaiitotal, targetblngadus, tercapaiigadus, targetblnpremium, tercapaiipremium, jumlahvisit};
+    const formData = {
+      bulan,
+      targetblntotal,
+      tercapaiitotal,
+      targetblngadus,
+      tercapaiigadus,
+      targetblnpremium,
+      tercapaiipremium,
+      jumlahvisit,
+    };
     //    const tercapaipersenn = calcPercent(targetbln, tercapaii).toString() + "%";
     mutationEdit.mutate({ ...formData });
   }
@@ -451,7 +493,9 @@ const DetailTargetList = ({ list, salesId }) => {
         isEdit={listEdit}
         onChange={(e) => setTercapaiitotal(parseInt(e.target.value))}
       />
-      <td className="border border-slate-300 p-2">{list.tercapaipersenntotal}</td>
+      <td className="border border-slate-300 p-2">
+        {list.tercapaipersenntotal}
+      </td>
       <TdInput
         id={`targetblngadus${list.id}`}
         value={list.targetblngadus}
@@ -468,7 +512,9 @@ const DetailTargetList = ({ list, salesId }) => {
         isEdit={listEdit}
         onChange={(e) => setTercapaiigadus(parseInt(e.target.value))}
       />
-      <td className="border border-slate-300 p-2">{list.tercapaipersenngadus}</td>
+      <td className="border border-slate-300 p-2">
+        {list.tercapaipersenngadus}
+      </td>
       <TdInput
         id={`targetblnpremium${list.id}`}
         value={list.targetblnpremium}
@@ -485,7 +531,9 @@ const DetailTargetList = ({ list, salesId }) => {
         isEdit={listEdit}
         onChange={(e) => setTercapaiipremium(parseInt(e.target.value))}
       />
-      <td className="border border-slate-300 p-2">{list.tercapaipersennpremium}</td>
+      <td className="border border-slate-300 p-2">
+        {list.tercapaipersennpremium}
+      </td>
       <TdInput
         id={`jumlahvisit${list.id}`}
         value={list.jumlahvisit}

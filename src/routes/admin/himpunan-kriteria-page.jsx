@@ -3,7 +3,6 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
-import axios from "axios";
 import {
   useMutation,
   useQueryClient,
@@ -16,13 +15,13 @@ import { HimpunanKriteriaModal } from "@/components/dashboard/modal/himpunan-kri
 import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { deleteApi, getApi } from "@/lib/fetcher";
 
 const HimpunanKriteriaPage = () => {
-  // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
-  const {role} = useAuth();
+  const { role } = useAuth();
 
   const {
     status,
@@ -31,9 +30,11 @@ const HimpunanKriteriaPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-all-himpunan-kriteria"],
-    queryFn: ({ pageParam }) => fetchAllHimpunanKriteria(pageParam),
+    queryFn: ({ pageParam }) =>
+      fetchAllHimpunanKriteria(pageParam, searchValue),
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
@@ -43,17 +44,11 @@ const HimpunanKriteriaPage = () => {
         : lastPageParam.length + 1,
   });
 
-  async function fetchAllHimpunanKriteria(pageParam) {
-    // if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/kriteria/showall", {
-      params: {
-        page: pageParam,
-      },
+  async function fetchAllHimpunanKriteria(pageParam, searchValue) {
+    return getApi("/kriteria/showall", {
+      page: pageParam,
+      nmkriteria: searchValue,
     });
-
-    if (response.status === 200) {
-      return response.data;
-    }
   }
 
   useEffect(() => {
@@ -70,14 +65,8 @@ const HimpunanKriteriaPage = () => {
   // onSubmit event ↓↓↓
   function onSearch(e) {
     e.preventDefault();
-
-    // TODO: Handle on search
-    alert(searchValue);
+    refetch();
   }
-
-  // if (role !== "ADMIN") {
-  //   return <ForbiddenPage />;
-  // }
 
   if (error) {
     return (
@@ -97,10 +86,10 @@ const HimpunanKriteriaPage = () => {
         />
         {/* modal start */}
         {role !== "ADMIN" ? null : (
-        <Button variant="sky" onClick={() => setOpen(true)}>
-          Tambah
-        </Button>
-        )}  
+          <Button variant="sky" onClick={() => setOpen(true)}>
+            Tambah
+          </Button>
+        )}
         <HimpunanKriteriaModal open={open} onClose={onClose} />
         {/* modal end */}
       </div>
@@ -146,17 +135,15 @@ const KriteriaCard = ({ data }) => {
   const { role } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/kriteria/deletehim/${id}`);
-    },
+    mutationFn: (id) => deleteApi(`/kriteria/deletehim/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get-all-himpunan-kriteria"],
       });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

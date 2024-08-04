@@ -3,12 +3,12 @@ import { Info, Trash2, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "react-intersection-observer";
-import axios from "axios";
 import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
+import { deleteApi, getApi } from "@/lib/fetcher";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { toast } from "sonner";
 import { Loading } from "@/components/dashboard/loading";
@@ -18,11 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const BobotKriteriaPage = () => {
-  // const { role } = useAuth();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
-  const {role} = useAuth();
+  const { role } = useAuth();
 
   const {
     status,
@@ -31,9 +30,10 @@ const BobotKriteriaPage = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["get-all-bobot-kriteria"],
-    queryFn: ({ pageParam }) => fetchAllBobotKriteria(pageParam),
+    queryFn: ({ pageParam }) => fetchAllBobotKriteria(pageParam, searchValue),
     initialPageParam: 1,
     getNextPageParam: (lastPage, lastPageParam) =>
       lastPage.length === 0 ||
@@ -43,17 +43,11 @@ const BobotKriteriaPage = () => {
         : lastPageParam.length + 1,
   });
 
-  async function fetchAllBobotKriteria(pageParam) {
-    // if (role !== "ADMIN") return [];
-    const response = await axios.get("http://localhost:8082/bobotkriteria/showall", {
-      params: {
-        page: pageParam,
-      },
+  async function fetchAllBobotKriteria(pageParam, searchValue) {
+    return getApi(`/bobotkriteria/showall`, {
+      page: pageParam,
+      nmkriteria: searchValue,
     });
-
-    if (response.status === 200) {
-      return response.data;
-    }
   }
 
   useEffect(() => {
@@ -70,14 +64,8 @@ const BobotKriteriaPage = () => {
   // onSubmit event ↓↓↓
   function onSearch(e) {
     e.preventDefault();
-
-    // TODO: Handle on search
-    alert(searchValue);
+    refetch();
   }
-
-  // if (role !== "ADMIN") {
-  //   return <ForbiddenPage />;
-  // }
 
   if (error) {
     return (
@@ -96,10 +84,10 @@ const BobotKriteriaPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
         {/* modal start */}
-        { role !== "ADMIN" ? null : (
-        <Button variant="sky" onClick={() => setOpen(true)}>
-          Tambah
-        </Button>
+        {role !== "ADMIN" ? null : (
+          <Button variant="sky" onClick={() => setOpen(true)}>
+            Tambah
+          </Button>
         )}
 
         <BobotKriteriaModal open={open} onClose={onClose} />
@@ -147,17 +135,15 @@ const BobotCard = ({ data }) => {
   const { role } = useAuth();
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return axios.delete(`http://localhost:8082/bobotkriteria/deletebobot/${id}`);
-    },
+    mutationFn: (id) => deleteApi(`/bobotkriteria/deletebobot/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get-all-bobot-kriteria"],
       });
       toast.success("Deleted successfully!");
     },
-    onError: () => {
-      toast.error("Failed to delete!");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
