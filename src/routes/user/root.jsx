@@ -19,15 +19,13 @@ function Root() {
             PT HARAPAN UTAMA MOTOR
           </h2>
           <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. In qui
-            voluptatem, dignissimos consequuntur tempora impedit aliquid
-            adipisci.
+            YOGHI SETIAWAN 2237101150 SISTEM INFORMASI
           </p>
           <Button
             variant="sky"
             className="w-fit"
             onClick={() =>
-              id ? navigate("/evaluasi/user-form") : navigate("/adm-login")
+              id ? navigate("/dashboard/home") : navigate("/adm-login")
             }
           >
             Mulai evaluasi
