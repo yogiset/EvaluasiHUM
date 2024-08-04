@@ -1,161 +1,150 @@
-import { useState, useEffect, Fragment } from "react";
-import { useInView } from "react-intersection-observer";
-import axios from "axios";
-import {
-    useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { getApi } from "@/lib/fetcher";
 import { Loading } from "@/components/dashboard/loading";
 import { SearchBar } from "@/components/dashboard/search-bar";
-import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const RankPage = () => {
-    // const { role } = useAuth();
-    const { ref, inView } = useInView();
-    const [searchValue, setSearchValue] = useState("");
-    const {
-        status,
-        data,
-        error,
-        isFetchingNextPage,
-        fetchNextPage,
-        hasNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["get-all-rank"],
-        queryFn: ({ pageParam }) => fetchAllRank(pageParam),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, lastPageParam) =>
-            lastPage.length === 0 ||
-                lastPage.totalPages === lastPageParam.length ||
-                lastPage.content.length === 0
-                ? undefined
-                : lastPageParam.length + 1,
+  const [searchValue, setSearchValue] = useState("");
+  const [pageParam, setPageParam] = useState(1);
+  const { status, data, error, refetch } = useQuery({
+    queryKey: ["get-all-rank", pageParam],
+    queryFn: () => fetchAllRank(pageParam),
+    placeholderData: keepPreviousData,
+  });
+
+  function fetchAllRank(page) {
+    return getApi("/sales/perangkingan", {
+      page: page,
+      limit: 20,
+      nama: searchValue,
     });
+  }
 
-    async function fetchAllRank(pageParam) {
-        // if (role !== "ADMIN") return [];
-        const response = await axios.get("http://localhost:8082/sales/perangkingan?page=1&limit=17", {
-            params: {
-                page: pageParam,
-            },
-        });
+  function onSearch(e) {
+    e.preventDefault();
+    refetch();
+  }
 
-        if (response.status === 200) {
-            return response.data;
-        }
-    }
+  function fetchNextPage(currentPage) {
+    setPageParam(currentPage + 1);
+    refetch();
+  }
 
-    useEffect(() => {
-        if (inView) {
-            fetchNextPage();
-        }
-    }, [fetchNextPage, inView]);
+  function fetchPrevPage(currentPage) {
+    setPageParam(currentPage - 1);
+    refetch();
+  }
 
-    // close modal ↓↓↓
-    function onClose() {
-        setOpen(false);
-    }
-
-    // onSubmit event ↓↓↓
-    function onSearch(e) {
-        e.preventDefault();
-
-        // TODO: Handle on search
-        alert(searchValue);
-    }
-
-    if (error) {
-        return (
-            <div className="w-full h-full flex justify-center items-center">
-                <h1 className="text-xl font-semibold">Error!</h1>
-            </div>
-        );
-    }
-
+  if (error) {
     return (
-        <div className="w-full h-full flex flex-col">
-            <div className="w-full flex justify-end items-center gap-x-2 p-2">
-                <SearchBar
-                    onSubmit={onSearch}
-                    placeholder="Cari Rank"
-                    onChange={(e) => setSearchValue(e.target.value)}
-                />
-            </div>
-            {status === "pending" ? (
-                <Loading />
-            ) : (
-                <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
-                    {data.pages.map((group, i) => (
-                        <RankList key={i} data={group.content} />
-                    ))}
-
-                    {hasNextPage && (
-                        <div ref={ref}>{isFetchingNextPage ? <Loading /> : null}</div>
-                    )}
-                </div>
-            )}
-        </div>
+      <div className="w-full h-full flex justify-center items-center">
+        <h1 className="text-xl font-semibold">Error!</h1>
+      </div>
     );
+  }
+
+  return (
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full flex justify-end items-center gap-x-2 p-2">
+        <SearchBar
+          onSubmit={onSearch}
+          placeholder="Cari Rank"
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+      </div>
+      {status === "pending" ? (
+        <Loading />
+      ) : (
+        <div className="w-full h-full overflow-y-auto space-y-2 pb-20">
+          <RankTable items={data} />
+          <div className="w-full flex items-center justify-between">
+            {data.pageable.pageNumber > 0 && (
+              <Button
+                variant="sky"
+                size="sm"
+                onClick={() => fetchPrevPage(data.pageable.pageNumber + 1)}
+              >
+                Prev
+              </Button>
+            )}
+            <p className="text-md font-semibold text-slate-600">
+              Page {data.pageable.pageNumber + 1} of {data.totalPages}
+            </p>
+            {data.pageable.pageNumber + 1 < data.totalPages && (
+              <Button
+                variant="sky"
+                size="sm"
+                onClick={() => fetchNextPage(data.pageable.pageNumber + 1)}
+              >
+                Next
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
-const RankList = ({ data }) => {
-    return (
-        <>
-            {data.length < 1 ? (
-                <div className="w-full h-full flex justify-center items-center">
-                    <h1 className="text-lg font-semibold">Rank Kosong</h1>
-                </div>
-            ) : (
-                <Fragment>
-                    {data?.map((elem) => (
-                        <RankCard key={elem.idsales} data={elem} />
-                    ))}
-                </Fragment>
-            )}
-        </>
-    );
-};
-
-const RankCard = ({ data }) => {
-    return (
-        <div className="w-full flex justify-between items-center border shadow-md rounded-md p-2">
-            <div className="space-y-1 truncate">
-                    {data.nama}
-                <div className="flex gap-x-2 h-[20px]">
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Tahun: {data.tahun}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Achivement Total: {data.achivementtotal}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Achivement Gadus: {data.achivementgadus}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Achivement Premium: {data.achivementpremium}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Jumlah Customer: {data.jumcustomer}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Jumlah Visit: {data.jumvisit}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Hasil: {data.hasil}
-                    </h1>
-                    <Separator orientation="vertical" />
-                    <h1 className="text-sm font-medium text-neutral-600">
-                        Rank: {data.rank}
-                    </h1>
-                </div>
-            </div>
-        </div>
-    );
+const RankTable = ({ items }) => {
+  return (
+    <Table className="table-auto md:table-fixed">
+      <TableHeader>
+        <TableRow className="sticky">
+          <TableHead className="w-14">No</TableHead>
+          <TableHead className="w-40">Nama</TableHead>
+          <TableHead className="w-16">Tahun</TableHead>
+          <TableHead>Achievement total</TableHead>
+          <TableHead>Achievement gadus</TableHead>
+          <TableHead>Achievement premium</TableHead>
+          <TableHead>Jumlah customer</TableHead>
+          <TableHead>Jumlah visit</TableHead>
+          <TableHead>Hasil</TableHead>
+          <TableHead className="w-16">Rank</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items?.content.map((elem, index) => (
+          <TableRow key={elem.idsales}>
+            <TableCell>{index + 1}</TableCell>
+            <TableCell>{elem.nama}</TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.tahun}
+            </TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.achivementtotal}
+            </TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.achivementgadus}
+            </TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.achivementpremium}
+            </TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.jumcustomer}
+            </TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.jumvisit}
+            </TableCell>
+            <TableCell className="truncate hover:cursor-default">
+              {elem.hasil}
+            </TableCell>
+            <TableCell>{elem.rank}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
 };
 
 export default RankPage;
