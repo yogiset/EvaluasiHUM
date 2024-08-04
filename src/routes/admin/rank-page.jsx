@@ -27,6 +27,12 @@ const RankPage = () => {
 
   function fetchAllRank(page, searchValue, selectValue) {
     switch (selectValue) {
+      case "penilaiansales":
+        return getApi("/sales/penilaiansales", {
+          page: pageParam,
+          limit: 20,
+          nama: searchValue,
+        });
       case "matriks":
         return getApi("/sales/matrikskeputusan", {
           page: pageParam,
@@ -93,6 +99,7 @@ const RankPage = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="rank">Ranking</SelectItem>
+            <SelectItem value="penilaiansales">Penilaian Sales</SelectItem>
             <SelectItem value="matriks">Matriks Keputusan</SelectItem>
             <SelectItem value="normalisasiMatriks">
               Normalisasi Matriks Keputusan
