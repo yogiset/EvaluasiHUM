@@ -19,46 +19,42 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  exampleTahun
+} from "@/data/userData";
 
 const RankPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [pageParam, setPageParam] = useState(1);
   const [selectValue, setSelectValue] = useState("rank");
+  const [selectedYear, setSelectedYear] = useState("");
 
-  function fetchAllRank(page, searchValue, selectValue) {
+  function fetchAllRank(page, searchValue, selectValue, selectedYear) {
+    let params = {
+      page,
+      limit: 20,
+      nama: searchValue,
+    };
+
+    if (selectedYear) {
+      params.tahun = selectedYear;
+    }
+
     switch (selectValue) {
       case "penilaiansales":
-        return getApi("/sales/penilaiansales", {
-          page: pageParam,
-          limit: 20,
-          nama: searchValue,
-        });
+        return getApi("/sales/penilaiansales", params);
       case "matriks":
-        return getApi("/sales/matrikskeputusan", {
-          page: pageParam,
-          limit: 20,
-          nama: searchValue,
-        });
-
+        return getApi("/sales/matrikskeputusan", params);
       case "normalisasiMatriks":
-        return getApi("/sales/normalisasimatrikskeputusan", {
-          page: pageParam,
-          limit: 20,
-          nama: searchValue,
-        });
-
+        return getApi("/sales/normalisasimatrikskeputusan", params);
       default:
-        return getApi("/sales/perangkingan", {
-          page: page,
-          limit: 20,
-          nama: searchValue,
-        });
+        return getApi("/sales/perangkingan", params);
     }
   }
 
   const { status, data, error, refetch } = useQuery({
-    queryKey: ["get-all-rank", pageParam, selectValue],
-    queryFn: () => fetchAllRank(pageParam, searchValue, selectValue),
+    queryKey: ["get-all-rank", pageParam, selectValue, selectedYear],
+    queryFn: () => fetchAllRank(pageParam, searchValue, selectValue, selectedYear),
     placeholderData: keepPreviousData,
   });
 
@@ -104,6 +100,21 @@ const RankPage = () => {
             <SelectItem value="normalisasiMatriks">
               Normalisasi Matriks Keputusan
             </SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          onValueChange={(value) => setSelectedYear(value)}
+          defaultValue={selectedYear}
+        >
+          <SelectTrigger className="w-max space-x-2 bg-sky-700 text-white">
+            <SelectValue placeholder="Pilih Tahun" />
+          </SelectTrigger>
+          <SelectContent>
+            {exampleTahun.map((tahun) => (
+              <SelectItem key={tahun} value={tahun}>
+                {tahun}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <SearchBar

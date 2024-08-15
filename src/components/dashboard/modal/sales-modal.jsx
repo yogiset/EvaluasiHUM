@@ -61,14 +61,20 @@ export const SalesModal = ({ open, onClose }) => {
 
   function addSalesDetailDtoList() {
     const prev = salesForm.getValues("salesDetailDtoList");
-    setSalesDetailDtoList([
-      ...salesDetailDtoList,
-      { bulan: "", targetblntotal: 0, tercapaiitotal: 0, targetblngadus: 0, tercapaiigadus: 0, targetblnpremium: 0, tercapaiipremium: 0, jumlahvisit: 0 },
-    ]);
-    salesForm.setValue("salesDetailDtoList", [
-      ...prev,
-      { bulan: "", targetblntotal: 0, tercapaiitotal: 0, targetblngadus: 0, tercapaiigadus: 0, targetblnpremium: 0, tercapaiipremium: 0, jumlahvisit: 0 },
-    ]);
+    if (salesDetailDtoList.length < 12) {
+      const newDetail = {
+        bulan: "",
+        targetblntotal: 0,
+        tercapaiitotal: 0,
+        targetblngadus: 0,
+        tercapaiigadus: 0,
+        targetblnpremium: 0,
+        tercapaiipremium: 0,
+        jumlahvisit: 0,
+      };
+      setSalesDetailDtoList([...salesDetailDtoList, newDetail]);
+      salesForm.setValue("salesDetailDtoList", [...prev, newDetail]);
+    }
   }
 
   function onSubmit(formData) {
@@ -120,7 +126,7 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
-            {/* <FormInput
+            <FormInput
               form={salesForm}
               label="Achivement Total Target"
               id="targettotal"
@@ -140,7 +146,7 @@ export const SalesModal = ({ open, onClose }) => {
               id="targetpremium"
               placeholder="Masukkan Target Premium"
               type="number"
-            /> */}
+            />
             <FormInput
               form={salesForm}
               label="Jumlah Customer"
