@@ -120,7 +120,7 @@ export const SalesModal = ({ open, onClose }) => {
               selectItems={exampleTahun}
               placeholder="Pilih Tahun"
             />
-            <FormInput
+            {/* <FormInput
               form={salesForm}
               label="Achivement Total Target"
               id="targettotal"
@@ -140,7 +140,7 @@ export const SalesModal = ({ open, onClose }) => {
               id="targetpremium"
               placeholder="Masukkan Target Premium"
               type="number"
-            />
+            /> */}
             <FormInput
               form={salesForm}
               label="Jumlah Customer"

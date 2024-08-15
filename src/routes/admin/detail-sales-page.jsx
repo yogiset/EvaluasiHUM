@@ -189,8 +189,6 @@ const DetailSalesPage = () => {
                     id="tahun"
                     title="Tahun"
                     desc={data.tahun}
-                    isEdit={isEdit}
-                    selectItems={exampleTahun}
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
                   />
@@ -473,8 +471,6 @@ const DetailTargetList = ({ list, salesId }) => {
         id={`bln${list.id}`}
         value={list.bulan}
         placeholder={list.bulan}
-        selectItems={exampleBulan}
-        isEdit={listEdit}
         onValueChange={(value) => setBulan(value)}
       />
       <TdInput
