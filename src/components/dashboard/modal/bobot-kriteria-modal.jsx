@@ -27,7 +27,7 @@ export const BobotKriteriaModal = ({ open, onClose }) => {
     resolver: zodResolver(bobotkriteriaSchema),
     defaultValues: {
       nmkriteria: "",
-      bobot: 0,
+      bobot: "",
     },
   });
 
@@ -80,7 +80,7 @@ export const BobotKriteriaModal = ({ open, onClose }) => {
               form={bobotForm}
               label="Bobot"
               id="bobot"
-              placeholder="Masukan Bobot"
+              placeholder="0"
               type="number"
             />
             <div className="flex flex-wrap gap-2">

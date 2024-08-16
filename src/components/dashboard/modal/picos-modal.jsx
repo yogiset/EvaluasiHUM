@@ -26,12 +26,12 @@ export const PicosModal = ({ open, onClose }) => {
     resolver: zodResolver(picosSchema),
     defaultValues: {
       nik: "",
-      tahun: 0,
+      tahun: "",
       bulan: "",
-      pipelinestrength: 0,
-      lowtouchratio: 0,
-      crosssellratio: 0,
-      premiumcontribution: 0,
+      pipelinestrength: "",
+      lowtouchratio: "",
+      crosssellratio: "",
+      premiumcontribution: "",
     },
   });
 
@@ -109,28 +109,28 @@ export const PicosModal = ({ open, onClose }) => {
               form={picosForm}
               label="Pipelinestrength"
               id="pipelinestrength"
-              placeholder="Masukkan Pipelinestrength"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={picosForm}
               label="Lowtouchratio"
               id="lowtouchratio"
-              placeholder="Masukkan Lowtouchratio"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={picosForm}
               label="Crosssellratio"
               id="crosssellratio"
-              placeholder="Masukkan crosssellratio"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={picosForm}
               label="Premiumcontribution"
               id="premiumcontribution"
-              placeholder="Masukkan premiumcontribution"
+              placeholder="0"
               type="number"
             />
             <div className="flex flex-wrap gap-2">

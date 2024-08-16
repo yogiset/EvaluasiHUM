@@ -26,13 +26,13 @@ export const CptModal = ({ open, onClose }) => {
     resolver: zodResolver(cptSchema),
     defaultValues: {
       nik: "",
-      tahun: 0,
-      panolcustomer: 0,
-      coverage: 0,
-      penetration: 0,
-      premiumcontribution: 0,
-      throughput: 0,
-      hitrate: 0,
+      tahun: "",
+      panolcustomer: "",
+      coverage: "",
+      penetration: "",
+      premiumcontribution: "",
+      throughput: "",
+      hitrate: "",
     },
   });
 
@@ -100,35 +100,35 @@ export const CptModal = ({ open, onClose }) => {
               form={cptForm}
               label="Panolcustomer"
               id="panolcustomer"
-              placeholder="Pilih panolcustomer"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={cptForm}
               label="Coverage"
               id="coverage"
-              placeholder="Masukkan Coverage"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={cptForm}
               label="Penetration"
               id="penetration"
-              placeholder="Masukkan penetration"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={cptForm}
               label="Throughput"
               id="throughput"
-              placeholder="Masukkan throughput"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={cptForm}
               label="Hitrate"
               id="hitrate"
-              placeholder="Masukkan hitrate"
+              placeholder="0"
               type="number"
             />
             <div className="flex flex-wrap gap-2">
