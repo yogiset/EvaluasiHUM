@@ -140,9 +140,14 @@ const BoardList = ({ role }) => {
       bg: "bg-pink-500",
     },
     {
-      title: "Ranking",
+      title: "Ranking Tahunan",
       path: "/dashboard/rank",
       bg: "bg-red-500",
+    },
+    {
+      title: "Ranking Bulanan",
+      path: "/dashboard/rankbulanan",
+      bg: "bg-yellow-500",
     },
   ];
 
