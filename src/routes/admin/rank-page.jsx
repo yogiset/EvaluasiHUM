@@ -19,9 +19,8 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  exampleTahun
-} from "@/data/userData";
+import { exampleTahun } from "@/data/userData";
+import { generatePDFTable } from "@/lib/generate-pdf-table";
 
 const RankPage = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -54,7 +53,8 @@ const RankPage = () => {
 
   const { status, data, error, refetch } = useQuery({
     queryKey: ["get-all-rank", pageParam, selectValue, selectedYear],
-    queryFn: () => fetchAllRank(pageParam, searchValue, selectValue, selectedYear),
+    queryFn: () =>
+      fetchAllRank(pageParam, searchValue, selectValue, selectedYear),
     placeholderData: keepPreviousData,
   });
 
@@ -75,6 +75,56 @@ const RankPage = () => {
     setPageParam(currentPage - 1);
   }
 
+  function exportTableToPdf() {
+    const tabelData = [];
+    const mainTabelColumns = [
+      "No",
+      "Nama",
+      "Tahun",
+      "Achiev Total",
+      "Achiev Gadus",
+      "Achiev Premium",
+      "Jumlah Customer",
+      "Jumlah Visit",
+    ];
+    let columns;
+
+    if (selectValue === "rank") {
+      columns = [...mainTabelColumns, "Hasil", "Rank"];
+
+      data.content.forEach((item, index) => {
+        tabelData.push([
+          index + 1,
+          item.nama,
+          item.tahun,
+          parseFloat(item.achivementtotal.toFixed(2)),
+          parseFloat(item.achivementgadus.toFixed(2)),
+          parseFloat(item.achivementpremium.toFixed(2)),
+          parseFloat(item.jumcustomer.toFixed(2)),
+          parseFloat(item.jumvisit.toFixed(2)),
+          parseFloat(item.hasil.toFixed(2)),
+          item.rank,
+        ]);
+      });
+    } else {
+      columns = mainTabelColumns;
+      data.content.forEach((item, index) => {
+        tabelData.push([
+          index + 1,
+          item.nama,
+          item.tahun,
+          parseFloat(item.achievtotal.toFixed(2)),
+          parseFloat(item.achievgadus.toFixed(2)),
+          parseFloat(item.achievpremium.toFixed(2)),
+          parseFloat(item.jumcustomer.toFixed(2)),
+          parseFloat(item.jumvisit.toFixed(2)),
+        ]);
+      });
+    }
+
+    generatePDFTable(tabelData, columns, selectValue);
+  }
+
   if (error) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -86,6 +136,9 @@ const RankPage = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="w-full flex justify-end items-center gap-x-2 p-2">
+        <Button variant="sky" onClick={exportTableToPdf}>
+          Export to PDF
+        </Button>
         <Select
           onValueChange={(value) => setSelectValue(value)}
           defaultValue={selectValue}
