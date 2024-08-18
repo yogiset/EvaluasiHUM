@@ -19,6 +19,7 @@ import CptPage from "./admin/cpt-page";
 import SalesPage from "./admin/sales-page";
 import PicosPage from "./admin/picos-page";
 import RankPage from "./admin/rank-page";
+import RankBulananPage from "./admin/rank-bulanan-page";
 import DetailHimpunanKriteriaPage from "./admin/detail-himpunan-kriteria";
 import DetailBobotKriteriaPage from "./admin/detail-bobot-kriteria";
 import DetailPicosPage from "./admin/detail-picos-page";
@@ -114,6 +115,10 @@ export const router = createBrowserRouter([
       {
         path: "bobotkriteria/:bobotId",
         element: <DetailBobotKriteriaPage />,
+      },
+      {
+        path: "rankbulanan",
+        element: <RankBulananPage />,
       },
       {
         path: "rank",

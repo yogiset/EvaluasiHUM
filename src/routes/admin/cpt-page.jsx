@@ -16,12 +16,17 @@ import { SearchBar } from "@/components/dashboard/search-bar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { deleteApi, getApi } from "@/lib/fetcher";
+import {
+  exampleTahun
+} from "@/data/userData";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
 const CptPage = () => {
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false); // modal/dialog state
   const { role } = useAuth();
+  const [selectedYear, setSelectedYear] = useState("");
   const {
     status,
     data,
@@ -43,7 +48,13 @@ const CptPage = () => {
   });
 
   async function fetchAllCpt(pageParam, searchValue) {
-    return getApi("/cpt/showall", { page: pageParam, nama: searchValue });
+    const params = { page: pageParam, nama: searchValue };
+
+    if (selectedYear) {
+      params.tahun = selectedYear;
+    }
+
+    return getApi("/cpt/showall", params);
   }
 
   useEffect(() => {
@@ -51,6 +62,10 @@ const CptPage = () => {
       fetchNextPage();
     }
   }, [fetchNextPage, inView]);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, selectedYear]);
 
   // close modal ↓↓↓
   function onClose() {
@@ -84,9 +99,20 @@ const CptPage = () => {
             Tambah
           </Button>
         )}
-
         <CptModal open={open} onClose={onClose} />
-        {/* modal end */}
+        
+        <Select onValueChange={(value) => setSelectedYear(value)} defaultValue={selectedYear}>
+          <SelectTrigger className="w-max space-x-2 bg-sky-700 text-white">
+            <SelectValue placeholder="Pilih Tahun" />
+          </SelectTrigger>
+          <SelectContent>
+            {exampleTahun.map((tahun) => (
+              <SelectItem key={tahun} value={tahun}>
+                {tahun}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       {status === "pending" ? (
         <Loading />

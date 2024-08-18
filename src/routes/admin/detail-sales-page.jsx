@@ -189,8 +189,6 @@ const DetailSalesPage = () => {
                     id="tahun"
                     title="Tahun"
                     desc={data.tahun}
-                    isEdit={isEdit}
-                    selectItems={exampleTahun}
                     placeholder={data.tahun}
                     onValueChange={(e) => setTahun(e)}
                   />
@@ -274,7 +272,7 @@ const DetailSalesPage = () => {
                   <TrText
                     id="jumlahvisit"
                     title="Jumlah Visit(%)"
-                    desc={data.jumlahvisit}
+                    desc={data.jumlahvisit + " % "}
                     isEdit={isEdit}
                     onChange={(e) => setJumlahvisit(parseFloat(e.target.value))}
                   />
@@ -473,8 +471,6 @@ const DetailTargetList = ({ list, salesId }) => {
         id={`bln${list.id}`}
         value={list.bulan}
         placeholder={list.bulan}
-        selectItems={exampleBulan}
-        isEdit={listEdit}
         onValueChange={(value) => setBulan(value)}
       />
       <TdInput
@@ -494,7 +490,7 @@ const DetailTargetList = ({ list, salesId }) => {
         onChange={(e) => setTercapaiitotal(parseInt(e.target.value))}
       />
       <td className="border border-slate-300 p-2">
-        {list.tercapaipersenntotal}
+        {list.tercapaipersenntotal + " % "}
       </td>
       <TdInput
         id={`targetblngadus${list.id}`}
@@ -513,7 +509,7 @@ const DetailTargetList = ({ list, salesId }) => {
         onChange={(e) => setTercapaiigadus(parseInt(e.target.value))}
       />
       <td className="border border-slate-300 p-2">
-        {list.tercapaipersenngadus}
+        {list.tercapaipersenngadus + " % "}
       </td>
       <TdInput
         id={`targetblnpremium${list.id}`}
@@ -532,11 +528,11 @@ const DetailTargetList = ({ list, salesId }) => {
         onChange={(e) => setTercapaiipremium(parseInt(e.target.value))}
       />
       <td className="border border-slate-300 p-2">
-        {list.tercapaipersennpremium}
+        {list.tercapaipersennpremium + " % "}
       </td>
       <TdInput
         id={`jumlahvisit${list.id}`}
-        value={list.jumlahvisit}
+        value={list.jumlahvisit + " % "}
         desc=""
         type="number"
         isEdit={listEdit}

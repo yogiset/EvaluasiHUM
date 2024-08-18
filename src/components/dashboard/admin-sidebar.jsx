@@ -40,7 +40,12 @@ const navigations = [
     icon: <ClipboardList />,
   },
   {
-    title: "Ranking",
+    title: "Ranking Bulanan",
+    path: "/dashboard/rankbulanan",
+    icon: <ClipboardList />,
+  },
+  {
+    title: "Ranking Tahunan",
     path: "/dashboard/rank",
     icon: <ClipboardList />,
   },

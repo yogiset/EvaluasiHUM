@@ -24,13 +24,13 @@ export const SalesTargetModal = ({ open, onClose, idsales }) => {
     resolver: zodResolver(salesDetailSchema),
     defaultValues: {
       bulan: "",
-      targetblntotal: 0,
-      tercapaiitotal: 0,
-      targetblngadus: 0,
-      tercapaiigadus: 0,
-      targetblnpremium: 0,
-      tercapaiipremium: 0,
-      jumlahvisit: 0,
+      targetblntotal: "",
+      tercapaiitotal: "",
+      targetblngadus: "",
+      tercapaiigadus: "",
+      targetblnpremium: "",
+      tercapaiipremium: "",
+      jumlahvisit: "",
     },
   });
 
@@ -93,49 +93,49 @@ export const SalesTargetModal = ({ open, onClose, idsales }) => {
               form={salesTargetForm}
               label="Target Total per Bulan"
               id="targetblntotal"
-              placeholder="Masukkan total target /bulan"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
               label="Tercapaitotal"
               id="tercapaiitotal"
-              placeholder="Masukkan total tercapai/bulan"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
               label="Target gadus Bulan"
               id="targetblngadus"
-              placeholder="Masukkan target gadus/bulan"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
               label="Tercapaigadus"
               id="tercapaiigadus"
-              placeholder="Masukkan gadus tercapai/bulan"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
               label="Target premium Bulan"
               id="targetblnpremium"
-              placeholder="Masukkan target premium/bulan"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
               label="Tercapaipremium"
               id="tercapaiipremium"
-              placeholder="Masukkan premium tercapai/bulan"
+              placeholder="0"
               type="number"
             />
             <FormInput
               form={salesTargetForm}
               label="Jumlahvisit"
               id="jumlahvisit"
-              placeholder="Masukkan jumlahvisit/bulan"
+              placeholder="0"
               type="number"
             />
 

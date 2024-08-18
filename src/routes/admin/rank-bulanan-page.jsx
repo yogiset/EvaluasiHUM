@@ -20,21 +20,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  exampleTahun
+  exampleBulan,exampleTahun
 } from "@/data/userData";
 
-const RankPage = () => {
+const RankBulananPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [pageParam, setPageParam] = useState(1);
   const [selectValue, setSelectValue] = useState("rank");
   const [selectedYear, setSelectedYear] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
 
-  function fetchAllRank(page, searchValue, selectValue, selectedYear) {
+  function fetchAllRank(page, searchValue, selectValue, selectedMonth, selectedYear) {
     let params = {
       page,
       limit: 20,
       nama: searchValue,
     };
+
+    if (selectedMonth) {
+        params.bulan = selectedMonth;
+    }
 
     if (selectedYear) {
       params.tahun = selectedYear;
@@ -42,19 +47,19 @@ const RankPage = () => {
 
     switch (selectValue) {
       case "penilaiansales":
-        return getApi("/sales/penilaiansales", params);
+        return getApi("/sales/penilaiansalesbulanan", params);
       case "matriks":
-        return getApi("/sales/matrikskeputusan", params);
+        return getApi("/sales/matrikskeputusanbulanan", params);
       case "normalisasiMatriks":
-        return getApi("/sales/normalisasimatrikskeputusan", params);
+        return getApi("/sales/normalisasimatrikskeputusanbulanan", params);
       default:
-        return getApi("/sales/perangkingan", params);
+        return getApi("/sales/perangkinganbulanan", params);
     }
   }
 
   const { status, data, error, refetch } = useQuery({
-    queryKey: ["get-all-rank", pageParam, selectValue, selectedYear],
-    queryFn: () => fetchAllRank(pageParam, searchValue, selectValue, selectedYear),
+    queryKey: ["get-all-rank", pageParam, selectValue, selectedMonth, selectedYear],
+    queryFn: () => fetchAllRank(pageParam, searchValue, selectValue, selectedMonth, selectedYear),
     placeholderData: keepPreviousData,
   });
 
@@ -100,6 +105,21 @@ const RankPage = () => {
             <SelectItem value="normalisasiMatriks">
               Normalisasi Matriks Keputusan
             </SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          onValueChange={(value) => setSelectedMonth(value)}
+          defaultValue={selectedMonth}
+        >
+          <SelectTrigger className="w-max space-x-2 bg-sky-700 text-white">
+            <SelectValue placeholder="Pilih Bulan" />
+          </SelectTrigger>
+          <SelectContent>
+            {exampleBulan.map((bulan) => (
+              <SelectItem key={bulan} value={bulan}>
+                {bulan}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select
@@ -168,6 +188,7 @@ const MatriksTable = ({ items }) => {
         <TableRow className="sticky">
           <TableHead className="w-14">No</TableHead>
           <TableHead className="w-40">Nama</TableHead>
+          <TableHead className="w-24">Bulan</TableHead>
           <TableHead className="w-16 text-center">Tahun</TableHead>
           <TableHead className="text-center">Achievement total</TableHead>
           <TableHead className="text-center">Achievement gadus</TableHead>
@@ -181,6 +202,9 @@ const MatriksTable = ({ items }) => {
           <TableRow key={elem.idsales}>
             <TableCell>{index + 1}</TableCell>
             <TableCell>{elem.nama}</TableCell>
+            <TableCell className="truncate hover:cursor-default text-center">
+              {elem.bulan}
+            </TableCell>
             <TableCell className="truncate hover:cursor-default text-center">
               {elem.tahun}
             </TableCell>
@@ -213,6 +237,7 @@ const RankTable = ({ items }) => {
         <TableRow className="sticky">
           <TableHead className="w-14">No</TableHead>
           <TableHead className="w-40">Nama</TableHead>
+          <TableHead className="w-24">Bulan</TableHead>
           <TableHead className="w-16 text-center">Tahun</TableHead>
           <TableHead className="text-center">Achievement total</TableHead>
           <TableHead className="text-center">Achievement gadus</TableHead>
@@ -228,6 +253,9 @@ const RankTable = ({ items }) => {
           <TableRow key={elem.idsales}>
             <TableCell>{index + 1}</TableCell>
             <TableCell>{elem.nama}</TableCell>
+            <TableCell className="truncate hover:cursor-default text-center">
+              {elem.bulan}
+            </TableCell>
             <TableCell className="truncate hover:cursor-default text-center">
               {elem.tahun}
             </TableCell>
@@ -257,4 +285,4 @@ const RankTable = ({ items }) => {
   );
 };
 
-export default RankPage;
+export default RankBulananPage;

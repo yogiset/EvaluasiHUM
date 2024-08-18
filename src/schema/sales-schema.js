@@ -9,8 +9,10 @@ export const salesSchema = z.object({
     invalid_type_error: "Please select a Year!",
   }),
   targettotal: z.coerce
-    .number({ required_error: "Target is required!" })
-    .nonnegative({ message: "Target must be a positive value." }),
+  .number({
+    required_error: "Please fill this field!",
+  })
+  .nonnegative({ message: "Target must be a positive value." }),  
   tercapaitotal: z.coerce
     .number({
       required_error: "Please fill this field!",
