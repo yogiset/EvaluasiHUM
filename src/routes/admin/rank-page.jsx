@@ -52,15 +52,14 @@ const RankPage = () => {
   }
 
   const { status, data, error, refetch } = useQuery({
-    queryKey: ["get-all-rank", pageParam, selectValue, selectedYear],
-    queryFn: () =>
-      fetchAllRank(pageParam, searchValue, selectValue, selectedYear),
-    placeholderData: keepPreviousData,
+    queryKey: ["get-all-rank", pageParam, selectValue, searchValue, selectedYear],
+    queryFn: () => fetchAllRank(pageParam, searchValue, selectValue, selectedYear),
+    keepPreviousData: true,
   });
 
   useEffect(() => {
     refetch();
-  }, [refetch, selectValue, pageParam]);
+  }, [refetch, selectValue, pageParam, selectedYear]);
 
   function onSearch(e) {
     e.preventDefault();

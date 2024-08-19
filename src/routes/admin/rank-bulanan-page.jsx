@@ -22,6 +22,7 @@ import {
 import {
   exampleBulan,exampleTahun
 } from "@/data/userData";
+import { generatePDFTable } from "@/lib/generate-pdf-table";
 
 const RankBulananPage = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -45,27 +46,29 @@ const RankBulananPage = () => {
       params.tahun = selectedYear;
     }
 
+
     switch (selectValue) {
       case "penilaiansales":
-        return getApi("/sales/penilaiansalesbulanan", params);
+        return getApi("/salesdetail/penilaiansalesbulanan", params);
       case "matriks":
-        return getApi("/sales/matrikskeputusanbulanan", params);
+        return getApi("/salesdetail/matrikskeputusanbulanan", params);
       case "normalisasiMatriks":
-        return getApi("/sales/normalisasimatrikskeputusanbulanan", params);
+        return getApi("/salesdetail/normalisasimatrikskeputusanbulanan", params);
       default:
-        return getApi("/sales/perangkinganbulanan", params);
+        return getApi("/salesdetail/perangkinganbulananan", params);
     }
   }
 
   const { status, data, error, refetch } = useQuery({
-    queryKey: ["get-all-rank", pageParam, selectValue, selectedMonth, selectedYear],
+    queryKey: ["get-all-rank", pageParam, selectValue, searchValue, selectedMonth, selectedYear],
     queryFn: () => fetchAllRank(pageParam, searchValue, selectValue, selectedMonth, selectedYear),
-    placeholderData: keepPreviousData,
+    keepPreviousData: true,
   });
+  
 
   useEffect(() => {
     refetch();
-  }, [refetch, selectValue, pageParam]);
+  }, [refetch, selectValue, pageParam, searchValue, selectedMonth, selectedYear]);
 
   function onSearch(e) {
     e.preventDefault();
@@ -80,6 +83,58 @@ const RankBulananPage = () => {
     setPageParam(currentPage - 1);
   }
 
+  function exportTableToPdf() {
+    const tabelData = [];
+    const mainTabelColumns = [
+      "No",
+      "Nama",
+      "Bulan",
+      "Tahun",
+      "Achiev Total",
+      "Achiev Gadus",
+      "Achiev Premium",
+      "Jumlah Customer",
+      "Jumlah Visit",
+    ];
+    let columns;
+
+    if (selectValue === "rank") {
+      columns = [...mainTabelColumns, "Hasil", "Rank"];
+
+      data.content.forEach((item, index) => {
+        tabelData.push([
+          index + 1,
+          item.nama,
+          item.bulan,
+          item.tahun,
+          parseFloat(item.achivementtotal.toFixed(2)),
+          parseFloat(item.achivementgadus.toFixed(2)),
+          parseFloat(item.achivementpremium.toFixed(2)),
+          parseFloat(item.jumcustomer.toFixed(2)),
+          parseFloat(item.jumvisit.toFixed(2)),
+          parseFloat(item.hasil.toFixed(2)),
+          item.rank,
+        ]);
+      });
+    } else {
+      columns = mainTabelColumns;
+      data.content.forEach((item, index) => {
+        tabelData.push([
+          index + 1,
+          item.nama,
+          item.tahun,
+          parseFloat(item.achievtotal.toFixed(2)),
+          parseFloat(item.achievgadus.toFixed(2)),
+          parseFloat(item.achievpremium.toFixed(2)),
+          parseFloat(item.jumcustomer.toFixed(2)),
+          parseFloat(item.jumvisit.toFixed(2)),
+        ]);
+      });
+    }
+
+    generatePDFTable(tabelData, columns, selectValue);
+  }
+
   if (error) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -92,19 +147,18 @@ const RankBulananPage = () => {
     <div className="w-full h-full flex flex-col">
       <div className="w-full flex justify-end items-center gap-x-2 p-2">
         <Select
-          onValueChange={(value) => setSelectValue(value)}
-          defaultValue={selectValue}
+          onValueChange={(value) => setSelectedYear(value)}
+          defaultValue={selectedYear}
         >
           <SelectTrigger className="w-max space-x-2 bg-sky-700 text-white">
-            <SelectValue placeholder="Ranking" />
+            <SelectValue placeholder="Pilih Tahun" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="rank">Ranking</SelectItem>
-            <SelectItem value="penilaiansales">Penilaian Sales</SelectItem>
-            <SelectItem value="matriks">Matriks Keputusan</SelectItem>
-            <SelectItem value="normalisasiMatriks">
-              Normalisasi Matriks Keputusan
-            </SelectItem>
+            {exampleTahun.map((tahun) => (
+              <SelectItem key={tahun} value={tahun}>
+                {tahun}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select
@@ -123,20 +177,24 @@ const RankBulananPage = () => {
           </SelectContent>
         </Select>
         <Select
-          onValueChange={(value) => setSelectedYear(value)}
-          defaultValue={selectedYear}
+          onValueChange={(value) => setSelectValue(value)}
+          defaultValue={selectValue}
         >
           <SelectTrigger className="w-max space-x-2 bg-sky-700 text-white">
-            <SelectValue placeholder="Pilih Tahun" />
+            <SelectValue placeholder="Ranking" />
           </SelectTrigger>
           <SelectContent>
-            {exampleTahun.map((tahun) => (
-              <SelectItem key={tahun} value={tahun}>
-                {tahun}
-              </SelectItem>
-            ))}
+            <SelectItem value="rank">Ranking</SelectItem>
+            <SelectItem value="penilaiansales">Penilaian Sales</SelectItem>
+            <SelectItem value="matriks">Matriks Keputusan</SelectItem>
+            <SelectItem value="normalisasiMatriks">
+              Normalisasi Matriks Keputusan
+            </SelectItem>
           </SelectContent>
         </Select>
+        <Button variant="sky" onClick={exportTableToPdf}>
+          Export to PDF
+        </Button>
         <SearchBar
           onSubmit={onSearch}
           placeholder="Cari nama..."
