@@ -135,9 +135,6 @@ const RankPage = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="w-full flex justify-end items-center gap-x-2 p-2">
-        <Button variant="sky" onClick={exportTableToPdf}>
-          Export to PDF
-        </Button>
         <Select
           onValueChange={(value) => setSelectValue(value)}
           defaultValue={selectValue}
@@ -169,6 +166,9 @@ const RankPage = () => {
             ))}
           </SelectContent>
         </Select>
+        <Button variant="sky" onClick={exportTableToPdf}>
+          Export to PDF
+        </Button>
         <SearchBar
           onSubmit={onSearch}
           placeholder="Cari nama..."
